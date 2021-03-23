@@ -17,7 +17,7 @@ Our code will be coming soon.
 
 ## Introduction
 
-Our code is based on [OpenPCDet v0.2](https://github.com/open-mmlab/OpenPCDet/tree/v0.2.0). More updates on OpenPCDet are supposed to be compatible with our code.
+Our code is based on [OpenPCDet v0.2](https://github.com/open-mmlab/OpenPCDet/tree/v0.2.0). More updates on [OpenPCDet](https://github.com/open-mmlab/OpenPCDet) are supposed to be compatible with our code.
 
 ### Supported features and ToDo List
 
@@ -45,13 +45,11 @@ Our code is heavily based on [OpenPCDet v0.2](https://github.com/open-mmlab/Open
 
 If you find this project useful in your research, please consider cite:
 ```
-@misc{yang2021st3d,
-      title={ST3D: Self-training for Unsupervised Domain Adaptation on 3D ObjectDetection}, 
-      author={Jihan Yang and Shaoshuai Shi and Zhe Wang and Hongsheng Li and Xiaojuan Qi},
-      year={2021},
-      eprint={2103.05346},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@inproceedings{yang2021st3d,
+    title={ST3D: Self-training for Unsupervised Domain Adaptation on 3D Object Detection},
+    author={Yang, Jihan and Shi, Shaoshuai and Wang, Zhe and Li, Hongsheng and Qi, Xiaojuan},
+    booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+    year={2021}
 }
 ```
 ```
