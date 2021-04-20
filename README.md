@@ -23,8 +23,12 @@ More updates on OpenPCDet are supposed to be compatible with our code.
 | [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 73.33 | 73.62 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) | 
 | [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) |
 
+<<<<<<< HEAD
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
 but you should achieve similar performance by training with the default configs.
+=======
+Our code is based on [OpenPCDet v0.2](https://github.com/open-mmlab/OpenPCDet/tree/v0.2.0). More updates on [OpenPCDet](https://github.com/open-mmlab/OpenPCDet) are supposed to be compatible with our code.
+>>>>>>> baaa64c14e5cb7bd5cffc674cbf12562295b5c65
 
 Also, the training Waymo data used in our work is version 1.0, but the version now available is version 1.2. 
 The pretrained model on these two version data should be similar when adapted to KITTI.  
@@ -59,13 +63,11 @@ Our code is heavily based on [OpenPCDet v0.2](https://github.com/open-mmlab/Open
 
 If you find this project useful in your research, please consider cite:
 ```
-@misc{yang2021st3d,
-      title={ST3D: Self-training for Unsupervised Domain Adaptation on 3D ObjectDetection}, 
-      author={Jihan Yang and Shaoshuai Shi and Zhe Wang and Hongsheng Li and Xiaojuan Qi},
-      year={2021},
-      eprint={2103.05346},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@inproceedings{yang2021st3d,
+    title={ST3D: Self-training for Unsupervised Domain Adaptation on 3D Object Detection},
+    author={Yang, Jihan and Shi, Shaoshuai and Wang, Zhe and Li, Hongsheng and Qi, Xiaojuan},
+    booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+    year={2021}
 }
 ```
 ```
