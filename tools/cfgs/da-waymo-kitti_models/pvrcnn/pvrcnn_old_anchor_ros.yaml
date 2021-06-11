@@ -13,7 +13,7 @@ DATA_CONFIG_TAR:
     SHIFT_COOR: [0.0, 0.0, 1.6]
 
     DATA_AUGMENTOR:
-        DISABLE_AUG_LIST: [ 'random_object_scaling' ]
+        DISABLE_AUG_LIST: [ 'normalize_object_size' ]
         AUG_CONFIG_LIST:
             - NAME: random_object_scaling
               SCALE_UNIFORM_NOISE: [ 0.7, 0.95 ]
