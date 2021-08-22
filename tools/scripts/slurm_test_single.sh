@@ -15,6 +15,5 @@ srun -p ${PARTITION} \
     --ntasks=${GPUS} \
     --ntasks-per-node=${GPUS_PER_NODE} \
     --kill-on-bad-exit=1 \
-    -x SH-IDC1-10-5-36-214 \
     ${SRUN_ARGS} \
     python -u test.py ${PY_ARGS}

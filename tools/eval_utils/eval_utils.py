@@ -1,24 +1,12 @@
-import tqdm
-import time
 import pickle
+import time
+
+import numpy as np
 import torch
-from pcdet.utils import common_utils
+import tqdm
+
 from pcdet.models import load_data_to_gpu
-
-
-def visualize_boxes(pred_dicts, input_dict):
-    import visualize_utils as vis
-    import mayavi.mlab as mlab
-    for batch_idx in range(len(pred_dicts)):
-        if (pred_dicts[batch_idx]['label_preds'] == 3).sum() > 0:
-            gt_boxes_list = []
-            scores_list = []
-            for j in range(3):
-                mask = pred_dicts[batch_idx]['label_preds'] == (j + 1)
-                gt_boxes_list.append(pred_dicts[batch_idx]['box3d_lidar'][mask, :])
-                scores_list.append(pred_dicts[batch_idx]['scores'][mask])
-            vis.draw_scenes_by_class(input_dict['points'][:, 1:], gt_boxes_list, scores_list)
-            mlab.show(stop=True)
+from pcdet.utils import common_utils
 
 
 def statistics_info(cfg, ret_dict, metric, disp_dict):
@@ -63,7 +51,6 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
     if cfg.LOCAL_RANK == 0:
         progress_bar = tqdm.tqdm(total=len(dataloader), leave=True, desc='eval', dynamic_ncols=True)
     start_time = time.time()
-
     for i, batch_dict in enumerate(dataloader):
         load_data_to_gpu(batch_dict)
         with torch.no_grad():

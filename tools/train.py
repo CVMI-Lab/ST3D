@@ -58,18 +58,25 @@ def parse_config():
 
 def main():
     args, cfg = parse_config()
-    if args.fix_random_seed:
-        common_utils.set_random_seed(666)
-
     if args.launcher == 'none':
         dist_train = False
+        total_gpus = 1
     else:
-        args.batch_size, cfg.LOCAL_RANK = getattr(common_utils, 'init_dist_%s' % args.launcher)(
-            args.batch_size, args.tcp_port, args.local_rank, backend='nccl'
+        total_gpus, cfg.LOCAL_RANK = getattr(common_utils, 'init_dist_%s' % args.launcher)(
+            args.tcp_port, args.local_rank, backend='nccl'
         )
         dist_train = True
 
+    if args.batch_size is None:
+        args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
+    else:
+        assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
+        args.batch_size = args.batch_size // total_gpus
+
     args.epochs = cfg.OPTIMIZATION.NUM_EPOCHS if args.epochs is None else args.epochs
+
+    if args.fix_random_seed:
+        common_utils.set_random_seed(666)
 
     output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / args.extra_tag
     ckpt_dir = output_dir / 'ckpt'
@@ -87,7 +94,6 @@ def main():
     logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
 
     if dist_train:
-        total_gpus = dist.get_world_size()
         logger.info('total_batch_size: %d' % (total_gpus * args.batch_size))
     for key, val in vars(args).items():
         logger.info('{:16} {}'.format(key, val))

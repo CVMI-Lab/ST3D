@@ -1,10 +1,12 @@
-import pickle
 import copy
+import pickle
+
 import numpy as np
 from skimage import io
-from ...utils import box_utils, common_utils, calibration_kitti, object3d_kitti, self_training_utils
-from ..dataset import DatasetTemplate
+
 from ...ops.roiaware_pool3d import roiaware_pool3d_utils
+from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti, self_training_utils
+from ..dataset import DatasetTemplate
 
 
 class KittiDataset(DatasetTemplate):
@@ -266,9 +268,9 @@ class KittiDataset(DatasetTemplate):
             return ret_dict
 
         def generate_single_sample_dict(batch_index, box_dict):
-            pred_scores = box_dict['pred_scores'].detach().cpu().numpy()
-            pred_boxes = box_dict['pred_boxes'].detach().cpu().numpy()
-            pred_labels = box_dict['pred_labels'].detach().cpu().numpy()
+            pred_scores = box_dict['pred_scores'].cpu().numpy()
+            pred_boxes = box_dict['pred_boxes'].cpu().numpy()
+            pred_labels = box_dict['pred_labels'].cpu().numpy()
             pred_dict = get_template_prediction(pred_scores.shape[0])
             if pred_scores.shape[0] == 0:
                 return pred_dict
@@ -471,4 +473,3 @@ if __name__ == '__main__':
             data_path=ROOT_DIR / 'data' / 'kitti',
             save_path=ROOT_DIR / 'data' / 'kitti'
         )
-

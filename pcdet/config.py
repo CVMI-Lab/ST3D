@@ -1,6 +1,7 @@
-from easydict import EasyDict
 from pathlib import Path
+
 import yaml
+from easydict import EasyDict
 
 
 def log_config_to_file(cfg, pre='cfg', logger=None):
@@ -53,7 +54,10 @@ def cfg_from_list(cfg_list, config):
 def merge_new_config(config, new_config):
     if '_BASE_CONFIG_' in new_config:
         with open(new_config['_BASE_CONFIG_'], 'r') as f:
-            yaml_config = yaml.load(f, Loader=yaml.FullLoader)
+            try:
+                yaml_config = yaml.load(f, Loader=yaml.FullLoader)
+            except:
+                yaml_config = yaml.load(f)
         config.update(EasyDict(yaml_config))
 
     for key, val in new_config.items():

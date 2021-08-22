@@ -43,7 +43,7 @@ Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usag
 
 - [x] Support training code on Waymo -> KITTI task
 
-- [ ] Update to Latest OpenPCDet version.
+- [x] Update to OpenPCDet v0.3.0 version.
   
 - [ ] Support more adaptation tasks.
 

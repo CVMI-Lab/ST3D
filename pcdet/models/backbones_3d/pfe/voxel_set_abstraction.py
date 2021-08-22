@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
-from ....utils import common_utils
+
 from ....ops.pointnet2.pointnet2_stack import pointnet2_modules as pointnet2_stack_modules
 from ....ops.pointnet2.pointnet2_stack import pointnet2_utils as pointnet2_stack_utils
+from ....utils import common_utils
 
 
 def bilinear_interpolate_torch(im, x, y):
@@ -140,8 +141,9 @@ class VoxelSetAbstraction(nn.Module):
                 ).long()
 
                 if sampled_points.shape[1] < self.model_cfg.NUM_KEYPOINTS:
-                    empty_num = self.model_cfg.NUM_KEYPOINTS - sampled_points.shape[1]
-                    cur_pt_idxs[0, -empty_num:] = cur_pt_idxs[0, :empty_num]
+                    times = int(self.model_cfg.NUM_KEYPOINTS / sampled_points.shape[1]) + 1
+                    non_empty = cur_pt_idxs[0, :sampled_points.shape[1]]
+                    cur_pt_idxs[0] = non_empty.repeat(times)[:self.model_cfg.NUM_KEYPOINTS]
 
                 keypoints = sampled_points[0][cur_pt_idxs[0]].unsqueeze(dim=0)
 
@@ -236,4 +238,3 @@ class VoxelSetAbstraction(nn.Module):
         batch_dict['point_features'] = point_features  # (BxN, C)
         batch_dict['point_coords'] = point_coords  # (BxN, 4)
         return batch_dict
-

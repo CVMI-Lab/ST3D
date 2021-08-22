@@ -1,6 +1,4 @@
-import torch
 from .detector3d_template import Detector3DTemplate
-from ..model_utils.model_nms_utils import class_agnostic_nms
 
 
 class PVRCNN(Detector3DTemplate):

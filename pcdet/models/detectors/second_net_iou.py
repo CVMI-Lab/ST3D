@@ -56,6 +56,22 @@ class SECONDNetIoU(Detector3DTemplate):
 
         return scores
 
+    def set_nms_score_by_class(self, iou_preds, cls_preds, label_preds, score_by_class):
+        n_classes = torch.unique(label_preds).shape[0]
+        nms_scores = torch.zeros(iou_preds.shape, dtype=torch.float32).cuda()
+        for i in range(n_classes):
+            mask = label_preds == (i + 1)
+            class_name = self.class_names[i]
+            score_type = score_by_class[class_name]
+            if score_type == 'iou':
+                nms_scores[mask] = iou_preds[mask]
+            elif score_type == 'cls':
+                nms_scores[mask] = cls_preds[mask]
+            else:
+                raise NotImplementedError
+
+        return nms_scores
+
     def post_processing(self, batch_dict):
         """
         Args:
@@ -100,7 +116,12 @@ class SECONDNetIoU(Detector3DTemplate):
                 iou_preds, label_preds = torch.max(iou_preds, dim=-1)
                 label_preds = batch_dict['roi_labels'][index] if batch_dict.get('has_class_labels', False) else label_preds + 1
 
-                if post_process_cfg.NMS_CONFIG.get('SCORE_TYPE', None) == 'iou' or \
+                if post_process_cfg.NMS_CONFIG.get('SCORE_BY_CLASS', None) and \
+                        post_process_cfg.NMS_CONFIG.SCORE_TYPE == 'score_by_class':
+                    nms_scores = self.set_nms_score_by_class(
+                        iou_preds, cls_preds, label_preds, post_process_cfg.NMS_CONFIG.SCORE_BY_CLASS
+                    )
+                elif post_process_cfg.NMS_CONFIG.get('SCORE_TYPE', None) == 'iou' or \
                         post_process_cfg.NMS_CONFIG.get('SCORE_TYPE', None) is None:
                     nms_scores = iou_preds
                 elif post_process_cfg.NMS_CONFIG.SCORE_TYPE == 'cls':

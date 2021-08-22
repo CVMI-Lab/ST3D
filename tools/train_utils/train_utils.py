@@ -1,24 +1,9 @@
-import torch
-import os
 import glob
+import os
+
+import torch
 import tqdm
 from torch.nn.utils import clip_grad_norm_
-
-
-def visualize_boxes_batch(batch):
-    import visualize_utils as vis
-    import mayavi.mlab as mlab
-    for b_idx in range(batch['batch_size']):
-        points = batch['points'][batch['points'][:, 0] == b_idx][:, 1:]
-
-        if 'debug' not in batch:
-            vis.draw_scenes(points, ref_boxes=batch['gt_boxes'][b_idx, :, :7],
-                            scores=batch['scores'][b_idx])
-        else:
-            vis.draw_scenes(points, ref_boxes=batch['gt_boxes'][b_idx, :, :7],
-                            gt_boxes=batch['debug'][b_idx]['gt_boxes_lidar'],
-                            scores=batch['scores'][b_idx])
-        mlab.show(stop=True)
 
 
 def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, accumulated_iter, optim_cfg,

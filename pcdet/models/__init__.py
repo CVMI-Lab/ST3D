@@ -1,9 +1,8 @@
-import torch
-import numpy as np
-import glob
-import os
-import torch.nn as nn
 from collections import namedtuple
+
+import numpy as np
+import torch
+
 from .detectors import build_detector
 
 

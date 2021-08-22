@@ -89,7 +89,7 @@ MODEL:
         SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
-        EVAL_METRIC: kitti
+        EVAL_METRIC: waymo
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
@@ -100,6 +100,9 @@ MODEL:
 
 
 OPTIMIZATION:
+    BATCH_SIZE_PER_GPU: 4
+    NUM_EPOCHS: 30
+
     OPTIMIZER: adam_onecycle
     LR: 0.003
     WEIGHT_DECAY: 0.01
