@@ -11,7 +11,7 @@ Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptat
 
 ## Introduction
 
-Our code is based on [OpenPCDet v0.2](https://github.com/open-mmlab/OpenPCDet/tree/v0.2.0). 
+Our code is based on [OpenPCDet v0.3](https://github.com/open-mmlab/OpenPCDet/commit/e3bec15f1052b4827d942398f20f2db1cb681c01). 
 More updates on OpenPCDet are supposed to be compatible with our code.
 
 ## Model Zoo
@@ -53,7 +53,7 @@ Our code is released under the Apache 2.0 license.
 
 ## Acknowledgement
 
-Our code is heavily based on [OpenPCDet v0.2](https://github.com/open-mmlab/OpenPCDet/tree/v0.2.0). Thanks OpenPCDet Development Team for their awesome codebase.
+Our code is heavily based on [OpenPCDet v0.3](https://github.com/open-mmlab/OpenPCDet/commit/e3bec15f1052b4827d942398f20f2db1cb681c01). Thanks OpenPCDet Development Team for their awesome codebase.
 
 ## Citation
 
