@@ -159,6 +159,8 @@ MODEL:
 
 
 OPTIMIZATION:
+    NUM_EPOCHS: 30
+    BATCH_SIZE_PER_GPU: 4
     OPTIMIZER: adam_onecycle
     LR: 0.003
     WEIGHT_DECAY: 0.01
