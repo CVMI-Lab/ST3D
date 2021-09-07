@@ -37,7 +37,6 @@ The pretrained model on these two version data should be similar when adapted to
 | [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor_sn.yaml)  | SN   | 25.26 | 21.23 | [model](https://drive.google.com/file/d/1RwjZ3bIn72TzYYO9HpjJKGQQmSDlSYiC/view?usp=sharing) |
 | [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d.yaml)  | ST3D | 55.72 | 55.19 | [model](https://drive.google.com/file/d/1mv-IkOKnP2rUqyMyXx6PklE7HjZTthpE/view?usp=sharing) |
 | [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d.yaml)  | ST3D (w/ SN) | 62.55 | 62.27 | [model](https://drive.google.com/file/d/1JZzLtLkBZo6QYNDQq8fjOX74FSiIzRV9/view?usp=sharing) |
-
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_ros.yaml) | ROS | 40.90 | 38.84 | [model](https://drive.google.com/file/d/1upZ5G-d_PEJ3I_fRgn3XPrlmJWmdOgI_/view?usp=sharing) | 
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_sn.yaml)  | SN  | 50.62 | 49.47 | [model](https://drive.google.com/file/d/1uW2ykRgv80ILoMvsWMDd-X2eETQJ-zl_/view?usp=sharing) |
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml) | ST3D | 68.54 | 71.11 | [model](https://drive.google.com/file/d/1rxUGDykml9UduVWbSITMmdZsHaXzi8nX/view?usp=sharing) | 
