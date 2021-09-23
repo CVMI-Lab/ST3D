@@ -20,6 +20,8 @@ More updates on OpenPCDet are supposed to be compatible with our code.
 
 |                                             | method | Car@R11 | Car@R40 | download | 
 |---------------------------------------------|----------:|:-------:|:-------:|:---------:|
+| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D | 63.53 | 62.19 | [model](https://drive.google.com/file/d/1UBxVqkVttoaYUhSvocW4Y3pzfHNnfxTW/view?usp=sharing) | 
+| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D | 62.76 | 64.05 | [model](https://drive.google.com/file/d/14vM5EUGy6BL6ku_ahB2XKonmhFxMv3Gg/view?usp=sharing) |
 | [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 73.33 | 73.62 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) | 
 | [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) |
 
@@ -43,6 +45,18 @@ The pretrained model on these two version data should be similar when adapted to
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml) | ST3D (w/ SN) | 72.44 | 73.16 | [model](https://drive.google.com/file/d/1jUT_2PUzze7pQzqjqR2oJFfd8z8CHlsH/view?usp=sharing) |
 
 We provide all pretrained models here for nuScenes > KITTI task.
+
+
+### Waymo -> nuScenes TASK
+|                                             | method | Car@R11 | Car@R40 | download | 
+|---------------------------------------------|----------:|:-------:|:-------:|:---------:|
+| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D | 23.24 | 20.19 | [model](https://drive.google.com/file/d/150gvNE29iZ8Ah4L4uO_E40x0fyr_cn_J/view?usp=sharing) | 
+| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D | 27.18 | 22.99 | [model](https://drive.google.com/file/d/1Gk5i4qRz5tLU7Yd4U-oPureN9cV6TaLa/view?usp=sharing) |
+| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 23.52 | 20.38 | [model](https://drive.google.com/file/d/1WUHBTZylVTFLdSvO8wrgti27SEjFJxQl/view?usp=sharing) | 
+| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 28.06 | 23.67 | [model](https://drive.google.com/file/d/1KTCvmltfwIEh9i2t3Pu9APp_2GKyENme/view?usp=sharing) |
+
+We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
+but you should achieve similar performance by training with the default configs.
 
 
 ## Installation
