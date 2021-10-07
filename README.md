@@ -23,7 +23,7 @@ More updates on OpenPCDet are supposed to be compatible with our code.
 | [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D | 63.53 | 62.19 | [model](https://drive.google.com/file/d/1UBxVqkVttoaYUhSvocW4Y3pzfHNnfxTW/view?usp=sharing) | 
 | [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D | 62.76 | 64.05 | [model](https://drive.google.com/file/d/14vM5EUGy6BL6ku_ahB2XKonmhFxMv3Gg/view?usp=sharing) |
 | [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 73.33 | 73.62 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) | 
-| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) |
+| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/1YP9G1ItUutjqe4qwSeRGuZ_3A5GPbktd/view?usp=sharing) |
 
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
 but you should achieve similar performance by training with the default configs.
