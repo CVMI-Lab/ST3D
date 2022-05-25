@@ -4,14 +4,7 @@ DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
     PROCESSED_DATA_TAG: 'waymo_processed_data'
     INFO_WITH_FAKELIDAR: False
-
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car']
-    SHIFT_COOR: [0.0, 0.0, 1.6]
-
+    
     DATA_AUGMENTOR:
         DISABLE_AUG_LIST: [ 'normalize_object_size' ]
         AUG_CONFIG_LIST:
@@ -29,6 +22,13 @@ DATA_CONFIG_TAR:
 
             - NAME: random_world_scaling
               WORLD_SCALE_RANGE: [ 0.95, 1.05 ]
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Car']
+    SHIFT_COOR: [0.0, 0.0, 1.6]
 
 MODEL:
     NAME: PVRCNN
