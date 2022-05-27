@@ -9,6 +9,11 @@ Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptat
 [[arXiv]](https://arxiv.org/abs/2103.05346);
 
 
+
+## Changelog
+[2022-05-27] We are now supported OpenPCDet v0.3 with Spconv1.2 in branch `st3d_v0.3`.
+
+
 ## Introduction
 Our original code is based on OpenPCDet v0.2.
 You can also checkout to the branch `st3d_v0.3`, which is based on [OpenPCDet v0.3](https://github.com/open-mmlab/OpenPCDet/commit/e3bec15f1052b4827d942398f20f2db1cb681c01). 
