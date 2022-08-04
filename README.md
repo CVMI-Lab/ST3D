@@ -11,6 +11,8 @@ Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptat
 
 
 ## Changelog
+[2022-08-04] We are now supported DSNorm, SASD and HQAC in ST3D++. Besides, We support self-training for multi categories.
+
 [2022-05-27] We are now supported OpenPCDet v0.3 with Spconv1.2 in branch `st3d_v0.3`.
 
 
