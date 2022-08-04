@@ -3,6 +3,7 @@ import torch
 import random
 import logging
 import os
+import copy
 import torch.multiprocessing as mp
 import torch.distributed as dist
 import subprocess
@@ -255,6 +256,36 @@ def set_bn_train(m):
         m.train()
 
 
+class NAverageMeter(object):
+    """
+    Contain N AverageMeter and update respectively or simultaneously
+    """
+    def __init__(self, n):
+        self.n = n
+        self.meters = [AverageMeter() for i in range(n)]
+
+    def update(self, val, index=None, attribute='avg'):
+        if isinstance(val, list) and index is None:
+            assert len(val) == self.n
+            for i in range(self.n):
+                self.meters[i].update(val[i])
+        elif isinstance(val, NAverageMeter) and index is None:
+            assert val.n == self.n
+            for i in range(self.n):
+                self.meters[i].update(getattr(val.meters[i], attribute))
+        elif not isinstance(val, list) and index is not None:
+            self.meters[index].update(val)
+        else:
+            raise ValueError
+
+    def aggregate_result(self):
+        result = "("
+        for i in range(self.n):
+            result += "{:.3f},".format(self.meters[i].avg)
+        result += ')'
+        return result
+
+
 def calculate_gradient_norm(model):
     total_norm = 0
     for p in model.parameters():
@@ -262,3 +293,20 @@ def calculate_gradient_norm(model):
         total_norm += param_norm.item() ** 2
     total_norm = total_norm ** (1. / 2)
     return total_norm
+
+
+def mask_dict(result_dict, mask):
+    new_dict = copy.deepcopy(result_dict)
+    for key, value in new_dict.items():
+        new_dict[key] = value[mask]
+    return new_dict
+
+
+def concatenate_array_inside_dict(merged_dict, result_dict):
+    for key, val in result_dict.items():
+        if key not in merged_dict:
+            merged_dict[key] = copy.deepcopy(val)
+        else:
+            merged_dict[key] = np.concatenate([merged_dict[key], copy.deepcopy(val)])
+
+    return merged_dict

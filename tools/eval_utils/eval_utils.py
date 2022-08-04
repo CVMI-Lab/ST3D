@@ -4,6 +4,7 @@ import pickle
 import torch
 from pcdet.utils import common_utils
 from pcdet.models import load_data_to_gpu
+from pcdet.models.model_utils.dsnorm import set_ds_target
 
 
 def visualize_boxes(pred_dicts, input_dict):
@@ -59,6 +60,9 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
                 broadcast_buffers=False
         )
     model.eval()
+
+    if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
+        model.apply(set_ds_target)
 
     if cfg.LOCAL_RANK == 0:
         progress_bar = tqdm.tqdm(total=len(dataloader), leave=True, desc='eval', dynamic_ncols=True)

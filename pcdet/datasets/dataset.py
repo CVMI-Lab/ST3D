@@ -149,14 +149,20 @@ class DatasetTemplate(torch_data.Dataset):
         gt_boxes = gt_boxes[:, :7]
 
         # only suitable for only one classes, generating gt_names for prepare data
-        gt_names = np.array([self.class_names[0] for n in gt_boxes])
+        gt_names = np.array(self.class_names)[np.abs(gt_classes.astype(np.int32)) - 1]
 
         input_dict['gt_boxes'] = gt_boxes
         input_dict['gt_names'] = gt_names
         input_dict['gt_classes'] = gt_classes
         input_dict['gt_scores'] = gt_scores
-        input_dict['pos_ps_bbox'] = (gt_classes > 0).sum()
-        input_dict['ign_ps_bbox'] = gt_boxes.shape[0] - input_dict['pos_ps_bbox']
+        input_dict['pos_ps_bbox'] = np.zeros((len(self.class_names)), dtype=np.float32)
+        input_dict['ign_ps_bbox'] = np.zeros((len(self.class_names)), dtype=np.float32)
+        for i in range(len(self.class_names)):
+            num_total_boxes = (np.abs(gt_classes) == (i+1)).sum()
+            num_ps_bbox = (gt_classes == (i+1)).sum()
+            input_dict['pos_ps_bbox'][i] = num_ps_bbox
+            input_dict['ign_ps_bbox'][i] = num_total_boxes - num_ps_bbox
+
         input_dict.pop('num_points_in_gt', None)
 
     def merge_all_iters_to_one_epoch(self, merge=True, epochs=None):

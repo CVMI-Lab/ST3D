@@ -340,3 +340,31 @@ def bipartite_ensemble(gt_infos_a, gt_infos_b, memory_ensemble_cfg):
     }
 
     return new_gt_infos
+
+
+def memory_ensemble(gt_infos_a, gt_infos_b, memory_ensemble_cfg, ensemble_func):
+    # if there are multiple classes
+    classes_a = np.unique(np.abs(gt_infos_a['gt_boxes'][:, -2]))
+    classes_b = np.unique(np.abs(gt_infos_b['gt_boxes'][:, -2]))
+
+    n_classes = max(classes_a.shape[0], classes_b.shape[0])
+    if n_classes == 0:
+        return gt_infos_a
+    
+    # single category case
+    if n_classes == 1:
+        return ensemble_func(gt_infos_a, gt_infos_b, memory_ensemble_cfg)
+
+    # for multi class case
+    merged_infos = {}
+    for i in np.union1d(classes_a, classes_b):
+        mask_a = np.abs(gt_infos_a['gt_boxes'][:, -2]) == i
+        gt_infos_a_i = common_utils.mask_dict(gt_infos_a, mask_a)
+
+        mask_b = np.abs(gt_infos_b['gt_boxes'][:, -2]) == i
+        gt_infos_b_i = common_utils.mask_dict(gt_infos_b, mask_b)
+
+        gt_infos = ensemble_func(gt_infos_a_i, gt_infos_b_i, memory_ensemble_cfg)
+        merged_infos = common_utils.concatenate_array_inside_dict(merged_infos, gt_infos)
+        
+    return merged_infos
