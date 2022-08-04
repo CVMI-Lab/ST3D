@@ -7,6 +7,8 @@ from pcdet.config import cfg, log_config_to_file, cfg_from_list, cfg_from_yaml_f
 from pcdet.utils import common_utils
 from pcdet.datasets import build_dataloader
 from pcdet.models import build_network, model_fn_decorator
+from pcdet.models.model_utils.dsnorm import DSNorm
+
 import torch.distributed as dist
 from train_utils.optimization import build_optimizer, build_scheduler
 from train_utils.train_utils import train_model
@@ -127,6 +129,8 @@ def main():
 
     if args.sync_bn:
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
+    elif cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
+        model = DSNorm.convert_dsnorm(model)
 
     model.cuda()
 

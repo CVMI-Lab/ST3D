@@ -15,6 +15,7 @@ from pcdet.models import build_network
 from pcdet.utils import common_utils
 from pcdet.config import cfg, cfg_from_list, cfg_from_yaml_file, log_config_to_file
 from eval_utils import eval_utils
+from pcdet.models.model_utils.dsnorm import DSNorm
 
 
 def parse_config():
@@ -200,6 +201,11 @@ def main():
         )
 
     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=test_set)
+
+    if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
+        model = DSNorm.convert_dsnorm(model)
+
+    state_name = 'model_state'
 
     with torch.no_grad():
         if args.eval_all:

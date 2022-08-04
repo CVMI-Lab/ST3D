@@ -379,3 +379,105 @@ class Detector3DTemplate(nn.Module):
         logger.info('==> Done')
 
         return it, epoch
+
+    def post_processing_multicriterion(self, batch_dict):
+        """
+        For 
+        Args:
+            batch_dict:
+                batch_size:
+                batch_cls_preds: (B, num_boxes, num_classes | 1) or (N1+N2+..., num_classes | 1)
+                batch_box_preds: (B, num_boxes, 7+C) or (N1+N2+..., 7+C)
+                cls_preds_normalized: indicate whether batch_cls_preds is normalized
+                batch_index: optional (N1+N2+...)
+                roi_labels: (B, num_rois)  1 .. num_classes
+        Returns:
+
+        """
+        post_process_cfg = self.model_cfg.POST_PROCESSING
+        batch_size = batch_dict['batch_size']
+        recall_dict = {}
+        pred_dicts = []
+        for index in range(batch_size):
+            if batch_dict.get('batch_index', None) is not None:
+                assert batch_dict['batch_cls_preds'].shape.__len__() == 2
+                batch_mask = (batch_dict['batch_index'] == index)
+            else:
+                assert batch_dict['batch_cls_preds'].shape.__len__() == 3
+                batch_mask = index
+
+            box_preds = batch_dict['batch_box_preds'][batch_mask]
+            iou_preds = batch_dict['batch_cls_preds'][batch_mask]
+            cls_preds = batch_dict['roi_scores'][batch_mask]
+
+            if isinstance(cls_preds, list):
+                cls_preds = torch.cat(cls_preds).squeeze()
+            else:
+                cls_preds = cls_preds.squeeze()
+
+            src_iou_preds = iou_preds
+            src_box_preds = box_preds
+            src_cls_preds = cls_preds
+            assert iou_preds.shape[1] in [1, self.num_class]
+
+            if not batch_dict['cls_preds_normalized']:
+                iou_preds = torch.sigmoid(iou_preds)
+                cls_preds = torch.sigmoid(cls_preds)
+
+            # TODO
+            if post_process_cfg.NMS_CONFIG.MULTI_CLASSES_NMS:
+                raise NotImplementedError
+            else:
+                iou_preds, label_preds = torch.max(iou_preds, dim=-1)
+                label_preds = batch_dict['roi_labels'][index] if batch_dict.get('has_class_labels',
+                                                                                False) else label_preds + 1
+                if isinstance(label_preds, list):
+                    label_preds = torch.cat(label_preds, dim=0)
+
+                if post_process_cfg.NMS_CONFIG.get('SCORE_WEIGHTS', None):
+                    weight_iou = post_process_cfg.NMS_CONFIG.SCORE_WEIGHTS.iou
+                    weight_cls = post_process_cfg.NMS_CONFIG.SCORE_WEIGHTS.cls
+
+                if post_process_cfg.NMS_CONFIG.get('SCORE_TYPE', None) == 'iou' or \
+                        post_process_cfg.NMS_CONFIG.get('SCORE_TYPE', None) is None:
+                    nms_scores = iou_preds
+                elif post_process_cfg.NMS_CONFIG.SCORE_TYPE == 'cls':
+                    nms_scores = cls_preds
+                elif post_process_cfg.NMS_CONFIG.SCORE_TYPE == 'hybrid_iou_cls':
+                    assert weight_iou + weight_cls == 1
+                    nms_scores = weight_iou * iou_preds + \
+                                 weight_cls * cls_preds
+                else:
+                    raise NotImplementedError
+
+                selected, selected_scores = class_agnostic_nms(
+                    box_scores=nms_scores, box_preds=box_preds,
+                    nms_config=post_process_cfg.NMS_CONFIG,
+                    score_thresh=post_process_cfg.SCORE_THRESH
+                )
+
+                if post_process_cfg.OUTPUT_RAW_SCORE:
+                    raise NotImplementedError
+
+                final_scores = selected_scores
+                final_labels = label_preds[selected]
+                final_boxes = box_preds[selected]
+
+            recall_dict = self.generate_recall_record(
+                box_preds=final_boxes if 'rois' not in batch_dict else src_box_preds,
+                recall_dict=recall_dict, batch_index=index, data_dict=batch_dict,
+                thresh_list=post_process_cfg.RECALL_THRESH_LIST
+            )
+
+            record_dict = {
+                'pred_boxes': final_boxes,
+                'pred_scores': final_scores,
+                'pred_labels': final_labels,
+                'pred_cls_scores': cls_preds[selected],
+                'pred_iou_scores': iou_preds[selected]
+            }
+
+            pred_dicts.append(record_dict)
+
+        return pred_dicts, recall_dict
+

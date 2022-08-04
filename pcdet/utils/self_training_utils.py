@@ -9,6 +9,8 @@ from pcdet.models import load_data_to_gpu
 from pcdet.utils import common_utils, commu_utils, memory_ensemble_utils
 import pickle as pkl
 import re
+from pcdet.models.model_utils.dsnorm import set_ds_target
+
 
 PSEUDO_LABELS = {}
 NEW_PSEUDO_LABELS = {}
@@ -78,8 +80,11 @@ def save_pseudo_label_epoch(model, val_loader, rank, leave_pbar, ps_label_dir, c
         pbar = tqdm.tqdm(total=total_it_each_epoch, leave=leave_pbar,
                          desc='generate_ps_e%d' % cur_epoch, dynamic_ncols=True)
 
-    pos_ps_meter = common_utils.AverageMeter()
-    ign_ps_meter = common_utils.AverageMeter()
+    pos_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
+    ign_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
+
+    if cfg.SELF_TRAIN.get('DSNORM', None):
+        model.apply(set_ds_target)
 
     model.eval()
 
@@ -95,7 +100,7 @@ def save_pseudo_label_epoch(model, val_loader, rank, leave_pbar, ps_label_dir, c
             load_data_to_gpu(target_batch)
             pred_dicts, ret_dict = model(target_batch)
 
-        pos_ps_batch, ign_ps_batch = save_pseudo_label_batch(
+        pos_ps_batch_nmeters, ign_ps_batch_nmeters = save_pseudo_label_batch(
             target_batch, pred_dicts=pred_dicts,
             need_update=(cfg.SELF_TRAIN.get('MEMORY_ENSEMBLE', None) and
                          cfg.SELF_TRAIN.MEMORY_ENSEMBLE.ENABLED and
@@ -103,10 +108,12 @@ def save_pseudo_label_epoch(model, val_loader, rank, leave_pbar, ps_label_dir, c
         )
 
         # log to console and tensorboard
-        pos_ps_meter.update(pos_ps_batch)
-        ign_ps_meter.update(ign_ps_batch)
-        disp_dict = {'pos_ps_box': "{:.3f}({:.3f})".format(pos_ps_meter.val, pos_ps_meter.avg),
-                     'ign_ps_box': "{:.3f}({:.3f})".format(ign_ps_meter.val, ign_ps_meter.avg)}
+        pos_ps_nmeter.update(pos_ps_batch_nmeters)
+        ign_ps_nmeter.update(ign_ps_batch_nmeters)
+        pos_ps_result = pos_ps_nmeter.aggregate_result()
+        ign_ps_result = ign_ps_nmeter.aggregate_result()
+
+        disp_dict = {'pos_ps_box': pos_ps_result, 'ign_ps_box': ign_ps_result}
 
         if rank == 0:
             pbar.update()
@@ -158,8 +165,8 @@ def save_pseudo_label_batch(input_dict,
         need_update: Bool.
             If set to true, use consistency matching to update pseudo label
     """
-    pos_ps_meter = common_utils.AverageMeter()
-    ign_ps_meter = common_utils.AverageMeter()
+    pos_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
+    ign_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
 
     batch_size = len(pred_dicts)
     for b_idx in range(batch_size):
@@ -188,7 +195,7 @@ def save_pseudo_label_batch(input_dict,
 
             labels_ignore_scores = np.array(cfg.SELF_TRAIN.SCORE_THRESH)[pred_labels - 1]
             ignore_mask = pred_scores < labels_ignore_scores
-            pred_labels[ignore_mask] = -1
+            pred_labels[ignore_mask] = -pred_labels[ignore_mask]
 
             gt_box = np.concatenate((pred_boxes,
                                      pred_labels.reshape(-1, 1),
@@ -208,18 +215,20 @@ def save_pseudo_label_batch(input_dict,
         # record pseudo label to pseudo label dict
         if need_update:
             ensemble_func = getattr(memory_ensemble_utils, cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NAME)
-            gt_infos = ensemble_func(PSEUDO_LABELS[input_dict['frame_id'][b_idx]],
-                                     gt_infos, cfg.SELF_TRAIN.MEMORY_ENSEMBLE)
+            gt_infos = memory_ensemble_utils.memory_ensemble(
+                PSEUDO_LABELS[input_dict['frame_id'][b_idx]], gt_infos,
+                cfg.SELF_TRAIN.MEMORY_ENSEMBLE, ensemble_func
+            )
 
-        if gt_infos['gt_boxes'].shape[0] > 0:
-            ign_ps_meter.update((gt_infos['gt_boxes'][:, 7] < 0).sum())
-        else:
-            ign_ps_meter.update(0)
-        pos_ps_meter.update(gt_infos['gt_boxes'].shape[0] - ign_ps_meter.val)
+        # counter the number of ignore boxes for each class
+        for i in range(ign_ps_nmeter.n):
+            num_total_boxes = (np.abs(gt_infos['gt_boxes'][:, 7]) == (i+1)).sum()
+            ign_ps_nmeter.update((gt_infos['gt_boxes'][:, 7] == -(i+1)).sum(), index=i)
+            pos_ps_nmeter.update(num_total_boxes - ign_ps_nmeter.meters[i].val, index=i)
 
         NEW_PSEUDO_LABELS[input_dict['frame_id'][b_idx]] = gt_infos
 
-    return pos_ps_meter.avg, ign_ps_meter.avg
+    return pos_ps_nmeter, ign_ps_nmeter
 
 
 def load_ps_label(frame_id):
