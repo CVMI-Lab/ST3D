@@ -107,6 +107,14 @@ If you find this project useful in your research, please consider cite:
 }
 ```
 ```
+@article{yang2021st3d++,
+  title={St3d++: Denoised self-training for unsupervised domain adaptation on 3d object detection},
+  author={Yang, Jihan and Shi, Shaoshuai and Wang, Zhe and Li, Hongsheng and Qi, Xiaojuan},
+  journal={arXiv preprint arXiv:2108.06682},
+  year={2021}
+}
+```
+```
 @misc{openpcdet2020,
     title={OpenPCDet: An Open-source Toolbox for 3D Object Detection from Point Clouds},
     author={OpenPCDet Development Team},
