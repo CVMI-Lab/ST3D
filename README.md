@@ -34,7 +34,10 @@ More updates on OpenPCDet are supposed to be compatible with our code.
 | [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/1YP9G1ItUutjqe4qwSeRGuZ_3A5GPbktd/view?usp=sharing) |
 
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
-but you should achieve similar performance by training with the default configs.
+but you should achieve similar performance by training with the default configs. To access these pretrained models, please 
+send us an email with your name, institute, a screenshot of the the Waymo dataset registration confirmation mail, and your 
+intended usage. Please send a second email if we don't get back to you in two days. Please note that Waymo open dataset is 
+under strict non-commercial license so we are not allowed to share the model with you if it will used for any profit-oriented activities.
 
 Also, the training Waymo data used in our work is version 1.0, but the version now available is version 1.2. 
 The pretrained model on these two version data should be similar when adapted to KITTI.  
