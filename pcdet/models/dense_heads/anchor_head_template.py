@@ -213,11 +213,15 @@ class AnchorHeadTemplate(nn.Module):
 
         return box_loss, tb_dict
 
-    def get_loss(self):
+    def get_loss(self, weights=None):
         cls_loss, tb_dict = self.get_cls_layer_loss()
         box_loss, tb_dict_box = self.get_box_reg_layer_loss()
         tb_dict.update(tb_dict_box)
-        rpn_loss = cls_loss + box_loss
+        cls_weight = box_weight = 1.0
+        if weights is not None:
+            cls_weight = weights[0]
+            box_weight = weights[1]
+        rpn_loss = cls_weight * cls_loss + box_weight * box_loss
 
         tb_dict['rpn_loss'] = rpn_loss.item()
         return rpn_loss, tb_dict

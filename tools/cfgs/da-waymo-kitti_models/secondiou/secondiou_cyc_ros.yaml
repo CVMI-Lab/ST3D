@@ -1,27 +1,40 @@
-CLASS_NAMES: ['Vehicle']
+CLASS_NAMES: ['Cyclist']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
-    PROCESSED_DATA_TAG: 'waymo_processed_data'
-    INFO_WITH_FAKELIDAR: False
 
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    USE_PSEUDO_LABEL: True
-    CLASS_NAMES: ['Car']
-    SHIFT_COOR: [0.0, 0.0, 1.6]
+    SAMPLED_INTERVAL: {
+        'train': 5,
+        'test': 10
+    }
 
     DATA_AUGMENTOR:
-        DISABLE_AUG_LIST: [ 'placeholder' ]
+        DISABLE_AUG_LIST: ['normalize_object_size' ]
         AUG_CONFIG_LIST:
-            - NAME: random_object_scaling
-              SCALE_UNIFORM_NOISE: [ 0.95, 1.05 ]
+            - NAME: gt_sampling
+              USE_ROAD_PLANE: False
+              DB_INFO_PATH:
+                - waymo_dbinfos_train_sampled_10.pkl
+              PREPARE: {
+                filter_by_min_points: [ 'Cyclist:5' ],
+                filter_by_difficulty: [ -1 ],
+              }
 
-            - NAME: random_object_rotation
-              ROT_PROB: 0.8
-              ROT_UNIFORM_NOISE: [ -0.38539816, 0.38539816 ]
+              SAMPLE_GROUPS: [ 'Cyclist:15' ]
+              NUM_POINT_FEATURES: 5
+              DATABASE_WITH_FAKELIDAR: False
+              REMOVE_EXTRA_WIDTH: [ 0.0, 0.0, 0.0 ]
+              LIMIT_WHOLE_SCENE: True
+
+            - NAME: random_object_scaling
+              SCALE_UNIFORM_NOISE: {
+                'Cyclist': [0.9, 1.05]
+              }
+
+            - NAME: normalize_object_size
+              SIZE_RES: {
+                'Cyclist': [-0.04, -0.27, -0.05]
+              }
 
             - NAME: random_world_flip
               ALONG_AXIS_LIST: [ 'x', 'y' ]
@@ -30,7 +43,15 @@ DATA_CONFIG_TAR:
               WORLD_ROT_ANGLE: [ -0.78539816, 0.78539816 ]
 
             - NAME: random_world_scaling
-              WORLD_SCALE_RANGE: [ 0.97, 1.03 ]
+              WORLD_SCALE_RANGE: [ 0.95, 1.05 ]
+
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 1.6]
 
 MODEL:
     NAME: SECONDNetIoU
@@ -65,14 +86,14 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'Vehicle',
-                'anchor_sizes': [[4.2, 2.0, 1.6]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [0],
+                'class_name': 'Cyclist',
+                'anchor_sizes': [ [ 1.78, 0.84, 1.78 ] ],
+                'anchor_rotations': [ 0, 1.57 ],
+                'anchor_bottom_heights': [ 0 ],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.55,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             }
         ]
 
@@ -143,7 +164,7 @@ MODEL:
 
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
-        SCORE_THRESH: 0.2
+        SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
         EVAL_METRIC: kitti
@@ -154,10 +175,10 @@ MODEL:
             NMS_THRESH: 0.01
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
-            SCORE_TYPE: hybrid_iou_cls
+            SCORE_TYPE: iou
             SCORE_WEIGHTS: {
-                'iou': 0.8,
-                'cls': 0.2
+                iou: 0.5,
+                cls: 0.5
             }
 
 
@@ -165,7 +186,7 @@ OPTIMIZATION:
     NUM_EPOCHS: 30
     BATCH_SIZE_PER_GPU: 4
     OPTIMIZER: adam_onecycle
-    LR: 0.0015
+    LR: 0.003
     WEIGHT_DECAY: 0.01
     MOMENTUM: 0.9
 
@@ -180,41 +201,3 @@ OPTIMIZATION:
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
-
-SELF_TRAIN:
-    SCORE_THRESH: [0.6]
-    NEG_THRESH: [0.2]
-    UPDATE_PSEUDO_LABEL: [0]
-    UPDATE_PSEUDO_LABEL_INTERVAL: 2
-    INIT_PS: None
-    DSNORM: True
-
-    SRC:
-        USE_DATA: True
-        USE_GRAD: True
-        LOSS_WEIGHT: 1.0
-    TAR:
-        USE_DATA: True
-        LOSS_WEIGHT: 1.0
-
-    PROG_AUG:
-        ENABLED: True
-        UPDATE_AUG: [5, 10, 20, 25]
-        SCALE: 1.1
-
-    MEMORY_ENSEMBLE:
-        ENABLED: True
-        NAME: consistency_ensemble
-        IOU_THRESH: 0.1
-
-        NMS_CONFIG:
-            NMS_TYPE: nms_gpu
-            MULTI_CLASSES_NMS: False
-            NMS_PRE_MAXSIZE: 512
-            NMS_POST_MAXSIZE: 100
-            NMS_THRESH: 0.1
-
-        MEMORY_VOTING:
-            ENABLED: True
-            IGNORE_THRESH: 2
-            RM_THRESH: 3

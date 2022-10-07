@@ -48,6 +48,9 @@ def train_one_epoch_st(model, optimizer, source_reader, target_loader, model_fun
             if cfg.SELF_TRAIN.get('DSNORM', None):
                 model.apply(set_ds_source)
 
+            if cfg.SELF_TRAIN.SRC.get('SEP_LOSS_WEIGHTS', None):
+                source_batch['SEP_LOSS_WEIGHTS'] = cfg.SELF_TRAIN.SRC.SEP_LOSS_WEIGHTS
+
             loss, tb_dict, disp_dict = model_func(model, source_batch)
             loss = cfg.SELF_TRAIN.SRC.get('LOSS_WEIGHT', 1.0) * loss
             loss.backward()
@@ -67,6 +70,9 @@ def train_one_epoch_st(model, optimizer, source_reader, target_loader, model_fun
 
             if cfg.SELF_TRAIN.get('DSNORM', None):
                 model.apply(set_ds_target)
+
+            if cfg.SELF_TRAIN.TAR.get('SEP_LOSS_WEIGHTS', None):
+                target_batch['SEP_LOSS_WEIGHTS'] = cfg.SELF_TRAIN.TAR.SEP_LOSS_WEIGHTS
 
             # parameters for save pseudo label on the fly
             st_loss, st_tb_dict, st_disp_dict = model_func(model, target_batch)

@@ -15,7 +15,8 @@ class SECONDNetIoU(Detector3DTemplate):
             batch_dict = cur_module(batch_dict)
 
         if self.training:
-            loss, tb_dict, disp_dict = self.get_training_loss()
+            weights = batch_dict.get('SEP_LOSS_WEIGHTS', None)
+            loss, tb_dict, disp_dict = self.get_training_loss(weights)
 
             ret_dict = {
                 'loss': loss
@@ -25,11 +26,14 @@ class SECONDNetIoU(Detector3DTemplate):
             pred_dicts, recall_dicts = self.post_processing_multicriterion(batch_dict)
             return pred_dicts, recall_dicts
 
-    def get_training_loss(self):
+    def get_training_loss(self, weights=None):
         disp_dict = {}
-
-        loss_rpn, tb_dict = self.dense_head.get_loss()
+        loss_rpn, tb_dict = self.dense_head.get_loss(weights)
         loss_rcnn, tb_dict = self.roi_head.get_loss(tb_dict)
 
-        loss = loss_rpn + loss_rcnn
+        iou_weight = 1.0
+        if weights is not None:
+            iou_weight = weights[-1]
+
+        loss = loss_rpn + iou_weight * loss_rcnn
         return loss, tb_dict, disp_dict

@@ -159,7 +159,7 @@ because the performance of adapted model is really unstable when target domain i
 You need to set the `--pretrained_model ${PRETRAINED_MODEL}` when finish the
 following self-training process.
 ```shell script
-sh scripts/dist_train.sh ${NUM_GPUS} --cfg_file cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d.yaml \
+sh scripts/dist_train.sh ${NUM_GPUS} --cfg_file cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml \
     --batch_size ${BATCH_SIZE} --pretrained_model ${PRETRAINED_MODEL}
 ```
 Notice that you also need to focus the performance of the **best model**.
