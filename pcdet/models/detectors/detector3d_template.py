@@ -325,6 +325,7 @@ class Detector3DTemplate(nn.Module):
         spconv_keys = find_all_spconv_keys(self)
 
         update_model_state = {}
+        spconv_matched_state = {}
         for key, val in model_state_disk.items():
             if key in spconv_keys and key in state_dict and state_dict[key].shape != val.shape:
                 # with different spconv versions, we need to adapt weight shapes for spconv blocks
@@ -339,11 +340,14 @@ class Detector3DTemplate(nn.Module):
                     if val_implicit.shape == state_dict[key].shape:
                         val = val_implicit.contiguous()
 
+            spconv_matched_state[key] = val
             if key in state_dict and state_dict[key].shape == val.shape:
                 update_model_state[key] = val
                 # logger.info('Update weight %s: %s' % (key, str(val.shape)))
 
-        if strict:
+        if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
+            self.load_state_dict(spconv_matched_state)
+        elif strict:
             self.load_state_dict(update_model_state)
         else:
             state_dict.update(update_model_state)
@@ -363,16 +367,11 @@ class Detector3DTemplate(nn.Module):
         if version is not None:
             logger.info('==> Checkpoint trained from version: %s' % version)
 
-        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=True)
+        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
 
-        if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
-            state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=True)
-        else:
-            state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
-
-            for key in state_dict:
-                if key not in update_model_state:
-                    logger.info('Not updated weight %s: %s' % (key, str(state_dict[key].shape)))
+        for key in state_dict:
+            if key not in update_model_state:
+                logger.info('Not updated weight %s: %s' % (key, str(state_dict[key].shape)))
 
         logger.info('==> Done (loaded %d/%d)' % (len(update_model_state), len(self.state_dict())))
 
