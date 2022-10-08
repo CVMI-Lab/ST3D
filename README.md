@@ -1,64 +1,57 @@
-# ST3D
+# ST3D & ST3D++
 
-Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptation on 3D Object Detection**, CVPR 2021
-
-![framework](./docs/framework.png)
-
-**Authors**: Jihan Yang\*, Shaoshuai Shi\*,  Zhe Wang, Hongsheng Li, Xiaojuan Qi (\*equal contribution)
-
-[[arXiv]](https://arxiv.org/abs/2103.05346);
-
+Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptation on 3D Object Detection**, CVPR 2021 and
+**ST3D++: Denoised Self-training for Unsupervised Domain Adaptation on 3D Object Detection**, T-PAMI 2022.
 
 
 ## News
-[2022-09-26] ST3D++ (The extension of ST3D) has been accepted to T-PAMI. The new proposed modules are already integrated in this repo, the config will be released soon.
-
-[2022-08-04] We are now supported DSNorm, SASD and HQAC in ST3D++. Besides, We support self-training for multi categories.
-
-[2022-05-27] We are now supported OpenPCDet v0.3 with Spconv1.2 in branch `st3d_v0.3`.
+[2022-09-26] ST3D++ (The extension of ST3D) has been integrated in this repo for Waymo->KITTI and nuScenes->KITTI.
 
 
 ## Introduction
-Our original code is based on OpenPCDet v0.2.
-You can also checkout to the branch `st3d_v0.3`, which is based on [OpenPCDet v0.3](https://github.com/open-mmlab/OpenPCDet/commit/e3bec15f1052b4827d942398f20f2db1cb681c01). 
+Our code is based on OpenPCDet v0.3.0.
 More updates on OpenPCDet are supposed to be compatible with our code.
 
 ## Model Zoo
 
 ### Waymo -> KITTI TASK
 
-|                                                                                       | method | Car@R11 | Car@R40 | download | 
-|---------------------------------------------------------------------------------------|----------:|:-------:|:-------:|:---------:|
-| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml) | ST3D | 63.53 | 62.19 | [model](https://drive.google.com/file/d/1UBxVqkVttoaYUhSvocW4Y3pzfHNnfxTW/view?usp=sharing) | 
-| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)               | ST3D | 62.76 | 64.05 | [model](https://drive.google.com/file/d/14vM5EUGy6BL6ku_ahB2XKonmhFxMv3Gg/view?usp=sharing) |
-| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml) | ST3D (w/ sn) | 73.33 | 73.62 | [model](https://drive.google.com/file/d/12f5EwWz2AugC0Ba3NETQG87GqE2C12Xz/view?usp=sharing) | 
-| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)               | ST3D (w/ sn)   | 75.71 | 77.33 | [model](https://drive.google.com/file/d/1YP9G1ItUutjqe4qwSeRGuZ_3A5GPbktd/view?usp=sharing) |
+|                                                                                             |     method     | Car@R40 | Ped@R40 | Cyc@R40 | 
+|---------------------------------------------------------------------------------------------|:--------------:|:-------:|:-------:|:-------:|
+| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)       |      ST3D      |  62.19  |  48.33  |  46.09  | 
+| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)       |  ST3D (w/ sn)  |  73.62  |  51.92  |  53.00  |
+| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d++_ros_car.yaml) |     ST3D++     |  65.10  |  53.87  |  53.43  |
+| [SECOND-IoU](tools/cfgs/da-waymo-kitti_models/secondiou_st3d/secondiou_st3d++_sn_car.yaml)  | ST3D++ (w/ sn) |  74.73  |  59.21  |  60.76  |
+| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                     |      ST3D      |  64.05  |    -    |    -    |
+| [PVRCNN](tools/cfgs/da-waymo-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                     |  ST3D (w/ sn)  |  77.33  |    -    |    -    |
 
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
 but you should achieve similar performance by training with the default configs. To access these pretrained models, please 
-send us an email with your name, institute, a screenshot of the the Waymo dataset registration confirmation mail, and your 
+send us an email with your name, institute, a screenshot of the Waymo dataset registration confirmation mail, and your 
 intended usage. Please send a second email if we don't get back to you in two days. Please note that Waymo open dataset is 
-under strict non-commercial license so we are not allowed to share the model with you if it will used for any profit-oriented activities.
+under strict non-commercial license, so we are not allowed to share the model with you if it will use for any profit-oriented activities.
 
 Also, the training Waymo data used in our work is version 1.0, but the version now available is version 1.2. 
 The pretrained model on these two version data should be similar when adapted to KITTI.  
 
 
 ### nuScenes -> KITTI TASK
-|                                             | method | Car@R11 | Car@R40 | download | 
-|---------------------------------------------|----------:|:-------:|:-------:|:---------:|
-| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor.yaml) | Source Only | 22.55 | 17.92 | [model](https://drive.google.com/file/d/1aryWzySSq5-AmRIxGKeSFkPWRcHlduW2/view?usp=sharing) | 
-| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor_ros.yaml) | ROS | 28.31 | 25.37 | [model](https://drive.google.com/file/d/10mWlQCYGX8gRBpX3GBrqrv1q7z9RG4P3/view?usp=sharing) | 
-| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor_sn.yaml)  | SN   | 25.26 | 21.23 | [model](https://drive.google.com/file/d/1RwjZ3bIn72TzYYO9HpjJKGQQmSDlSYiC/view?usp=sharing) |
-| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)  | ST3D | 55.72 | 55.19 | [model](https://drive.google.com/file/d/1mv-IkOKnP2rUqyMyXx6PklE7HjZTthpE/view?usp=sharing) |
-| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)  | ST3D (w/ SN) | 62.55 | 62.27 | [model](https://drive.google.com/file/d/1JZzLtLkBZo6QYNDQq8fjOX74FSiIzRV9/view?usp=sharing) |
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor.yaml) | Source Only | 40.35 | 37.17 | [model](https://drive.google.com/file/d/1iboJ1JOB0x1V8eKf73gsOr5hR5Mjjdra/view?usp=sharing) |
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_ros.yaml) | ROS | 40.90 | 38.84 | [model](https://drive.google.com/file/d/1upZ5G-d_PEJ3I_fRgn3XPrlmJWmdOgI_/view?usp=sharing) | 
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_sn.yaml)  | SN  | 50.62 | 49.47 | [model](https://drive.google.com/file/d/1uW2ykRgv80ILoMvsWMDd-X2eETQJ-zl_/view?usp=sharing) |
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml) | ST3D | 68.54 | 71.11 | [model](https://drive.google.com/file/d/1rxUGDykml9UduVWbSITMmdZsHaXzi8nX/view?usp=sharing) | 
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml) | ST3D (w/ SN) | 72.44 | 73.16 | [model](https://drive.google.com/file/d/1jUT_2PUzze7pQzqjqR2oJFfd8z8CHlsH/view?usp=sharing)
+|                                                                                                |     method     | Car@R40 | Ped@R40 | Cyc@R40 | 
+|------------------------------------------------------------------------------------------------|:--------------:|:-------:|:-------:|:-------:|
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor.yaml)          |  Source Only   |  17.92  |    -    |    -    | 
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor_ros.yaml)      |      ROS       |  25.37  |    -    |    -    | 
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou/secondiou_old_anchor_sn.yaml)       |       SN       |  21.23  |  34.36  |  5.67   |
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)       |      ST3D      |  55.19  |    -    |    -    |
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d_car.yaml)       |  ST3D (w/ SN)  |  62.27  |    -    |    -    |
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d++_ros_car.yaml) |     ST3D++     |  66.01  |  45.23  |  25.98  |
+| [SECOND-IoU](tools/cfgs/da-nuscenes-kitti_models/secondiou_st3d/secondiou_st3d++_sn_car.yaml)  | ST3D++ (w/ SN) |  66.24  |  46.75  |  22.66  |
+| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor.yaml)                   |  Source Only   |  37.17  |    -    |    -    |
+| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_ros.yaml)               |      ROS       |  38.84  |    -    |    -    | 
+| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn/pvrcnn_old_anchor_sn.yaml)                |       SN       |  49.47  |    -    |    -    |
+| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                    |      ST3D      |  71.11  |    -    |    -    | 
+| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                    |  ST3D (w/ SN)  |  73.16  |    -    |    -    |
 
-We provide all pretrained models here for nuScenes > KITTI task.
+We provide pretrained models here for nuScenes > KITTI task in [models](https://connecthkuhk-my.sharepoint.com/:f:/g/personal/jhyang13_connect_hku_hk/ErVtcVax3OBJgn4TyQxbOwMBCt1kDCt4_rYaXqHPsg_ZNw?e=a42lgy).
 
 
 ### Waymo -> nuScenes TASK
@@ -112,10 +105,10 @@ If you find this project useful in your research, please consider cite:
 ```
 ```
 @article{yang2021st3d++,
-  title={St3d++: Denoised self-training for unsupervised domain adaptation on 3d object detection},
+  title={ST3D++: Denoised Self-training for Unsupervised Domain Adaptation on 3D Object Detection},
   author={Yang, Jihan and Shi, Shaoshuai and Wang, Zhe and Li, Hongsheng and Qi, Xiaojuan},
-  journal={arXiv preprint arXiv:2108.06682},
-  year={2021}
+  journal={IEEE Transactions on Pattern Analysis and Machine Intelligence},
+  year={2022}
 }
 ```
 ```

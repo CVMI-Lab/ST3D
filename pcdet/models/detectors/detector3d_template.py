@@ -363,14 +363,12 @@ class Detector3DTemplate(nn.Module):
         if version is not None:
             logger.info('==> Checkpoint trained from version: %s' % version)
 
-        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
+        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=True)
 
         if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
-            self.load_state_dict(model_state_disk)
+            state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=True)
         else:
-            state_dict = self.state_dict()
-            state_dict.update(update_model_state)
-            self.load_state_dict(state_dict)
+            state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
 
             for key in state_dict:
                 if key not in update_model_state:
@@ -479,7 +477,7 @@ class Detector3DTemplate(nn.Module):
                 else:
                     raise NotImplementedError
 
-                selected, selected_scores = class_agnostic_nms(
+                selected, selected_scores = model_nms_utils.class_agnostic_nms(
                     box_scores=nms_scores, box_preds=box_preds,
                     nms_config=post_process_cfg.NMS_CONFIG,
                     score_thresh=post_process_cfg.SCORE_THRESH
