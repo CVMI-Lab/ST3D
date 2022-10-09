@@ -45,6 +45,9 @@ def parse_config():
     parser.add_argument('--max_waiting_mins', type=int, default=0, help='max waiting minutes')
     parser.add_argument('--start_epoch', type=int, default=0, help='')
     parser.add_argument('--save_to_file', action='store_true', default=False, help='')
+    parser.add_argument('--eval_fov_only', action='store_true', default=False, help='')
+    parser.add_argument('--eval_src', action='store_true', default=False, help='')
+    parser.add_argument('--num_epochs_to_eval', type=int, default=30, help='number of checkpoints to be evaluated')
 
     args = parser.parse_args()
 
