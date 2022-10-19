@@ -256,7 +256,7 @@ SELF_TRAIN:
 
     MEMORY_ENSEMBLE:
         ENABLED: True
-        NAME: consistency_matching
+        NAME: consistency_ensemble
         IOU_THRESH: 0.1
 
         NMS_CONFIG:
