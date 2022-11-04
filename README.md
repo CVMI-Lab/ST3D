@@ -51,7 +51,7 @@ The pretrained model on these two version data should be similar when adapted to
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                    |      ST3D      |  71.11  |    -    |    -    | 
 | [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pvrcnn_st3d/pvrcnn_st3d.yaml)                    |  ST3D (w/ SN)  |  73.16  |    -    |    -    |
 | [PointRCNN](tools/cfgs/da-nuscenes-kitti_models/pointrcnn/pointrcnn.yaml)                      |      ROS       |  55.92  |    -    |    -    |
-| [PV-RCNN](tools/cfgs/da-nuscenes-kitti_models/pointrcnn_st3d/pointrcnn_st3d++_car.yaml)        |    ST3D++      |  67.51  |    -    |    -    |
+| [PointRCNN](tools/cfgs/da-nuscenes-kitti_models/pointrcnn_st3d/pointrcnn_st3d++_car.yaml)      |    ST3D++      |  67.51  |    -    |    -    |
 
 We provide pretrained models here for nuScenes > KITTI task in [models](https://connecthkuhk-my.sharepoint.com/:f:/g/personal/jhyang13_connect_hku_hk/ErVtcVax3OBJgn4TyQxbOwMBCt1kDCt4_rYaXqHPsg_ZNw?e=a42lgy).
 
