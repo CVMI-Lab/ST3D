@@ -9,8 +9,12 @@ def get_git_commit_number():
     if not os.path.exists('.git'):
         return '0000000'
 
-    cmd_out = subprocess.run(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE)
-    git_commit_number = cmd_out.stdout.decode('utf-8')[:7]
+    try:
+        cmd_out = subprocess.run(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE)
+        git_commit_number = cmd_out.stdout.decode('utf-8')[:7]
+    except FileNotFoundError as e:
+        git_commit_number = '0000000'
+
     return git_commit_number
 
 
