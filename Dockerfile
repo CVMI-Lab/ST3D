@@ -36,3 +36,6 @@ ENV FORCE_CUDA="1"
 RUN pip install -r requirements.txt
 RUN pip install cumm-cu111 spconv-cu111
 RUN python setup.py develop
+# Add below to resolve binary incompatibility issues
+RUN pip install numpy==1.20.1
+

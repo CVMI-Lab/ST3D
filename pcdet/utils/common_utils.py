@@ -144,19 +144,33 @@ def init_dist_slurm(tcp_port, local_rank, backend='nccl'):
     return total_gpus, rank
 
 
+# def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
+#     if mp.get_start_method(allow_none=True) is None:
+#         mp.set_start_method('spawn')
+
+#     num_gpus = torch.cuda.device_count()
+#     torch.cuda.set_device(local_rank % num_gpus)
+#     dist.init_process_group(
+#         backend=backend,
+#         init_method='tcp://127.0.0.1:%d' % tcp_port,
+#         rank=local_rank,
+#         world_size=num_gpus
+#     )
+#     rank = dist.get_rank()
+#     return num_gpus, rank
+
+#FIX FOR MULTIGPU SINGLE MACHINE TRAINING
 def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
     if mp.get_start_method(allow_none=True) is None:
         mp.set_start_method('spawn')
-
     num_gpus = torch.cuda.device_count()
-    torch.cuda.set_device(local_rank % num_gpus)
+
     dist.init_process_group(
         backend=backend,
-        init_method='tcp://127.0.0.1:%d' % tcp_port,
-        rank=local_rank,
-        world_size=num_gpus
     )
+
     rank = dist.get_rank()
+    torch.cuda.set_device(rank % num_gpus)
     return num_gpus, rank
 
 

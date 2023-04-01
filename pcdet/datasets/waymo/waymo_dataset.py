@@ -389,7 +389,7 @@ if __name__ == '__main__':
     if args.func == 'create_waymo_infos':
         import yaml
         from easydict import EasyDict
-        dataset_cfg = EasyDict(yaml.load(open(args.cfg_file)))
+        dataset_cfg = EasyDict(yaml.safe_load(open(args.cfg_file)))
         ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
         create_waymo_infos(
             dataset_cfg=dataset_cfg,
