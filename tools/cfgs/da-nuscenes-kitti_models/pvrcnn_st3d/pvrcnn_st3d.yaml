@@ -1,4 +1,4 @@
-CLASS_NAMES: ['car']
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_kitti_dataset.yaml
@@ -12,7 +12,7 @@ DATA_CONFIG_TAR:
     TARGET: True
     FOV_POINTS_ONLY: False
     USE_PSEUDO_LABEL: True
-    CLASS_NAMES: ['Car']
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 1.6]
 
     DATA_AUGMENTOR:
@@ -65,6 +65,9 @@ MODEL:
         DIR_LIMIT_OFFSET: 0.0
         NUM_DIR_BINS: 2
 
+        # USE_MULTIHEAD: True
+        # SEPARATE_MULTIHEAD: True
+
         ANCHOR_GENERATOR_CONFIG: [
             {
                 'class_name': 'car',
@@ -75,8 +78,42 @@ MODEL:
                 'feature_map_stride': 8,
                 'matched_threshold': 0.55,
                 'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': pedestrian,
+                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-0.935],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': bicycle,
+                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-1.18],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             }
         ]
+
+        # SHARED_CONV_NUM_FILTER: 64
+
+        # RPN_HEAD_CFGS: [
+        #     {
+        #         'HEAD_CLS_NAME': ['car'],
+        #     },
+        #     {
+        #         'HEAD_CLS_NAME': ['bicycle'],
+        #     },
+        #     {
+        #         'HEAD_CLS_NAME': ['pedestrian']
+        #     }
+        # ]
 
         TARGET_ASSIGNER_CONFIG:
             NAME: AxisAlignedTargetAssigner
@@ -87,12 +124,23 @@ MODEL:
             BOX_CODER: ResidualCoder
 
         LOSS_CONFIG:
+            # REG_LOSS_TYPE: WeightedL1Loss
             LOSS_WEIGHTS: {
+                # 'pos_cls_weight': 1.0,
+                # 'neg_cls_weight': 2.0,
                 'cls_weight': 1.0,
-                'loc_weight': 2.0,
+                'loc_weight': 0.25,
                 'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
+
+        # LOSS_CONFIG:
+        #     LOSS_WEIGHTS: {
+        #         'cls_weight': 1.0,
+        #         'loc_weight': 2.0,
+        #         'dir_weight': 0.2,
+        #         'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        #     }
 
     PFE:
         NAME: VoxelSetAbstraction

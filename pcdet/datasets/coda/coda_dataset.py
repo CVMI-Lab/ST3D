@@ -9,7 +9,7 @@ from ...utils import box_utils, calibration_kitti, common_utils, object3d_kitti,
 from ..dataset import DatasetTemplate
 
 
-class KittiDataset(DatasetTemplate):
+class CODataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
         """
         Args:
@@ -28,13 +28,13 @@ class KittiDataset(DatasetTemplate):
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
 
-        self.kitti_infos = []
-        self.include_kitti_data(self.mode)
+        self.coda_infos = []
+        self.include_coda_data(self.mode)
 
-    def include_kitti_data(self, mode):
+    def include_coda_data(self, mode):
         if self.logger is not None:
-            self.logger.info('Loading KITTI dataset')
-        kitti_infos = []
+            self.logger.info('Loading CODa dataset')
+        coda_infos = []
 
         for info_path in self.dataset_cfg.INFO_PATH[mode]:
             info_path = self.root_path / info_path
@@ -42,12 +42,12 @@ class KittiDataset(DatasetTemplate):
                 continue
             with open(info_path, 'rb') as f:
                 infos = pickle.load(f)
-                kitti_infos.extend(infos)
+                coda_infos.extend(infos)
 
-        self.kitti_infos.extend(kitti_infos)
+        self.coda_infos.extend(coda_infos)
 
         if self.logger is not None:
-            self.logger.info('Total samples for KITTI dataset: %d' % (len(self.kitti_infos)))
+            self.logger.info('Total samples for CODa dataset: %d' % (len(self.coda_infos)))
 
     def set_split(self, split):
         super().__init__(
@@ -65,19 +65,19 @@ class KittiDataset(DatasetTemplate):
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
     def get_image_shape(self, idx):
-        img_file = self.root_split_path / 'image_2' / ('%s.png' % idx)
+        img_file = self.root_split_path / 'image_0' / ('%s.jpg' % idx)
         assert img_file.exists()
         return np.array(io.imread(img_file).shape[:2], dtype=np.int32)
 
     def get_label(self, idx):
-        label_file = self.root_split_path / 'label_2' / ('%s.txt' % idx)
-        assert label_file.exists()
+        label_file = self.root_split_path / 'label_0' / ('%s.txt' % idx)
+        assert label_file.exists(), "Label file %s does not exist" % label_file
         return object3d_kitti.get_objects_from_label(label_file)
 
     def get_calib(self, idx):
         calib_file = self.root_split_path / 'calib' / ('%s.txt' % idx)
         assert calib_file.exists()
-        return calibration_kitti.Calibration(calib_file)
+        return calibration_kitti.Calibration(calib_file, use_coda=True)
 
     def get_road_plane(self, idx):
         plane_file = self.root_split_path / 'planes' / ('%s.txt' % idx)
@@ -134,6 +134,7 @@ class KittiDataset(DatasetTemplate):
             R0_4x4[3, 3] = 1.
             R0_4x4[:3, :3] = calib.R0
             V2C_4x4 = np.concatenate([calib.V2C, np.array([[0., 0., 0., 1.]])], axis=0)
+            # Store calib info as P2 key for easier downstream processing
             calib_info = {'P2': P2, 'R0_rect': R0_4x4, 'Tr_velo_to_cam': V2C_4x4}
 
             info['calib'] = calib_info
@@ -141,16 +142,28 @@ class KittiDataset(DatasetTemplate):
             if has_label:
                 obj_list = self.get_label(sample_idx)
                 annotations = {}
-                annotations['name'] = np.array([obj.cls_type for obj in obj_list])
-                annotations['truncated'] = np.array([obj.truncation for obj in obj_list])
-                annotations['occluded'] = np.array([obj.occlusion for obj in obj_list])
-                annotations['alpha'] = np.array([obj.alpha for obj in obj_list])
-                annotations['bbox'] = np.concatenate([obj.box2d.reshape(1, 4) for obj in obj_list], axis=0)
-                annotations['dimensions'] = np.array([[obj.l, obj.h, obj.w] for obj in obj_list])  # lhw(camera) format
-                annotations['location'] = np.concatenate([obj.loc.reshape(1, 3) for obj in obj_list], axis=0)
-                annotations['rotation_y'] = np.array([obj.ry for obj in obj_list])
-                annotations['score'] = np.array([obj.score for obj in obj_list])
-                annotations['difficulty'] = np.array([obj.level for obj in obj_list], np.int32)
+                if len(obj_list)>0:
+                    annotations['name'] = np.array([obj.cls_type for obj in obj_list])
+                    annotations['truncated'] = np.array([obj.truncation for obj in obj_list])
+                    annotations['occluded'] = np.array([obj.occlusion for obj in obj_list])
+                    annotations['alpha'] = np.array([obj.alpha for obj in obj_list])
+                    annotations['bbox'] = np.concatenate([obj.box2d.reshape(1, 4) for obj in obj_list], axis=0)
+                    annotations['dimensions'] = np.array([[obj.l, obj.h, obj.w] for obj in obj_list])  # lhw(camera) format
+                    annotations['location'] = np.concatenate([obj.loc.reshape(1, 3) for obj in obj_list], axis=0)
+                    annotations['rotation_y'] = np.array([obj.ry for obj in obj_list])
+                    annotations['score'] = np.array([obj.score for obj in obj_list])
+                    annotations['difficulty'] = np.array([obj.level for obj in obj_list], np.int32)
+                else:
+                    annotations['name'] = np.array([])
+                    annotations['truncated'] = np.array([])
+                    annotations['occluded'] = np.array([])
+                    annotations['alpha'] = np.array([])
+                    annotations['bbox'] = np.empty((0, 4))
+                    annotations['dimensions'] = np.empty((0,3)) # lhw(camera) format
+                    annotations['location'] = np.empty((0,3))
+                    annotations['rotation_y'] = np.array([])
+                    annotations['score'] = np.array([])
+                    annotations['difficulty'] = np.array([], np.int32)
 
                 num_objects = len([obj.cls_type for obj in obj_list if obj.cls_type != 'DontCare'])
                 num_gt = len(annotations['name'])
@@ -194,7 +207,7 @@ class KittiDataset(DatasetTemplate):
         import torch
 
         database_save_path = Path(self.root_path) / ('gt_database' if split == 'train' else ('gt_database_%s' % split))
-        db_info_save_path = Path(self.root_path) / ('kitti_dbinfos_%s.pkl' % split)
+        db_info_save_path = Path(self.root_path) / ('coda_dbinfos_%s.pkl' % split)
 
         database_save_path.mkdir(parents=True, exist_ok=True)
         all_db_infos = {}
@@ -332,29 +345,29 @@ class KittiDataset(DatasetTemplate):
         return annos
 
     def evaluation(self, det_annos, class_names, **kwargs):
-        if 'annos' not in self.kitti_infos[0].keys():
+        if 'annos' not in self.coda_infos[0].keys():
             return None, {}
 
-        from .kitti_object_eval_python import eval as kitti_eval
+        from ..kitti.kitti_object_eval_python import eval as kitti_eval
 
         eval_det_annos = copy.deepcopy(det_annos)
-        eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.kitti_infos]
+        eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.coda_infos]
         ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
 
         return ap_result_str, ap_dict
 
     def __len__(self):
         if self._merge_all_iters_to_one_epoch:
-            return len(self.kitti_infos) * self.total_epochs
+            return len(self.coda_infos) * self.total_epochs
 
-        return len(self.kitti_infos)
+        return len(self.coda_infos)
 
     def __getitem__(self, index):
         # index = 4
         if self._merge_all_iters_to_one_epoch:
-            index = index % len(self.kitti_infos)
+            index = index % len(self.coda_infos)
 
-        info = copy.deepcopy(self.kitti_infos[index])
+        info = copy.deepcopy(self.coda_infos[index])
 
         sample_idx = info['point_cloud']['lidar_idx']
 
@@ -419,38 +432,38 @@ class KittiDataset(DatasetTemplate):
         return data_dict
 
 
-def create_kitti_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
-    dataset = KittiDataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
+def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
+    dataset = CODataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
     train_split, val_split = 'train', 'val'
 
-    train_filename = save_path / ('kitti_infos_%s.pkl' % train_split)
-    val_filename = save_path / ('kitti_infos_%s.pkl' % val_split)
-    trainval_filename = save_path / 'kitti_infos_trainval.pkl'
-    test_filename = save_path / 'kitti_infos_test.pkl'
+    train_filename = save_path / ('coda_infos_%s.pkl' % train_split)
+    val_filename = save_path / ('coda_infos_%s.pkl' % val_split)
+    trainval_filename = save_path / 'coda_infos_trainval.pkl'
+    test_filename = save_path / 'coda_infos_test.pkl'
 
-    print('---------------Start to generate data infos---------------')
+    print('---------------Start to generate data infos----3-----------')
 
     dataset.set_split(train_split)
-    kitti_infos_train = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
+    coda_infos_train = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
     with open(train_filename, 'wb') as f:
-        pickle.dump(kitti_infos_train, f)
-    print('Kitti info train file is saved to %s' % train_filename)
+        pickle.dump(coda_infos_train, f)
+    print('CODa info train file is saved to %s' % train_filename)
 
     dataset.set_split(val_split)
-    kitti_infos_val = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
+    coda_infos_val = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
     with open(val_filename, 'wb') as f:
-        pickle.dump(kitti_infos_val, f)
-    print('Kitti info val file is saved to %s' % val_filename)
+        pickle.dump(coda_infos_val, f)
+    print('CODa info val file is saved to %s' % val_filename)
 
     with open(trainval_filename, 'wb') as f:
-        pickle.dump(kitti_infos_train + kitti_infos_val, f)
-    print('Kitti info trainval file is saved to %s' % trainval_filename)
+        pickle.dump(coda_infos_train + coda_infos_val, f)
+    print('CODa info trainval file is saved to %s' % trainval_filename)
 
     dataset.set_split('test')
-    kitti_infos_test = dataset.get_infos(num_workers=workers, has_label=False, count_inside_pts=False)
+    coda_infos_test = dataset.get_infos(num_workers=workers, has_label=False, count_inside_pts=False)
     with open(test_filename, 'wb') as f:
-        pickle.dump(kitti_infos_test, f)
-    print('Kitti info test file is saved to %s' % test_filename)
+        pickle.dump(coda_infos_test, f)
+    print('CODa info test file is saved to %s' % test_filename)
 
     print('---------------Start create groundtruth database for data augmentation---------------')
     dataset.set_split(train_split)
@@ -461,15 +474,15 @@ def create_kitti_infos(dataset_cfg, class_names, data_path, save_path, workers=4
 
 if __name__ == '__main__':
     import sys
-    if sys.argv.__len__() > 1 and sys.argv[1] == 'create_kitti_infos':
+    if sys.argv.__len__() > 1 and sys.argv[1] == 'create_coda_infos':
         import yaml
         from pathlib import Path
         from easydict import EasyDict
         dataset_cfg = EasyDict(yaml.safe_load(open(sys.argv[2])))
         ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
-        create_kitti_infos(
+        create_coda_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Car', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'kitti',
-            save_path=ROOT_DIR / 'data' / 'kitti'
+            data_path=ROOT_DIR / 'data' / 'coda',
+            save_path=ROOT_DIR / 'data' / 'coda',
         )

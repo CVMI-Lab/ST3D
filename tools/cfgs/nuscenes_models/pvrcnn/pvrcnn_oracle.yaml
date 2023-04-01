@@ -1,9 +1,9 @@
-CLASS_NAMES: ['car']
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_oracle_dataset.yaml
     TARGET: True
-    CLASS_NAMES: ['car']
+    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
     SHIFT_COOR: [0.0, 0.0, 1.8]
     MAX_SWEEPS: 1
     PRED_VELOCITY: False
@@ -43,13 +43,33 @@ MODEL:
         ANCHOR_GENERATOR_CONFIG: [
             {
                 'class_name': 'car',
-                'anchor_sizes': [[4.7, 2.1, 1.7]],
+                'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
                 'matched_threshold': 0.55,
                 'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': pedestrian,
+                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-0.935],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': bicycle,
+                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-1.18],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             }
         ]
 

@@ -107,7 +107,7 @@ def main():
         os.system('cp %s %s' % (args.cfg_file, output_dir))
 
     tb_log = SummaryWriter(log_dir=str(output_dir / 'tensorboard')) if cfg.LOCAL_RANK == 0 else None
-
+    print("Creating dataloader")
     # -----------------------create dataloader & network & optimizer---------------------------
     source_set, source_loader, source_sampler = build_dataloader(
         dataset_cfg=cfg.DATA_CONFIG,
