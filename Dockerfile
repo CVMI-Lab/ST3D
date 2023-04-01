@@ -1,5 +1,5 @@
-ARG PYTORCH="1.8.1"
-ARG CUDA="11.1"
+ARG PYTORCH="1.10.0"
+ARG CUDA="11.3"
 ARG CUDNN="8"
 
 FROM pytorch/pytorch:${PYTORCH}-cuda${CUDA}-cudnn${CUDNN}-devel
@@ -34,8 +34,8 @@ WORKDIR /ST3D
 
 ENV FORCE_CUDA="1"
 RUN pip install -r requirements.txt
-RUN pip install cumm-cu111 spconv-cu111
+RUN pip install cumm-cu113 spconv-cu113
 RUN python setup.py develop
 # Add below to resolve binary incompatibility issues
-RUN pip install numpy==1.20.1
+# RUN pip install numpy==1.20.1
 
