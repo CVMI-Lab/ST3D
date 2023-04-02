@@ -4,7 +4,6 @@ from torch.autograd import Function
 from ...utils import common_utils
 from . import roiaware_pool3d_cuda
 
-
 def points_in_boxes_cpu(points, boxes):
     """
     Args:
