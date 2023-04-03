@@ -25,10 +25,10 @@ DATA_AUGMENTOR:
           DB_INFO_PATH:
             - nuscenes_dbinfos_10sweeps_withvelo.pkl
           PREPARE: {
-            filter_by_min_points: ['car:5'],
+            filter_by_min_points: ['car:5', 'pedestrian:5', 'bicycle:5'],
           }
 
-          SAMPLE_GROUPS: ['car:15']
+          SAMPLE_GROUPS: ['car:15', 'pedestrian:15', 'bicycle:15']
 
           NUM_POINT_FEATURES: 5
           DATABASE_WITH_FAKELIDAR: False

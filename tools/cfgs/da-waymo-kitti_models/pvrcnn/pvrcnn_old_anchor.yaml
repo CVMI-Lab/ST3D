@@ -1,4 +1,4 @@
-CLASS_NAMES: ['Vehicle']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
@@ -9,7 +9,7 @@ DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car']
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 1.6]
 
 MODEL:
@@ -53,6 +53,26 @@ MODEL:
                 'feature_map_stride': 8,
                 'matched_threshold': 0.55,
                 'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': Pedestrian,
+                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-0.935],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.4
+            },
+            {
+                'class_name': Cyclist,
+                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'anchor_rotations': [0, 1.57],
+                'anchor_bottom_heights': [-1.18],
+                'align_center': False,
+                'feature_map_stride': 8,
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             }
         ]
 
@@ -191,7 +211,7 @@ MODEL:
 
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
+    NUM_EPOCHS: 24
     BATCH_SIZE_PER_GPU: 2
     OPTIMIZER: adam_onecycle
     LR: 0.01

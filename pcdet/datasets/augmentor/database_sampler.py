@@ -185,7 +185,7 @@ class DataBaseSampler(object):
                 iou1 = iou1 if iou1.shape[1] > 0 else iou2
                 valid_mask = ((iou1.max(axis=1) + iou2.max(axis=1)) == 0).nonzero()[0]
                 valid_sampled_dict = [sampled_dict[x] for x in valid_mask]
-                valid_sampled_boxes = sampled_boxes[valid_mask]
+                valid_sampled_boxes = sampled_boxes[valid_mask, 0:7] #Added 0:7 to make shapes agree with existed
 
                 existed_boxes = np.concatenate((existed_boxes, valid_sampled_boxes), axis=0)
                 total_valid_sampled_dict.extend(valid_sampled_dict)

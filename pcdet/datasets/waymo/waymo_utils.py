@@ -187,7 +187,7 @@ def process_single_sequence(sequence_file, save_path, sampled_interval, has_labe
         sequence_infos = pickle.load(open(pkl_file, 'rb'))
         print('Skip sequence since it has been processed before: %s' % pkl_file)
         return sequence_infos
-
+    
     for cnt, data in enumerate(dataset):
         if cnt % sampled_interval != 0:
             continue

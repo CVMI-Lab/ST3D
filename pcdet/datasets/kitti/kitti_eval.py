@@ -47,6 +47,7 @@ def transform_to_kitti_format(pred_infos, gt_annos, dataset, fakelidar):
         map_name_to_kitti = {
             'car': 'Car',
             'pedestrian': 'Pedestrian',
+            'bicycle': 'Cyclist',
             'truck': 'Truck',
         }
     else:
@@ -108,7 +109,7 @@ def main():
         )
 
         ap_result_str, ap_dict = kitti_eval.get_official_eval_result(
-            cur_gt_annos, cur_pred_info, current_classes=['Car']
+            cur_gt_annos, cur_pred_info, current_classes=['Car', 'Pedestrian', 'Cyclist']
         )
         print(f'----------Range={cur_range}, avg_pred_objs={num_pred_objs / len(pred_infos)}, '
               f'avg_gt_objs={num_gt_objs / len(gt_infos)}-------------')

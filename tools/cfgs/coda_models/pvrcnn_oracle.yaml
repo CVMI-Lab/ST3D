@@ -1,13 +1,10 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_oracle_dataset.yaml
-    TARGET: True
-    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
-    SHIFT_COOR: [0.0, 0.0, 1.8]
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset.yaml
     BALANCED_RESAMPLING: False
+    FOV_POINTS_ONLY: False
+    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
 
 MODEL:
     NAME: PVRCNN
@@ -42,17 +39,17 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'car',
-                'anchor_sizes': [[4.2, 2.0, 1.6]],
+                'class_name': 'Car',
+                'anchor_sizes': [[3.9, 1.6, 1.56]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [0],
+                'anchor_bottom_heights': [-1.78],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.55,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.6,
+                'unmatched_threshold': 0.45
             },
             {
-                'class_name': pedestrian,
+                'class_name': Pedestrian,
                 'anchor_sizes': [[0.73, 0.67, 1.77]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [-0.935],
@@ -62,7 +59,7 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': bicycle,
+                'class_name': Cyclist,
                 'anchor_sizes': [[1.70, 0.60, 1.28]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [-1.18],
@@ -172,7 +169,7 @@ MODEL:
             FG_RATIO: 0.5
 
             SAMPLE_ROI_BY_EACH_CLASS: True
-            CLS_SCORE_TYPE: raw_roi_iou
+            CLS_SCORE_TYPE: roi_iou
 
             CLS_FG_THRESH: 0.75
             CLS_BG_THRESH: 0.25
