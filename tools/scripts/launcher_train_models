@@ -1,0 +1,2 @@
+ibrun -n 3 -o 0 task_affinity singularity exec --nv ../st3d.sif PORT=${PORT1} bash tools/dist_train.sh ${NUM_GPUS}--cfg_file ${CONFIG_FILE1} ${EXTRA_TAG1} --batch_size ${NUM_GPUS} >> launcher_train_models_task${LAUNCHER_TSK_ID} &
+wait
