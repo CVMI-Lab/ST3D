@@ -167,12 +167,13 @@ class CODataset(DatasetTemplate):
 
                 num_objects = len([obj.cls_type for obj in obj_list if obj.cls_type != 'DontCare'])
                 num_gt = len(annotations['name'])
-                index = list(range(num_objects)) + [-1] * (num_gt - num_objects)
-                annotations['index'] = np.array(index, dtype=np.int32)
-
-                loc = annotations['location'][:num_objects]
-                dims = annotations['dimensions'][:num_objects]
-                rots = annotations['rotation_y'][:num_objects]
+                index = np.argwhere( np.isin([obj.cls_type for obj in obj_list], ['DontCare'], invert=True) ).reshape(-1,)
+                # list(range(num_objects)) + [-1] * (num_gt - num_objects)
+                annotations['index'] = index.astype(np.int32) # np.array(index, dtype=np.int32) #TODO: refactor later
+                
+                loc = annotations['location'][index]
+                dims = annotations['dimensions'][index]
+                rots = annotations['rotation_y'][index]
                 loc_lidar = calib.rect_to_lidar(loc)
                 l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
                 loc_lidar[:, 2] += h[:, 0] / 2
@@ -180,6 +181,17 @@ class CODataset(DatasetTemplate):
                 annotations['gt_boxes_lidar'] = gt_boxes_lidar
 
                 info['annos'] = annotations
+
+                # Check that all other keys besides gt boxes lidar and index match
+                prev_key = None
+                for key in info['annos'].keys():
+                    if key == 'index' or key=='gt_boxes_lidar':
+                        continue
+                    if prev_key == None:
+                        prev_key = key
+                    assert len(info['annos'][key]) == len(info['annos'][prev_key]), "Keys %s and %s do not \
+                        match" % (key, prev_key)
+                    prev_key = key
 
                 if count_inside_pts:
                     points = self.get_lidar(sample_idx)
@@ -316,7 +328,7 @@ class CODataset(DatasetTemplate):
             pred_dict['rotation_y'] = pred_boxes_camera[:, 6]
             pred_dict['score'] = pred_scores
             pred_dict['boxes_lidar'] = pred_boxes
-
+        
             return pred_dict
 
         annos = []
@@ -368,6 +380,8 @@ class CODataset(DatasetTemplate):
             index = index % len(self.coda_infos)
 
         info = copy.deepcopy(self.coda_infos[index])
+        # print("before if name annos ", info['annos']['name'].shape)
+        # print("before if bbox annos ", info['annos']['bbox'].shape)
 
         sample_idx = info['point_cloud']['lidar_idx']
 
@@ -392,7 +406,9 @@ class CODataset(DatasetTemplate):
 
         if 'annos' in info:
             annos = info['annos']
-            annos = common_utils.drop_info_with_name(annos, name='DontCare')
+            # print("if name annos ", annos['name'].shape)
+            # print("if bbox annos ", annos['bbox'].shape)
+            annos = common_utils.drop_info_with_name(annos, name='DontCare', gt_filtered=True)
             loc, dims, rots = annos['location'], annos['dimensions'], annos['rotation_y']
             gt_names = annos['name']
             gt_boxes_camera = np.concatenate([loc, dims, rots[..., np.newaxis]], axis=1).astype(np.float32)
