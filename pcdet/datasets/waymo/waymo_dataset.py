@@ -26,6 +26,7 @@ class WaymoDataset(DatasetTemplate):
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_sequence_list = [x.strip() for x in open(split_dir).readlines()]
 
+
         self.infos = []
         self.include_waymo_data(self.mode)
 
@@ -82,7 +83,7 @@ class WaymoDataset(DatasetTemplate):
         from . import waymo_utils
         print('---------------The waymo sample interval is %d, total sequecnes is %d-----------------'
               % (sampled_interval, len(self.sample_sequence_list)))
-
+        
         process_single_sequence = partial(
             waymo_utils.process_single_sequence,
             save_path=save_path, sampled_interval=sampled_interval, has_label=has_label

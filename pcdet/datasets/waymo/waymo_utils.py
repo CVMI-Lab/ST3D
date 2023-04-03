@@ -177,6 +177,10 @@ def process_single_sequence(sequence_file, save_path, sampled_interval, has_labe
         print('NotFoundError: %s' % sequence_file)
         return []
 
+    if sequence_file.is_dir():
+        print("Is directory %s" % sequence_file)
+        return []
+
     dataset = tf.data.TFRecordDataset(str(sequence_file), compression_type='')
     cur_save_dir = save_path / sequence_name
     cur_save_dir.mkdir(parents=True, exist_ok=True)
