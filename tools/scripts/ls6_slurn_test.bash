@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 24:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 00:10:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -35,6 +35,6 @@ export BATCH_SIZE1=36
 # Uncomment to launch model training
 module load launcher_gpu
 export LAUNCHER_WORKDIR=/scratch/09156/arthurz/research/ST3D/tools
-export LAUNCHER_JOB_FILE=scripts/launcher_train_damodels_source
+export LAUNCHER_JOB_FILE=scripts/launcher_test_damodels_source
 
 ${LAUNCHER_DIR}/paramrun
