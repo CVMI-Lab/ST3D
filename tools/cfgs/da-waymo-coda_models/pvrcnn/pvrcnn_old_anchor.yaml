@@ -1,10 +1,16 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset.yaml
-    BALANCED_RESAMPLING: True
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    PROCESSED_DATA_TAG: 'waymo_processed_data'
+    INFO_WITH_FAKELIDAR: False
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    TARGET: True
     FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 1.6]
 
 MODEL:
     NAME: PVRCNN
@@ -39,14 +45,14 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'Car',
-                'anchor_sizes': [[3.9, 1.6, 1.56]],
+                'class_name': 'Vehicle',
+                'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.78],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.45
+                'matched_threshold': 0.55,
+                'unmatched_threshold': 0.4
             },
             {
                 'class_name': Pedestrian,
@@ -169,7 +175,7 @@ MODEL:
             FG_RATIO: 0.5
 
             SAMPLE_ROI_BY_EACH_CLASS: True
-            CLS_SCORE_TYPE: roi_iou
+            CLS_SCORE_TYPE: raw_roi_iou
 
             CLS_FG_THRESH: 0.75
             CLS_BG_THRESH: 0.25
@@ -206,7 +212,7 @@ MODEL:
 
 OPTIMIZATION:
     NUM_EPOCHS: 24
-    BATCH_SIZE_PER_GPU: 4
+    BATCH_SIZE_PER_GPU: 2
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
