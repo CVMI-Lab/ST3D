@@ -22,9 +22,11 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # export CONFIG_FILE1=cfgs/nuscenes_models/pvrcnn/pvrcnn_oracle.yaml
 # export EXTRA_TAG1=pvrcnn_oracle
 
+# For nuscenes-coda (source) eval. Use best model for pretrained model
 export PORT=29503
 export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor.yaml
 export EXTRA_TAG1=pvrcnn_pretrain_coda_small
+export BATCH_SIZE1=36
 
 # export PORT=29503
 # export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle.yaml
