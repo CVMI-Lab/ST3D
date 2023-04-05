@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 00:10:00                        # Run time (hh:mm:ss)
+#SBATCH -t 10:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -23,7 +23,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # export EXTRA_TAG1=pvrcnn_oracle
 
 # For nuscenes-coda (source) eval. Use best model for pretrained model
-export PORT=29503
+export PORT=29505
 export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor.yaml
 export EXTRA_TAG1=pvrcnn_pretrain_coda_small
 export BATCH_SIZE1=36
