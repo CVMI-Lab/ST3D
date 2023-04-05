@@ -20,6 +20,8 @@ class NuScenesDataset(DatasetTemplate):
         self.include_nuscenes_data(self.mode)
         if self.training and self.dataset_cfg.get('BALANCED_RESAMPLING', False):
             self.infos = self.balanced_infos_resampling(self.infos)
+        import pdb; pdb.set_trace()
+        print("done")
 
     def include_nuscenes_data(self, mode):
         self.logger.info('Loading NuScenes dataset')
@@ -234,6 +236,7 @@ class NuScenesDataset(DatasetTemplate):
             'car': 'Car',
             'pedestrian': 'Pedestrian',
             'truck': 'Truck',
+            'bicycle', 'Cyclist'
         }
 
         def transform_to_kitti_format(annos, info_with_fakelidar=False, is_gt=False):
