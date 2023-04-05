@@ -65,10 +65,10 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': Cyclist,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'class_name': 'Cyclist',
+                'anchor_sizes': [[1.78, 0.84, 1.78]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
                 'matched_threshold': 0.5,
