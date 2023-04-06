@@ -55,14 +55,14 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': Pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'class_name': 'Pedestrian',
+                'anchor_sizes': [[0.91, 0.86, 1.73]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             },
             {
                 'class_name': 'Cyclist',
@@ -211,7 +211,7 @@ MODEL:
 
 
 OPTIMIZATION:
-    NUM_EPOCHS: 24
+    NUM_EPOCHS: 30
     BATCH_SIZE_PER_GPU: 2
     OPTIMIZER: adam_onecycle
     LR: 0.01
