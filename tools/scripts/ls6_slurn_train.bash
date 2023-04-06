@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 12:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -30,18 +30,17 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # For CODa oracle
 export PORT=29502
 export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle.yaml
-export EXTRA_TAG1=coda_batch2_80
-export CKPT1=../output/coda_models/pvrcnn_oracle/pvrcnn_oracle_coda_small_resamp/ckpt/checkpoint_epoch_11.pth
+export EXTRA_TAG1=pvrcnn_oracle_coda_small_resamp 
+export CKPT1=../output/coda_models/pvrcnn_oracle/pvrcnn_oracle_coda_small_resamp/ckpt/checkpoint_epoch_10.pth
 export EPOCH1=80
 export BATCH_SIZE1=24
 
 # For waymo->coda da
-# export PORT=29500
+# export PORT=29503
 # export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor.yaml
 # export EXTRA_TAG1=waymo_da_coda_small
-# export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_da_coda_small/ckpt/checkpoint_epoch_2.pth
-# export BATCH_SIZE1=12
-# export EPOCH1=30
+# export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_coda_pretrain/ckpt/checkpoint_epoch_6.pth
+# export BATCH_SIZE1=24
 
 # Uncomment to launch model training
 # module load launcher_gpu
