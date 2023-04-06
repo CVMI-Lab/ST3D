@@ -30,7 +30,7 @@ class CODataset(DatasetTemplate):
 
         self.coda_infos = []
         self.include_coda_data(self.mode)
-
+        
         if self.training and self.dataset_cfg.get('BALANCED_RESAMPLING', False):
             self.coda_infos = self.balanced_infos_resampling(self.coda_infos)
 
@@ -103,6 +103,7 @@ class CODataset(DatasetTemplate):
     def get_lidar(self, idx):
         lidar_file = self.root_split_path / 'velodyne' / ('%s.bin' % idx)
         assert lidar_file.exists()
+        
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
     def get_image_shape(self, idx):
@@ -425,7 +426,6 @@ class CODataset(DatasetTemplate):
         # print("before if bbox annos ", info['annos']['bbox'].shape)
 
         sample_idx = info['point_cloud']['lidar_idx']
-
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
 
