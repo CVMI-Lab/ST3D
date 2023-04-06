@@ -20,7 +20,6 @@ class NuScenesDataset(DatasetTemplate):
         self.include_nuscenes_data(self.mode)
         if self.training and self.dataset_cfg.get('BALANCED_RESAMPLING', False):
             self.infos = self.balanced_infos_resampling(self.infos)
-
         print("done")
 
     def include_nuscenes_data(self, mode):

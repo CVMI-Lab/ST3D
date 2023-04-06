@@ -1,0 +1,2 @@
+ibrun -n 3 -o 0 task_affinity singularity exec --nv ../st3d.sif bash scripts/dist_train.sh ${NUM_GPUS} --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --batch_size ${BATCH_SIZE1} --pretrained_model ${PRETRAINED_MODEL1} --epochs ${EPOCH1} >> launcher_selftrain_models_task${LAUNCHER_TSK_ID} &
+wait
