@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 10:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 05:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -22,11 +22,18 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # export CONFIG_FILE1=cfgs/nuscenes_models/pvrcnn/pvrcnn_oracle.yaml
 # export EXTRA_TAG1=pvrcnn_oracle
 
-# For nuscenes-coda (source) eval. Use best model for pretrained model
+# For nuscenes-coda (source) eval.
+# export PORT=29501
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor.yaml
+# export EXTRA_TAG1=pvrcnn_pretrain_coda_small
+# export BATCH_SIZE1=36
+
+# For waymo->coda (source eval).
 export PORT=29501
-export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor.yaml
-export EXTRA_TAG1=pvrcnn_pretrain_coda_small
+export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor.yaml
+export EXTRA_TAG1=waymo_da_coda_small
 export BATCH_SIZE1=36
+export EVAL_TAG1=waymo_da_oracle
 
 # export PORT=29503
 # export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle.yaml
