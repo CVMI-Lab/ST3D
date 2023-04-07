@@ -174,6 +174,7 @@ def train_model_st(model, optimizer, source_loader, target_loader, model_func, l
                     ((cur_epoch % cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL_INTERVAL == 0)
                      and cur_epoch != 0):
                 target_loader.dataset.eval()
+                print("Saving pseudolabels")
                 self_training_utils.save_pseudo_label_epoch(
                     model, target_loader, rank,
                     leave_pbar=True, ps_label_dir=ps_label_dir, cur_epoch=cur_epoch

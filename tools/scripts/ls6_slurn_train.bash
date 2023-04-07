@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 12:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 00:10:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -28,7 +28,7 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # export EXTRA_TAG1=pvrcnn_pretrain_coda_small 
 
 # For CODa oracle
-export PORT=29502
+export PORT=29500
 export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle.yaml
 export EXTRA_TAG1=pvrcnn_oracle_coda_small_resamp 
 export CKPT1=../output/coda_models/pvrcnn_oracle/pvrcnn_oracle_coda_small_resamp/ckpt/checkpoint_epoch_10.pth
