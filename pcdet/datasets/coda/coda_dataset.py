@@ -10,7 +10,7 @@ from ..dataset import DatasetTemplate
 
 
 class CODataset(DatasetTemplate):
-    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
+    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None):
         """
         Args:
             root_path:
@@ -20,7 +20,8 @@ class CODataset(DatasetTemplate):
             logger:
         """
         super().__init__(
-            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger
+            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger, 
+            ps_label_dir=ps_label_dir
         )
         self.split = self.dataset_cfg.DATA_SPLIT[self.mode]
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')

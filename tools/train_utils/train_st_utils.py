@@ -180,7 +180,7 @@ def train_model_st(model, optimizer, source_loader, target_loader, model_func, l
                     leave_pbar=True, ps_label_dir=ps_label_dir, cur_epoch=cur_epoch
                 )
                 target_loader.dataset.train()
-            
+
             # curriculum data augmentation
             if cfg.SELF_TRAIN.get('PROG_AUG', None) and cfg.SELF_TRAIN.PROG_AUG.ENABLED and \
                 (cur_epoch in cfg.SELF_TRAIN.PROG_AUG.UPDATE_AUG):
