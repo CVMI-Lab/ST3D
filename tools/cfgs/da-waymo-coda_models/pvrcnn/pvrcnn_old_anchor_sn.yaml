@@ -1,29 +1,18 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_kitti_dataset.yaml
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
-    SHIFT_COOR: [0.0, 0.0, 1.8]
-
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_kitti_dataset.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    USE_PSEUDO_LABEL: True
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 1.6]
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    PROCESSED_DATA_TAG: 'waymo_processed_data'
+    INFO_WITH_FAKELIDAR: False
 
     DATA_AUGMENTOR:
-        DISABLE_AUG_LIST: [ 'placeholder' ]
+        DISABLE_AUG_LIST: [ 'random_object_scaling' ]
         AUG_CONFIG_LIST:
             - NAME: random_object_scaling
-              SCALE_UNIFORM_NOISE: [ 0.95, 1.05 ]
+              SCALE_UNIFORM_NOISE: [ 0.7, 0.95 ]
 
-            - NAME: random_object_rotation
-              ROT_PROB: 0.8
-              ROT_UNIFORM_NOISE: [ -0.38539816, 0.38539816 ]
+            - NAME: normalize_object_size
+              SIZE_RES: [ -0.91, -0.49, -0.26 ]
 
             - NAME: random_world_flip
               ALONG_AXIS_LIST: [ 'x', 'y' ]
@@ -32,7 +21,14 @@ DATA_CONFIG_TAR:
               WORLD_ROT_ANGLE: [ -0.78539816, 0.78539816 ]
 
             - NAME: random_world_scaling
-              WORLD_SCALE_RANGE: [ 0.97, 1.03 ]
+              WORLD_SCALE_RANGE: [ 0.95, 1.05 ]
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
@@ -65,12 +61,9 @@ MODEL:
         DIR_LIMIT_OFFSET: 0.0
         NUM_DIR_BINS: 2
 
-        # USE_MULTIHEAD: True
-        # SEPARATE_MULTIHEAD: True
-
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'car',
+                'class_name': 'Vehicle',
                 'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [0],
@@ -80,40 +73,26 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'class_name': 'Pedestrian',
+                'anchor_sizes': [[0.91, 0.86, 1.73]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             },
             {
-                'class_name': bicycle,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'class_name': 'Cyclist',
+                'anchor_sizes': [[1.78, 0.84, 1.78]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
                 'matched_threshold': 0.5,
                 'unmatched_threshold': 0.35
             }
         ]
-
-        # SHARED_CONV_NUM_FILTER: 64
-
-        # RPN_HEAD_CFGS: [
-        #     {
-        #         'HEAD_CLS_NAME': ['car'],
-        #     },
-        #     {
-        #         'HEAD_CLS_NAME': ['bicycle'],
-        #     },
-        #     {
-        #         'HEAD_CLS_NAME': ['pedestrian']
-        #     }
-        # ]
 
         TARGET_ASSIGNER_CONFIG:
             NAME: AxisAlignedTargetAssigner
@@ -124,23 +103,12 @@ MODEL:
             BOX_CODER: ResidualCoder
 
         LOSS_CONFIG:
-            # REG_LOSS_TYPE: WeightedL1Loss
             LOSS_WEIGHTS: {
-                # 'pos_cls_weight': 1.0,
-                # 'neg_cls_weight': 2.0,
                 'cls_weight': 1.0,
-                'loc_weight': 0.25,
+                'loc_weight': 2.0,
                 'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-
-        # LOSS_CONFIG:
-        #     LOSS_WEIGHTS: {
-        #         'cls_weight': 1.0,
-        #         'loc_weight': 2.0,
-        #         'dir_weight': 0.2,
-        #         'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-        #     }
 
     PFE:
         NAME: VoxelSetAbstraction
@@ -247,7 +215,7 @@ MODEL:
 
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
-        SCORE_THRESH: 0.2
+        SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
         EVAL_METRIC: kitti
@@ -261,10 +229,10 @@ MODEL:
 
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
+    NUM_EPOCHS: 50
     BATCH_SIZE_PER_GPU: 2
     OPTIMIZER: adam_onecycle
-    LR: 0.0015
+    LR: 0.01
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 
@@ -279,42 +247,3 @@ OPTIMIZATION:
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
-
-
-SELF_TRAIN:
-    SRC:
-        USE_DATA: False
-        USE_GRAD: False
-        LOSS_WEIGHT: 1.0
-    TAR:
-        USE_DATA: True
-        LOSS_WEIGHT: 1.0
-
-    SCORE_THRESH: [0.5]
-    NEG_THRESH: [0.2]
-    UPDATE_PSEUDO_LABEL: [0]
-    UPDATE_PSEUDO_LABEL_INTERVAL: 4
-    INIT_PS: None #/robodata/arthurz/Benchmarks/unsupda/ST3D/output/da-nuscenes-coda_models/pvrcnn_st3d/pvrcnn_st3d/pvrcnn_pretrain_coda_small/ps_label/ps_label_e0.pkl
-
-    PROG_AUG:
-        ENABLED: True
-        UPDATE_AUG: [5, 10, 20, 25]
-        SCALE: 1.1
-
-    MEMORY_ENSEMBLE:
-        ENABLED: False
-        NAME: consistency_ensemble
-        IOU_THRESH: 0.1
-
-        NMS_CONFIG:
-            NMS_TYPE: nms_gpu
-            MULTI_CLASSES_NMS: False
-            NMS_PRE_MAXSIZE: 512
-            NMS_POST_MAXSIZE: 100
-            NMS_THRESH: 0.1
-
-        MEMORY_VOTING:
-            ENABLED: False
-            IGNORE_THRESH: 2
-            RM_THRESH: 3
-

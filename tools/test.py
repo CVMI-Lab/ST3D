@@ -68,7 +68,11 @@ def eval_single_ckpt(model, test_loader, args, eval_output_dir, logger, epoch_id
 
 def get_no_evaluated_ckpt(ckpt_dir, ckpt_record_file, args):
     ckpt_list = glob.glob(os.path.join(ckpt_dir, '*checkpoint_epoch_*.pth'))
-    ckpt_list.sort(key=os.path.getmtime)
+    # ckpt_list.sort(key=os.path.getmtime)
+    # import pdb; pdb.set_trace()
+    #Sort by epoch num
+    ckpt_list = sorted(ckpt_list, key=lambda x:int(re.findall("(\d+)",x)[-1]), reverse=False)
+    # print("ckpt list ", ckpt_list)
     evaluated_ckpt_list = [float(x.strip()) for x in open(ckpt_record_file, 'r').readlines()]
 
     for cur_ckpt in ckpt_list:
@@ -127,6 +131,7 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
         )
 
         if cfg.LOCAL_RANK == 0:
+            print("cur_epoch_id ", cur_epoch_id)
             for key, val in tb_dict.items():
                 tb_log.add_scalar(key, val, cur_epoch_id)
 

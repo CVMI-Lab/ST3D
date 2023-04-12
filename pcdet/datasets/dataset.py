@@ -12,7 +12,7 @@ from ..ops.roiaware_pool3d import roiaware_pool3d_utils
 
 
 class DatasetTemplate(torch_data.Dataset):
-    def __init__(self, dataset_cfg=None, class_names=None, training=True, root_path=None, logger=None):
+    def __init__(self, dataset_cfg=None, class_names=None, training=True, root_path=None, logger=None, ps_label_dir=None):
         super().__init__()
         self.dataset_cfg = dataset_cfg
         self.training = training
@@ -20,6 +20,7 @@ class DatasetTemplate(torch_data.Dataset):
         self.logger = logger
         self.root_path = root_path if root_path is not None else Path(self.dataset_cfg.DATA_PATH)
         self.logger = logger
+        self.ps_label_dir = ps_label_dir
         if self.dataset_cfg is None or class_names is None:
             return
 
@@ -144,11 +145,11 @@ class DatasetTemplate(torch_data.Dataset):
         return fov_gt_mask
 
     def fill_pseudo_labels(self, input_dict):
-        gt_boxes = self_training_utils.load_ps_label(input_dict['frame_id'])
+        gt_boxes = self_training_utils.load_ps_label(input_dict['frame_id'], self.ps_label_dir)
         gt_scores = gt_boxes[:, 8]
         gt_classes = gt_boxes[:, 7]
         gt_boxes = gt_boxes[:, :7]
-
+        
         # only suitable for only one classes, generating gt_names for prepare data
         gt_names = np.array(self.class_names)[np.abs(gt_classes.astype(np.int32)) - 1]
 

@@ -744,6 +744,18 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
                 ret_dict['%s_image/moderate_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 1, 0]
                 ret_dict['%s_image/hard_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 2, 0]
 
+    # ARTHUR average the map between all classes in return for model comparison
+    ret_dict['m3d/map_R40'] = 0
+    ret_dict['mbev/map_R40'] = 0
+    for curcls in current_classes:
+        ret_dict['m3d/map_R40'] += ((ret_dict['%s_3d/easy_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_3d/moderate_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_3d/hard_R40' % class_to_name[curcls]] ))/3
+        ret_dict['mbev/map_R40'] += ((ret_dict['%s_bev/easy_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_bev/moderate_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_bev/hard_R40' % class_to_name[curcls]] ))/3
+    ret_dict['m3d/map_R40'] /= len(current_classes)
+    ret_dict['mbev/map_R40'] /= len(current_classes)
     return result, ret_dict
 
 
