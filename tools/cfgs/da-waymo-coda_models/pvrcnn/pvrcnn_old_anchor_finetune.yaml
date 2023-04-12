@@ -1,11 +1,10 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_kitti_dataset.yaml
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
-    SHIFT_COOR: [0.0, 0.0, 1.8]
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    BALANCED_RESAMPLING: True
+    FOV_POINTS_ONLY: False
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
@@ -47,7 +46,7 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'car',
+                'class_name': 'Car',
                 'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [0],
@@ -57,20 +56,20 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'class_name': 'Pedestrian',
+                'anchor_sizes': [[0.91, 0.86, 1.73]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             },
             {
-                'class_name': bicycle,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'class_name': 'Cyclist',
+                'anchor_sizes': [[1.78, 0.84, 1.78]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
                 'matched_threshold': 0.5,

@@ -115,9 +115,9 @@ MODEL:
                 # 'pos_cls_weight': 1.0,
                 # 'neg_cls_weight': 2.0,
                 'cls_weight': 1.0,
-                'loc_weight': 0.25,
+                'loc_weight': 2.0,
                 'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
 
     PFE:

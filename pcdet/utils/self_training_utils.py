@@ -11,9 +11,11 @@ import pickle as pkl
 import re
 from pcdet.models.model_utils.dsnorm import set_ds_target
 
+from multiprocessing import Manager
+# from multiprocessing.managers import SyncManager
 
-PSEUDO_LABELS = {}
-NEW_PSEUDO_LABELS = {}
+PSEUDO_LABELS = {} # Manager().dict()
+NEW_PSEUDO_LABELS = {} # Manager().dict()
 
 
 def check_already_exsit_pseudo_label(ps_label_dir, start_epoch):
@@ -30,6 +32,8 @@ def check_already_exsit_pseudo_label(ps_label_dir, start_epoch):
     Returns:
 
     """
+    global PSEUDO_LABELS
+
     # support init ps_label given by cfg
     if start_epoch == 0 and cfg.SELF_TRAIN.get('INIT_PS', None):
         if os.path.exists(cfg.SELF_TRAIN.INIT_PS):
@@ -57,7 +61,7 @@ def check_already_exsit_pseudo_label(ps_label_dir, start_epoch):
             latest_ps_label = pkl.load(open(cur_pkl, 'rb'))
             PSEUDO_LABELS.update(latest_ps_label)
             return cur_pkl
-
+    assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
     return None
 
 
@@ -73,6 +77,7 @@ def save_pseudo_label_epoch(model, val_loader, rank, leave_pbar, ps_label_dir, c
         ps_label_dir: dir to save pseudo label
         cur_epoch
     """
+    # assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
     val_dataloader_iter = iter(val_loader)
     total_it_each_epoch = len(val_loader)
 
@@ -124,9 +129,13 @@ def save_pseudo_label_epoch(model, val_loader, rank, leave_pbar, ps_label_dir, c
         pbar.close()
 
     gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch)
+    assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
 
 
 def gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch):
+    global PSEUDO_LABELS
+    global NEW_PSEUDO_LABELS
+    # assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
     commu_utils.synchronize()
 
     if dist.is_initialized():
@@ -149,6 +158,8 @@ def gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch):
     PSEUDO_LABELS.update(NEW_PSEUDO_LABELS)
     NEW_PSEUDO_LABELS.clear()
 
+    assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
+
 
 def save_pseudo_label_batch(input_dict,
                             pred_dicts=None,
@@ -165,6 +176,9 @@ def save_pseudo_label_batch(input_dict,
         need_update: Bool.
             If set to true, use consistency matching to update pseudo label
     """
+    global PSEUDO_LABELS
+    global NEW_PSEUDO_LABELS
+    # assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
     pos_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
     ign_ps_nmeter = common_utils.NAverageMeter(len(cfg.CLASS_NAMES))
 
@@ -227,18 +241,34 @@ def save_pseudo_label_batch(input_dict,
             pos_ps_nmeter.update(num_total_boxes - ign_ps_nmeter.meters[i].val, index=i)
 
         NEW_PSEUDO_LABELS[input_dict['frame_id'][b_idx]] = gt_infos
-
+    # assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
     return pos_ps_nmeter, ign_ps_nmeter
 
 
-def load_ps_label(frame_id):
+def load_ps_label(frame_id, ps_label_dir=None):
     """
     :param frame_id: file name of pseudo label
     :return gt_box: loaded gt boxes (N, 9) [x, y, z, w, l, h, ry, label, scores]
     """
+    global PSEUDO_LABELS
+    commu_utils.synchronize()
+    # assert len(PSEUDO_LABELS)>0, "PSEUDO_LABEL LNGTH is ZERO"
+    # global PSEUDO_LABELS
+    if frame_id not in PSEUDO_LABELS:
+        ps_label_list = glob.glob(os.path.join(ps_label_dir, 'ps_label_e*.pkl'))
+        if len(ps_label_list) > 0:
+            ps_label_list.sort(key=os.path.getmtime, reverse=True)
+            cur_pkl = ps_label_list[-1]
+            # load pseudo label and return
+            latest_ps_label = pkl.load(open(cur_pkl, 'rb'))
+            PSEUDO_LABELS.update(latest_ps_label)
+        else:
+            print("Could not find ps labels pkls to load")
+    
     if frame_id in PSEUDO_LABELS:
         gt_box = PSEUDO_LABELS[frame_id]['gt_boxes']
     else:
+        # Update pseudo label from saved pseudo labels
         raise ValueError('Cannot find pseudo label for frame: %s' % frame_id)
 
     return gt_box

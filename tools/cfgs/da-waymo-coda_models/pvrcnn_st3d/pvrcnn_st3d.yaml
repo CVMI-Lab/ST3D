@@ -1,16 +1,15 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Bicycle']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
-    SHIFT_COOR: [0.0, 0.0, 1.8]
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    PROCESSED_DATA_TAG: 'waymo_processed_data'
+    INFO_WITH_FAKELIDAR: False
 
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
+    USE_PSEUDO_LABEL: True
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 0.8]
 
@@ -47,7 +46,7 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'car',
+                'class_name': 'Vehicle',
                 'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [0],
@@ -57,20 +56,20 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
+                'class_name': 'Pedestrian',
+                'anchor_sizes': [[0.91, 0.86, 1.73]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
+                'matched_threshold': 0.5,
+                'unmatched_threshold': 0.35
             },
             {
-                'class_name': bicycle,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
+                'class_name': 'Cyclist',
+                'anchor_sizes': [[1.78, 0.84, 1.78]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
                 'matched_threshold': 0.5,
@@ -199,7 +198,7 @@ MODEL:
 
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
-        SCORE_THRESH: 0.1
+        SCORE_THRESH: 0.2
         OUTPUT_RAW_SCORE: False
 
         EVAL_METRIC: kitti
@@ -210,13 +209,18 @@ MODEL:
             NMS_THRESH: 0.1
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
+            SCORE_TYPE: hybrid_iou_cls
+            SCORE_WEIGHTS: {
+                iou: 0.5,
+                cls: 0.5
+            }
 
 
 OPTIMIZATION:
-    NUM_EPOCHS: 50
+    NUM_EPOCHS: 30
     BATCH_SIZE_PER_GPU: 4
     OPTIMIZER: adam_onecycle
-    LR: 0.01
+    LR: 0.0015
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 
@@ -227,7 +231,49 @@ OPTIMIZATION:
     LR_DECAY: 0.1
     LR_CLIP: 0.0000001
 
+    EP_PER_CYCLE: 4
+
     LR_WARMUP: False
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
+
+SELF_TRAIN:
+    SRC:
+        USE_DATA: True
+        USE_GRAD: True
+        LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
+    TAR:
+        USE_DATA: True
+        LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
+
+    SCORE_THRESH: [0.6, 0.55, 0.55]
+    NEG_THRESH: [0.25, 0.2, 0.2]
+    UPDATE_PSEUDO_LABEL: [0]
+    UPDATE_PSEUDO_LABEL_INTERVAL: 4
+    INIT_PS: None
+    DSNORM: True
+    
+    PROG_AUG:
+        ENABLED: True
+        UPDATE_AUG: [0, 5, 10, 20, 25]
+        SCALE: 1.05
+
+    MEMORY_ENSEMBLE:
+        ENABLED: False
+        NAME: consistency_ensemble
+        IOU_THRESH: 0.1
+
+        NMS_CONFIG:
+            NMS_TYPE: nms_gpu
+            MULTI_CLASSES_NMS: False
+            NMS_PRE_MAXSIZE: 512
+            NMS_POST_MAXSIZE: 100
+            NMS_THRESH: 0.1
+
+        MEMORY_VOTING:
+            ENABLED: False
+            IGNORE_THRESH: 2
+            RM_THRESH: 3
