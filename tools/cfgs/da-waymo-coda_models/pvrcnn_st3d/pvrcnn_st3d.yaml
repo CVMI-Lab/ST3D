@@ -249,8 +249,8 @@ SELF_TRAIN:
         LOSS_WEIGHT: 1.0
         SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
 
-    SCORE_THRESH: [0.6, 0.55, 0.55]
-    NEG_THRESH: [0.25, 0.2, 0.2]
+    SCORE_THRESH: [0.4, 0.3, 0.3]
+    NEG_THRESH: [0.2, 0.1, 0.1]
     UPDATE_PSEUDO_LABEL: [0]
     UPDATE_PSEUDO_LABEL_INTERVAL: 4
     INIT_PS: None
@@ -262,7 +262,7 @@ SELF_TRAIN:
         SCALE: 1.05
 
     MEMORY_ENSEMBLE:
-        ENABLED: False
+        ENABLED: True
         NAME: consistency_ensemble
         IOU_THRESH: 0.1
 
@@ -274,6 +274,6 @@ SELF_TRAIN:
             NMS_THRESH: 0.1
 
         MEMORY_VOTING:
-            ENABLED: False
+            ENABLED: True
             IGNORE_THRESH: 2
             RM_THRESH: 3

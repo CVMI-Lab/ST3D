@@ -261,26 +261,29 @@ OPTIMIZATION:
 
 SELF_TRAIN:
     SRC:
-        USE_DATA: False
-        USE_GRAD: False
+        USE_DATA: True
+        USE_GRAD: True
         LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [0.0,1.0,1.0]
     TAR:
         USE_DATA: True
         LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
 
-    SCORE_THRESH: [0.2, 0.5, 0.2]
-    NEG_THRESH: [0.2, 0.5, 0.2]
+    SCORE_THRESH: [0.4, 0.3, 0.3]
+    NEG_THRESH: [0.2, 0.1, 0.1]
     UPDATE_PSEUDO_LABEL: [0]
     UPDATE_PSEUDO_LABEL_INTERVAL: 4
     INIT_PS: None
+    DSNORM: True
 
     PROG_AUG:
         ENABLED: True
-        UPDATE_AUG: [5, 10, 20, 25]
-        SCALE: 1.1
+        UPDATE_AUG: [0, 5, 10, 20, 25]
+        SCALE: 1.05
 
     MEMORY_ENSEMBLE:
-        ENABLED: False
+        ENABLED: True
         NAME: consistency_ensemble
         IOU_THRESH: 0.1
 
@@ -292,7 +295,7 @@ SELF_TRAIN:
             NMS_THRESH: 0.1
 
         MEMORY_VOTING:
-            ENABLED: False
+            ENABLED: True
             IGNORE_THRESH: 2
             RM_THRESH: 3
 
