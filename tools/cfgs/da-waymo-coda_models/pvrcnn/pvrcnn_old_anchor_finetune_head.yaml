@@ -1,16 +1,17 @@
-CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
-    PROCESSED_DATA_TAG: 'waymo_processed_data'
-    INFO_WITH_FAKELIDAR: False
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    BALANCED_RESAMPLING: True
+    FOV_POINTS_ONLY: False
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
-# DATA_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
-#     TARGET: True
-#     FOV_POINTS_ONLY: False
-#     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-#     SHIFT_COOR: [0.0, 0.0, 0.8]
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
@@ -45,7 +46,7 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'Vehicle',
+                'class_name': 'Car',
                 'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [0],
@@ -209,12 +210,14 @@ MODEL:
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
+FINETUNE:
+    STAGE: head
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 2
+    NUM_EPOCHS: 25
+    BATCH_SIZE_PER_GPU: 24
     OPTIMIZER: adam_onecycle
-    LR: 0.01
+    LR: 0.005
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 
