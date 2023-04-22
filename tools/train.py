@@ -134,7 +134,6 @@ def main():
         model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
     elif cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
         model = DSNorm.convert_dsnorm(model)
-
     model.cuda()
 
     optimizer = build_optimizer(model, cfg.OPTIMIZATION)
@@ -156,11 +155,25 @@ def main():
             )
             last_epoch = start_epoch + 1
 
+    # Freeze model weights for non-head parameters
+    if cfg.get('FINETUNE', None) and cfg.get('FINETUNE', None)['STAGE']=='head':
+        print("Freezing model backbone weights...")
+        head_layers = ['point_head', 'roi_head', 'dense_head']
+        for name, param in model.named_parameters():
+            name_parent = name.split('.')[0]
+            if name_parent not in head_layers:
+                param.requires_grad = False
+            else:
+                param.requires_grad = True
+
+        for name, param in model.named_parameters():
+            print("Name %s requires grad %s" % (name, param.requires_grad))
+    
     model.train()  # before wrap to DistributedDataParallel to support fixed some parameters
     if dist_train:
         model = nn.parallel.DistributedDataParallel(model, device_ids=[cfg.LOCAL_RANK % torch.cuda.device_count()])
     logger.info(model)
-
+    
     if cfg.get('SELF_TRAIN', None):
         total_iters_each_epoch = len(target_loader) if not args.merge_all_iters_to_one_epoch \
                                             else len(target_loader) // args.epochs

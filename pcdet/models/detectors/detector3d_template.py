@@ -345,13 +345,23 @@ class Detector3DTemplate(nn.Module):
                 update_model_state[key] = val
                 # logger.info('Update weight %s: %s' % (key, str(val.shape)))
 
+       
         if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
             self.load_state_dict(spconv_matched_state)
         elif strict:
             self.load_state_dict(update_model_state)
         else:
             state_dict.update(update_model_state)
-            self.load_state_dict(state_dict)
+            # Randomly initialize model weights for head
+            if cfg.get('FINETUNE', None):
+                state_keys = list(state_dict.keys())
+                remove_layers = ['point_head', 'roi_head', 'dense_head']
+                print("Randomly initializing weights for head layers...")
+                for model_key in state_keys:
+                    parent_key = model_key.split('.')[0]
+                    if parent_key in remove_layers:
+                        state_dict.pop(model_key, None)
+            self.load_state_dict(state_dict, strict=False)
         return state_dict, update_model_state
 
     def load_params_from_file(self, filename, logger, to_cpu=False):
@@ -385,7 +395,7 @@ class Detector3DTemplate(nn.Module):
         epoch = checkpoint.get('epoch', -1)
         it = checkpoint.get('it', 0.0)
 
-        self._load_state_dict(checkpoint['model_state'], strict=True)
+        self._load_state_dict(checkpoint['model_state'], strict=False)
 
         if optimizer is not None:
             if 'optimizer_state' in checkpoint and checkpoint['optimizer_state'] is not None:
