@@ -56,7 +56,7 @@ def build_scheduler(optimizer, total_iters_each_epoch, total_epochs, last_epoch,
 
         if optim_cfg.LR_WARMUP:
             lr_warmup_scheduler = CosineWarmupLR(
-                optimizer, T_max=optim_cfg.WARMUP_EPOCH * len(total_iters_each_epoch),
+                optimizer, T_max=optim_cfg.WARMUP_EPOCH * total_iters_each_epoch,
                 eta_min=optim_cfg.LR / optim_cfg.DIV_FACTOR
             )
 
