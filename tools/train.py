@@ -26,7 +26,7 @@ def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default=None, help='specify the config for training')
 
-    parser.add_argument('--batch_size', type=int, default=16, required=False, help='batch size for training')
+    parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=None, required=False, help='number of epochs to train for')
     parser.add_argument('--workers', type=int, default=4, help='number of workers for dataloader')
     parser.add_argument('--extra_tag', type=str, default='default', help='extra tag for this experiment')
@@ -69,11 +69,11 @@ def main():
         # Modify cfg parameters from search
         if learning_rate!=None:
             cfg.OPTIMIZATION.LR = learning_rate
-            args.extra_tag += "LR%0.6f" % learning_rate 
+        args.extra_tag += "LR%0.6f" % cfg.OPTIMIZATION.LR 
 
         if optimizer!=None:
             cfg.OPTIMIZATION.OPTIMIZER = optimizer
-            args.extra_tag += "OPT%s" % optimizer
+        args.extra_tag += "OPT%s" % cfg.OPTIMIZATION.OPTIMIZER
 
         if args.launcher == 'none':
             dist_train = False
@@ -84,12 +84,14 @@ def main():
                     args.tcp_port, args.local_rank, backend='nccl'
                 )
             else:
-                total_gpus = 4
+                total_gpus = torch.cuda.device_count()
 
         dist_train = True
         if args.batch_size is None:
             args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
         else:
+            print("Batch size ", args.batch_size)
+            print("total gpus ", total_gpus)
             assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
             args.batch_size = args.batch_size // total_gpus
 
@@ -204,10 +206,6 @@ def main():
         # select proper trainer
         train_func = train_model_st if cfg.get('SELF_TRAIN', None) else train_model
 
-        use_wandb = False
-        if cfg.get('FINETUNE', None) and cfg.get('FINETUNE', None)['WANDB']:
-            use_wandb = cfg.get('FINETUNE', None)['WANDB']
-
         # -----------------------start training---------------------------
         logger.info('**********************Start training %s/%s(%s)**********************'
                     % (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
@@ -234,7 +232,7 @@ def main():
             merge_all_iters_to_one_epoch=args.merge_all_iters_to_one_epoch,
             logger=logger,
             ema_model=None,
-            log_wandb=use_wandb
+            ft_cfg=cfg.get('FINETUNE', None)
         )
 
         logger.info('**********************End training %s/%s(%s)**********************\n\n\n'
@@ -269,19 +267,37 @@ def main():
         repeat_eval_ckpt(
             model.module if dist_train else model,
             test_loader, args, eval_output_dir, logger, ckpt_dir,
-            dist_test=dist_train, use_wandb=use_wandb
+            dist_test=dist_train, ft_cfg=cfg.get('FINETUNE', None)
         )
+        wandb.finish()
         logger.info('**********************End evaluation %s/%s(%s)**********************' %
                     (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
 
-    lr_search = [1e-2, 1e-3, 1e-4, 1e-5]
-    opt_search = ["adam_onecycle", "adam", "sgd"]
-    init_launch = True
+    # Initialize with finetune or train from scratch
+    args, cfg = parse_config()
+    if cfg.get('FINETUNE', None) and cfg.get('FINETUNE', None)['STAGE']!='scratch':
+        head_stage = cfg.get('FINETUNE', None)['STAGE']=='head'
+        full_stage = cfg.get('FINETUNE', None)['STAGE']=='full'
+        headfull_stage = cfg.get('FINETUNE', None)['STAGE']=='headfull'
 
-    for lr in lr_search:
-        for opt in opt_search:    
-            train_loop(init_launch, lr, opt)
-            init_launch = False
+        if head_stage:
+            lr_search = [1e-2, 1e-3]
+            opt_search = ["adam_onecycle", "adam", "sgd"]
+        elif full_stage: 
+            lr_search = [1e-2, 1e-3, 1e-4]
+            opt_search = ["adam_onecycle", "adam", "sgd"]
+        elif headfull_stage:
+            lr_search = [1e-2, 1e-3, 1e-4]
+            opt_search = ["adam_onecycle"]
+        init_launch = True
+
+        for lr in lr_search:
+            for opt in opt_search:
+                train_loop(init_launch, lr, opt)
+                init_launch = False
+    else:
+        init_launch = True
+        train_loop()
 
 if __name__ == '__main__':
     main()

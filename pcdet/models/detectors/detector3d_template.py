@@ -353,7 +353,7 @@ class Detector3DTemplate(nn.Module):
         else:
             state_dict.update(update_model_state)
             # Randomly initialize model weights for head
-            if cfg.get('FINETUNE', None):
+            if cfg.get('FINETUNE', None) and cfg.get('FINETUNE')['STAGE']=='head':
                 state_keys = list(state_dict.keys())
                 remove_layers = ['point_head', 'roi_head', 'dense_head']
                 print("Randomly initializing weights for head layers...")

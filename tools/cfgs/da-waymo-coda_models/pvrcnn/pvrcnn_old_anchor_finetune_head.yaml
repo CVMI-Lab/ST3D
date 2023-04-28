@@ -213,10 +213,11 @@ MODEL:
 FINETUNE:
     STAGE: head
     WANDB: True
+    WANDB_NAME: waymo-codasmall-finetune-head
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 36
+    BATCH_SIZE_PER_GPU: 20 #46GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
