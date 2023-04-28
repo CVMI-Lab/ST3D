@@ -1,10 +1,17 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    SHIFT_COOR: [0.0, 0.0, 0.8]
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
@@ -40,13 +47,13 @@ MODEL:
         ANCHOR_GENERATOR_CONFIG: [
             {
                 'class_name': 'Car',
-                'anchor_sizes': [[3.9, 1.6, 1.56]],
+                'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.78],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.45
+                'matched_threshold': 0.55,
+                'unmatched_threshold': 0.4
             },
             {
                 'class_name': Pedestrian,
@@ -169,7 +176,7 @@ MODEL:
             FG_RATIO: 0.5
 
             SAMPLE_ROI_BY_EACH_CLASS: True
-            CLS_SCORE_TYPE: roi_iou
+            CLS_SCORE_TYPE: raw_roi_iou
 
             CLS_FG_THRESH: 0.75
             CLS_BG_THRESH: 0.25
@@ -204,13 +211,13 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: full
     WANDB: True
-    WANDB_NAME: coda-small-oracle
+    WANDB_NAME: nuscenes-codasmall-finetune-full
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 12 # 44gb
+    BATCH_SIZE_PER_GPU: 12 #46GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
@@ -219,11 +226,11 @@ OPTIMIZATION:
     MOMS: [0.95, 0.85]
     PCT_START: 0.4
     DIV_FACTOR: 10
-    DECAY_STEP_LIST: [35, 45]
+    DECAY_STEP_LIST: [15, 20]
     LR_DECAY: 0.1
     LR_CLIP: 0.0000001
 
-    LR_WARMUP: False
+    LR_WARMUP: True
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
