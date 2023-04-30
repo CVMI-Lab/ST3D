@@ -120,7 +120,7 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
     )
 
     if ft_cfg is not None:
-        classes = ['Pedestrian', 'Cyclist', 'Car']
+        classes = class_names
         wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
         for c in classes:
             wandb_keys.append('%s_3d/easy_R40'     % c)
