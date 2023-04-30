@@ -18,3 +18,4 @@ launcher_train*
 launcher_test*
 test_st3d_model*
 *.sif
+**wandb/
