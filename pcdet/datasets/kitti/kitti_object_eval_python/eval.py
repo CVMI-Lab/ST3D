@@ -653,6 +653,7 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
         4: 'Person_sitting',
         5: 'Truck'
     }
+
     name_to_class = {v: n for n, v in class_to_name.items()}
     if not isinstance(current_classes, (list, tuple)):
         current_classes = [current_classes]
@@ -672,6 +673,7 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
             if anno['alpha'][0] != -10:
                 compute_aos = True
             break
+
     mAPbbox, mAPbev, mAP3d, mAPaos, mAPbbox_R40, mAPbev_R40, mAP3d_R40, mAPaos_R40 = do_eval(
         gt_annos, dt_annos, current_classes, min_overlaps, compute_aos, PR_detail_dict=PR_detail_dict)
 
