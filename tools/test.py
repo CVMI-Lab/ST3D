@@ -17,11 +17,13 @@ from pcdet.config import cfg, cfg_from_list, cfg_from_yaml_file, log_config_to_f
 from eval_utils import eval_utils
 from pcdet.models.model_utils.dsnorm import DSNorm
 
+import wandb
+
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default=None, help='specify the config for training')
 
-    parser.add_argument('--batch_size', type=int, default=16, required=False, help='batch size for training')
+    parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=80, required=False, help='Number of epochs to train for')
     parser.add_argument('--workers', type=int, default=4, help='number of workers for dataloader')
     parser.add_argument('--extra_tag', type=str, default='default', help='extra tag for this experiment')
@@ -153,6 +155,7 @@ def main():
     if args.batch_size is None:
         args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
     else:
+        print("batch size ", args.batch_size)
         assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
         args.batch_size = args.batch_size // total_gpus
 
@@ -212,8 +215,27 @@ def main():
 
     with torch.no_grad():
         if args.eval_all:
+            ft_cfg=cfg.get('FINETUNE', None)
+            if ft_cfg is not None:
+                # start a new wandb run to track this script
+                wandb_name = "lr%0.6f_opt%s_rank%i_eval_all" % (cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, cfg.LOCAL_RANK)
+                wandb.init(
+                    # set the wandb project where this run will be logged
+                    project=ft_cfg.WANDB_NAME,
+                    
+                    # track hyperparameters and run metadata
+                    config={
+                        "learning_rate": cfg.OPTIMIZATION.LR,
+                        "optimizer": cfg.OPTIMIZATION.OPTIMIZER,
+                        "architecture": "PVRCNN",
+                        "dataset": "CODa_dino",
+                        "epochs": 50,
+                        "name": wandb_name
+                    },
+                    name=wandb_name
+                )            
             repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger,
-                             ckpt_dir, dist_test=dist_test)
+                             ckpt_dir, dist_test=dist_test, ft_cfg=ft_cfg)
         else:
             eval_single_ckpt(model, test_loader, args, eval_output_dir, logger,
                              epoch_id, dist_test=dist_test)

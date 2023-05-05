@@ -1,5 +1,6 @@
 DATASET: 'CODataset'
-DATA_PATH: '../data/coda_dino_full'
+# DATA_PATH: '../data/coda_dino_full' # User this for dino pseudo gt
+DATA_PATH: '../data/coda_ped_gt' # Use this for ground truth gt
 
 POINT_CLOUD_RANGE: [0.0, -10.0, -2, 10.0, 10.0, 4]
 

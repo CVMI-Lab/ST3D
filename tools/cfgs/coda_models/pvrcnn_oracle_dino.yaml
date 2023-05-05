@@ -6,14 +6,14 @@ DATA_CONFIG:
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
 
-# DATA_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/coda_dino_dataset.yaml
 
-#     POINT_CLOUD_RANGE: [-25.6, -25.6, -2, 25.6, 25.6, 8]
-#     TARGET: True
-#     FOV_POINTS_ONLY: False
-#     CLASS_NAMES: ['Pedestrian']
-#     SHIFT_COOR: [0.0, 0.0, 0.8]
+    POINT_CLOUD_RANGE: [0.0, -10.0, -2, 10.0, 10.0, 4]
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Pedestrian']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
