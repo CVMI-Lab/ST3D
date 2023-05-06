@@ -750,17 +750,14 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
     ret_dict['m3d/map_R40'] = 0
     ret_dict['mbev/map_R40'] = 0
     for curcls in current_classes:
-
-        print("3d easy ", ret_dict['%s_3d/easy_R40' % class_to_name[curcls]])
-        print("3d moderate ", ret_dict['%s_3d/moderate_R40' % class_to_name[curcls]])
-        print("3d hard ", ret_dict['%s_3d/hard_R40' % class_to_name[curcls]])
         ret_dict['m3d/map_R40'] += ((ret_dict['%s_3d/easy_R40' % class_to_name[curcls]] ) + 
             (ret_dict['%s_3d/moderate_R40' % class_to_name[curcls]] ) + 
             (ret_dict['%s_3d/hard_R40' % class_to_name[curcls]] ))/3
         ret_dict['mbev/map_R40'] += ((ret_dict['%s_bev/easy_R40' % class_to_name[curcls]] ) + 
             (ret_dict['%s_bev/moderate_R40' % class_to_name[curcls]] ) + 
             (ret_dict['%s_bev/hard_R40' % class_to_name[curcls]] ))/3
-    print("current classes len ", len(current_classes))
+    print("current class ", current_classes)
+    print("ret dict is ", ret_dict)
     ret_dict['m3d/map_R40'] /= len(current_classes)
     ret_dict['mbev/map_R40'] /= len(current_classes)
     return result, ret_dict
