@@ -72,6 +72,7 @@ def train_model(model, optimizer, train_loader, target_loader, model_func, lr_sc
     if ft_cfg is not None:
         # start a new wandb run to track this script
         wandb_name = "lr%0.6f_opt%s_rank%i" % (optim_cfg.LR, optim_cfg.OPTIMIZER, rank)
+        model_architecture_name = ft_cfg.ARCH if 'ARCH' in ft_cfg else "PVRCNN"
         wandb.init(
             # set the wandb project where this run will be logged
             project=ft_cfg.WANDB_NAME,
@@ -80,7 +81,7 @@ def train_model(model, optimizer, train_loader, target_loader, model_func, lr_sc
             config={
                 "learning_rate": optim_cfg.LR,
                 "optimizer": optim_cfg.OPTIMIZER,
-                "architecture": "PVRCNN",
+                "architecture": model_architecture_name,
                 "dataset": "CODa",
                 "epochs": 25,
                 "name": wandb_name
