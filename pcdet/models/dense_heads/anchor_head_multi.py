@@ -65,7 +65,7 @@ class SingleHead(BaseBEVBackbone):
                 code_size_cnt += reg_channel
                 self.conv_box[f'conv_{reg_name}'] = nn.Sequential(*cur_conv_list)
                 self.conv_box_names.append(f'conv_{reg_name}')
-
+            
             for m in self.conv_box.modules():
                 if isinstance(m, nn.Conv2d):
                     nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -294,7 +294,8 @@ class AnchorHeadMulti(AnchorHeadTemplate):
             cls_loss = cls_loss * loss_weights['cls_weight']
             cls_losses += cls_loss
             start_idx += cls_pred.shape[1]
-        assert start_idx == one_hot_targets.shape[1]
+
+        assert start_idx == one_hot_targets.shape[1], "Start idx %i and one hots target is %i" % (start_idx, one_hot_targets.shape[1])
         tb_dict = {
             'rpn_loss_cls': cls_losses.item()
         }

@@ -119,9 +119,10 @@ FINETUNE:
     STAGE: scratch
     WANDB: True
     WANDB_NAME: waymo-centerpoint
+    ARCH: CenterPoint
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
+    NUM_EPOCHS: 50
     BATCH_SIZE_PER_GPU: 1
 
     OPTIMIZER: adam_onecycle
