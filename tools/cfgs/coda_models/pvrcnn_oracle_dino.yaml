@@ -1,10 +1,19 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+CLASS_NAMES: ['Pedestrian']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/coda_dino_dataset.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/coda_dino_dataset.yaml
+
+    POINT_CLOUD_RANGE: [0.0, -10.0, -2, 10.0, 10.0, 4]
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Pedestrian']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
@@ -39,16 +48,6 @@ MODEL:
 
         ANCHOR_GENERATOR_CONFIG: [
             {
-                'class_name': 'Car',
-                'anchor_sizes': [[3.9, 1.6, 1.56]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.78],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.45
-            },
-            {
                 'class_name': Pedestrian,
                 'anchor_sizes': [[0.73, 0.67, 1.77]],
                 'anchor_rotations': [0, 1.57],
@@ -57,16 +56,6 @@ MODEL:
                 'feature_map_stride': 8,
                 'matched_threshold': 0.6,
                 'unmatched_threshold': 0.4
-            },
-            {
-                'class_name': Cyclist,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.5,
-                'unmatched_threshold': 0.35
             }
         ]
 
@@ -206,11 +195,11 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: coda-small-oracle
+    WANDB_NAME: coda-dino-pseudolabels
 
 OPTIMIZATION:
-    NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 12 # 44gb
+    NUM_EPOCHS: 150
+    BATCH_SIZE_PER_GPU: 10 # 44gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

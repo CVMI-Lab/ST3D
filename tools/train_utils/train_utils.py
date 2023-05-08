@@ -8,7 +8,7 @@ from torch.nn.utils import clip_grad_norm_
 import wandb
 
 def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, accumulated_iter, optim_cfg,
-                    rank, tbar, total_it_each_epoch, dataloader_iter, tb_log=None, leave_pbar=False, log_wandb=False):
+                    rank, tbar, total_it_each_epoch, dataloader_iter, tb_log=None, leave_pbar=False, ft_cfg=None):
     if total_it_each_epoch == len(train_loader):
         dataloader_iter = iter(train_loader)
 
@@ -38,7 +38,7 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         
         loss, tb_dict, disp_dict = model_func(model, batch)
 
-        if log_wandb:
+        if ft_cfg is not None:
             wandb.log({"loss": loss, "lr": cur_lr, "iter": cur_it})
 
         loss.backward()
@@ -68,13 +68,13 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
 def train_model(model, optimizer, train_loader, target_loader, model_func, lr_scheduler, optim_cfg,
                 start_epoch, total_epochs, start_iter, rank, tb_log, ckpt_save_dir, ps_label_dir,
                 source_sampler=None, target_sampler=None, lr_warmup_scheduler=None, ckpt_save_interval=1,
-                max_ckpt_save_num=50, merge_all_iters_to_one_epoch=False, logger=None, ema_model=None, log_wandb=False):
-    if log_wandb:
+                max_ckpt_save_num=50, merge_all_iters_to_one_epoch=False, logger=None, ema_model=None, ft_cfg=None):
+    if ft_cfg is not None:
         # start a new wandb run to track this script
         wandb_name = "lr%0.6f_opt%s_rank%i" % (optim_cfg.LR, optim_cfg.OPTIMIZER, rank)
         wandb.init(
             # set the wandb project where this run will be logged
-            project="waymo-codasmall-finetune-head",
+            project=ft_cfg.WANDB_NAME,
             
             # track hyperparameters and run metadata
             config={
@@ -114,7 +114,7 @@ def train_model(model, optimizer, train_loader, target_loader, model_func, lr_sc
                 leave_pbar=(cur_epoch + 1 == total_epochs),
                 total_it_each_epoch=total_it_each_epoch,
                 dataloader_iter=dataloader_iter,
-                log_wandb=log_wandb
+                ft_cfg=ft_cfg
             )
 
             # save trained model
@@ -132,7 +132,6 @@ def train_model(model, optimizer, train_loader, target_loader, model_func, lr_sc
                 save_checkpoint(
                     checkpoint_state(model, optimizer, trained_epoch, accumulated_iter), filename=ckpt_name,
                 )
-    wandb.finish()
 
 def model_state_to_cpu(model_state):
     model_state_cpu = type(model_state)()  # ordered dict

@@ -542,5 +542,5 @@ if __name__ == '__main__':
             dataset_cfg=dataset_cfg,
             class_names=['Car', 'Pedestrian', 'Cyclist'],
             data_path=ROOT_DIR / 'data' / 'coda',
-            save_path=ROOT_DIR / 'data' / 'coda_2d',
+            save_path=ROOT_DIR / 'data' / 'coda',
         )

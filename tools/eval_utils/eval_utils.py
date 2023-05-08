@@ -22,7 +22,7 @@ def statistics_info(cfg, ret_dict, metric, disp_dict):
 
 
 def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, save_to_file=False, result_dir=None, args=None,
-    use_wandb=False):
+    ft_cfg=None):
     result_dir.mkdir(parents=True, exist_ok=True)
 
     final_output_dir = result_dir / 'final_result' / 'data'
@@ -119,8 +119,15 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         output_path=final_output_dir
     )
 
-    if use_wandb:
-        classes = ['Pedestrian', 'Cyclist', 'Car']
+    if ft_cfg is not None:
+        """
+        Changed to this from 'class_names' because currently kitti eval.py nmaps everything
+        to these classes in class_to_name variable. To add additional classes, modify
+        line 648 in eval.py to include other classes besides these. Note this will simply
+        be the classes used to evaluate your model, it does not affect the classes that the 
+        model is trained to predict.
+        """
+        classes = ['Car', 'Pedestrian', 'Cyclist'] 
         wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
         for c in classes:
             wandb_keys.append('%s_3d/easy_R40'     % c)
