@@ -1,16 +1,16 @@
-CLASS_NAMES: ['car',' 'pedestrian', 'bicycle']
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_coda_dataset.yaml
     MAX_SWEEPS: 1
     PRED_VELOCITY: False
-    BALANCED_RESAMPLING: 
+    BALANCED_RESAMPLING: False
     
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
     # POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
     DATA_PROCESSOR:
-        -  NAME: mask_points_and_boxes_outside_range
+        - NAME: mask_points_and_boxes_outside_range
           REMOVE_OUTSIDE_BOXES: True
 
         - NAME: shuffle_points
@@ -99,13 +99,10 @@ MODEL:
                 'HEAD_CLS_NAME': ['car']
             },
             {
-                'HEAD_CLS_NAME': ['bus']
+                'HEAD_CLS_NAME': ['pedestrian']
             },
             {
                 'HEAD_CLS_NAME': ['bicycle']
-            },
-            {
-                'HEAD_CLS_NAME': ['pedestrian']
             }
         ]
         SEPARATE_REG_CONFIG: 
@@ -159,7 +156,7 @@ FINETUNE:
     ARCH: PointPillars
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 4 #40gb
+    BATCH_SIZE_PER_GPU: 6 #40gb
     NUM_EPOCHS: 50
 
     OPTIMIZER: adam_onecycle
