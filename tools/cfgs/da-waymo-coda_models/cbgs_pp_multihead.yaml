@@ -4,7 +4,6 @@ DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/waymo_dataset.yaml
     PROCESSED_DATA_TAG: 'waymo_processed_data'
     INFO_WITH_FAKELIDAR: False
-    SHIFT_COOR: [0.0, 0.0, 1.8]
 
     #Override voxel size to set it equal in height to z for pointpillarscatter
     DATA_PROCESSOR:
@@ -155,7 +154,7 @@ FINETUNE:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 6
+    BATCH_SIZE_PER_GPU: 6 # 44gb
     NUM_EPOCHS: 50
 
     OPTIMIZER: adam_onecycle
