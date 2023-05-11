@@ -338,7 +338,7 @@ def fused_compute_statistics(overlaps,
         dc_num += dc_nums[i]
 
 
-def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=50):
+def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=1000):
     """fast iou algorithm. this function can be used independently to
     do result analysis. Must be used in CAMERA coordinate system.
     Args:
