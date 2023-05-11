@@ -209,10 +209,15 @@ MODEL:
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
+FINETUNE:
+    STAGE: scratch
+    WANDB: True
+    WANDB_NAME: waymo-pvrcnn
+    ARCH: PVRCNN
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 2
+    NUM_EPOCHS: 50
+    BATCH_SIZE_PER_GPU: 10 # 38GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

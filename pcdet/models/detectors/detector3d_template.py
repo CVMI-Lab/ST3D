@@ -262,6 +262,10 @@ class Detector3DTemplate(nn.Module):
                 final_labels = torch.cat(pred_labels, dim=0)
                 final_boxes = torch.cat(pred_boxes, dim=0)
             else:
+                if isinstance(cls_preds, list):
+                    cls_preds = torch.stack(cls_preds)
+                    cls_preds = cls_preds.reshape(-1, 1)
+
                 cls_preds, label_preds = torch.max(cls_preds, dim=-1)
                 if batch_dict.get('has_class_labels', False):
                     label_key = 'roi_labels' if 'roi_labels' in batch_dict else 'batch_pred_labels'
