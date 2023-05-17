@@ -5,6 +5,7 @@ Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptat
 
 
 ## News
+[2023-05-17] Support Waymo -> Lyft setting.
 [2022-09-26] ST3D++ (The extension of ST3D) has been integrated in this repo for Waymo->KITTI and nuScenes->KITTI.
 
 
@@ -66,6 +67,23 @@ We provide pretrained models here for nuScenes > KITTI task in [models](https://
 
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
 but you should achieve similar performance by training with the default configs.
+
+
+### Waymo -> Lyft TASK
+|                                                                                  |       method | Car@R11 | Car@R40 |                                            download                                            | 
+|----------------------------------------------------------------------------------|-------------:|:-------:|:-------:|:----------------------------------------------------------------------------------------------:|
+| [SECOND-IoU](tools/cfgs/da-waymo-lyft_models/secondiou/secondiou.yaml)           |  Source Only |    -    |  54.34  |                                               -                                                | 
+| [SECOND-IoU](tools/cfgs/da-waymo-lyft_models/secondiou/secondiou_sn.yaml)        |           SN |    -    |  54.34  |                                               -                                                |
+| [SECOND-IoU](tools/cfgs/da-waymo-lyft_models/secondiou_st3d/secondiou_st3d.yaml) |         ST3D |    -    |  59.24  | [model](https://drive.google.com/file/d/1YfOawQUvdVmExQ5H_-xQuFBCFg57dD01/view?usp=share_link) | 
+| [SECOND-IoU](tools/cfgs/da-waymo-lyft_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) |    -    |  57.99  | [model](https://drive.google.com/file/d/1bZQaDeIxcUzk6fyMI7RRykl-eAnpySCp/view?usp=share_link) | 
+| [PVRCNN](tools/cfgs/da-waymo-lyft_models/pvrcnn/pvrcnn.yaml)                     |  Source Only |    -    |  58.53  |                                               -                                                |
+| [PVRCNN](tools/cfgs/da-waymo-lyft_models/pvrcnn/pvrcnn_sn.yaml)                  |           SN |    -    |  56.64  |                                               -                                                |
+| [PVRCNN](tools/cfgs/da-waymo-lyft_models/pvrcnn_st3d/pvrcnn_st3d.yaml)           |         ST3D |    -    |  60.53  | [model](https://drive.google.com/file/d/12hVyBwT3rT3bm6yWsa5xrBim89iPVkev/view?usp=share_link) |
+| [PVRCNN](tools/cfgs/da-waymo-lyft_models/pvrcnn_st3d/pvrcnn_st3d.yaml)           | ST3D (w/ sn) |    -    |  58.54  | [model](https://drive.google.com/file/d/1fYbD_43vGQYaCY767L78-2Znyber5tdf/view?usp=share_link) |
+
+We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
+but you should achieve similar performance by training with the default configs.
+
 
 
 ## Installation
