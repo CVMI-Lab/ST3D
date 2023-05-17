@@ -6,6 +6,7 @@ Code release for the paper **ST3D: Self-training for Unsupervised Domain Adaptat
 
 ## News
 [2023-05-17] Support Waymo -> Lyft setting.
+
 [2022-09-26] ST3D++ (The extension of ST3D) has been integrated in this repo for Waymo->KITTI and nuScenes->KITTI.
 
 
