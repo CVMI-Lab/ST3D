@@ -167,9 +167,9 @@ def init_dist_pytorch(tcp_port, local_rank, backend='nccl'):
     if mp.get_start_method(allow_none=True) is None:
         mp.set_start_method('spawn')
     num_gpus = torch.cuda.device_count()
-
+    from datetime import timedelta
     dist.init_process_group(
-        backend=backend,
+        backend=backend, timeout=timedelta(seconds=216000) # added to help with unequal gpu load
     )
 
     rank = dist.get_rank()
