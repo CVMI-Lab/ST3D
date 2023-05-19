@@ -338,7 +338,7 @@ def fused_compute_statistics(overlaps,
         dc_num += dc_nums[i]
 
 
-def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=1000):
+def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=1500):
     """fast iou algorithm. this function can be used independently to
     do result analysis. Must be used in CAMERA coordinate system.
     Args:
@@ -453,7 +453,7 @@ def eval_class(gt_annos,
                metric,
                min_overlaps,
                compute_aos=False,
-               num_parts=1000):
+               num_parts=1500):
     """Kitti eval. support 2d/bev/3d/aos eval. support 0.5:0.05:0.95 coco AP.
     Args:
         gt_annos: dict, must from get_label_annos() in kitti_common.py
@@ -653,6 +653,10 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
         4: 'Person_sitting',
         5: 'Truck'
     }
+    # Class to name for coda
+    # class_to_name = {}
+    # for cls_idx, cls_name in enumerate(current_classes):
+    #     class_to_name[cls_idx] = cls_name
 
     name_to_class = {v: n for n, v in class_to_name.items()}
     if not isinstance(current_classes, (list, tuple)):
