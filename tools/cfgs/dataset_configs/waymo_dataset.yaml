@@ -11,7 +11,7 @@ DATA_SPLIT: {
 
 SAMPLED_INTERVAL: {
     'train': 5,
-    'test': 5
+    'test': 5 # eval on 20% for memory usage
 }
 
 INFO_WITH_FAKELIDAR: False

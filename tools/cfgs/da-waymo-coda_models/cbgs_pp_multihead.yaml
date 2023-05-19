@@ -154,7 +154,7 @@ FINETUNE:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 6 # 44gb
+    BATCH_SIZE_PER_GPU: 1 # 44gb
     NUM_EPOCHS: 50
 
     OPTIMIZER: adam_onecycle
