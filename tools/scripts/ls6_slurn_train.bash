@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 00:10:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -14,6 +14,10 @@ cd /scratch/09156/arthurz/research/ST3D/tools
 
 export NUM_GPUS=3
 export CUDA_VISIBLE_DEVICES=0,1,2
+export SINGULARITYENV_CUDA_VISIBLE_DEVICES=0,1,2
+
+# For wandb
+export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 
 # singularity exec --nv st3d.sif bash scripts/dist_train.sh 3 --cfg_file cfgs/nuscenes_models/pvrcnn/pvrcnn_oracle.yaml --batch_size 3
 
@@ -36,19 +40,30 @@ export CUDA_VISIBLE_DEVICES=0,1,2
 # export BATCH_SIZE1=24
 
 # For waymo->coda (SN).
-export PORT=29501
-export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_sn.yaml
-export EXTRA_TAG1=pvrcnn_sn_coda
+# export PORT=29501
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_sn.yaml
+# export EXTRA_TAG1=pvrcnn_sn_coda
 # export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_ros_sn/pvrcnn_sn_coda_small/ckpt/checkpoint_epoch_6.pth
-export EPOCH1=50
-export BATCH_SIZE1=12
+# export EPOCH1=50
+# export BATCH_SIZE1=12
 
 # For waymo->coda (SOURCE)
 # export PORT=29503
 # export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor.yaml
-# export EXTRA_TAG1=waymo_da_coda_small
-# export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_coda_pretrain/ckpt/checkpoint_epoch_6.pth
-# export BATCH_SIZE1=24
+# export EXTRA_TAG1=waymo_oracle
+# # export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_coda_pretrain/ckpt/checkpoint_epoch_6.pth
+# export BATCH_SIZE1=12
+# export EPOCH1=30
+
+# Train kitti pp oracle
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-kitti-coda_models/cbgs_pp_multihead.yaml
+export EXTRA_TAG1=kitti_oracle
+
+# Train kitti pvrcnn oracle
+export PORT=29501
+export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
+export EXTRA_TAG2=kitti_oracle
 
 # Uncomment to launch model training
 module load launcher_gpu
