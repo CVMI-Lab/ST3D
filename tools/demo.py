@@ -4,6 +4,7 @@ from pathlib import Path
 import time
 import copy
 import json
+import os
 
 try:
     import open3d
@@ -108,9 +109,9 @@ def main():
     # isfirstrun=True
     with torch.no_grad():
         for idx, data_dict in enumerate(demo_dataset):
-            if idx<311: # visualizing trajectory 7 road side 
+            if idx<591: # visualizing trajectory 7 road side 
                 continue
-            if idx > 350:
+            if idx > 630:
                 break
             logger.info(f'Visualized sample index: \t{idx + 1}')
             data_dict = demo_dataset.collate_batch([data_dict])
@@ -120,6 +121,7 @@ def main():
             # x y z l w h yaw
             pc_filepath = demo_dataset.sample_file_list[idx]
             frame = pc_filepath.split('/')[-1].split('.')[0]
+            traj_idx = int(frame[:2])
             frame_idx = int(frame[2:])
             # Save into json files to preds directory for img visualization
             pred_boxes = pred_dicts[0]['pred_boxes'].cpu().numpy()
@@ -149,7 +151,7 @@ def main():
 
             for box_idx, box in enumerate(pred_boxes):
                 label_idx = pred_labels[box_idx]
-                label_name = class_names[label_idx]
+                label_name = class_names[label_idx-1]
                 obj_dict = copy.deepcopy(obj_dict_template)
                 obj_dict["cX"] = float(box[0])
                 obj_dict["cY"] = float(box[1])
@@ -163,8 +165,12 @@ def main():
                 json_dict["3dbbox"].append(obj_dict)
 
             traj = 7
-            json_filename = "3d_bbox_os1_%i_%i.json" % (traj, frame_idx)
-            json_file = open("preds/%i/%s" % (traj, json_filename), "w+")
+            json_filename = "3d_bbox_os1_%i_%i.json" % (traj_idx, frame_idx)
+            traj_dir = os.path.join("preds", str(traj_idx))
+            if not os.path.exists(traj_dir):
+                os.mkdir(traj_dir)
+            json_path = os.path.join(traj_dir, json_filename)
+            json_file = open(json_path, "w+")
             json_file.write(json.dumps(json_dict, indent=2))
             json_file.close()
 

@@ -127,7 +127,10 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         be the classes used to evaluate your model, it does not affect the classes that the 
         model is trained to predict.
         """
-        classes = ['Car', 'Pedestrian', 'Cyclist'] 
+        # classes = ['Car', 'Pedestrian', 'Cyclist'] 
+        classes = class_names
+        print("classes for wandb ", classes)
+        print("classes in result dict ", result_dict.keys())
         wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
         for c in classes:
             wandb_keys.append('%s_3d/easy_R40'     % c)
