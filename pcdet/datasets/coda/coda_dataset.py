@@ -541,6 +541,8 @@ if __name__ == '__main__':
         create_coda_infos(
             dataset_cfg=dataset_cfg,
             # class_names=['Car', 'Pedestrian', 'Cyclist'],
+            # data_path=ROOT_DIR / 'data' / 'coda128_3class',
+            # save_path=ROOT_DIR / 'data' / 'coda128_3class'
             class_names=[
                 'Car',
                 'Pedestrian',
@@ -593,8 +595,8 @@ if __name__ == '__main__':
                 'Tree',
                 'Other'
             ],
-            data_path=ROOT_DIR / 'data' / 'coda',
-            save_path=ROOT_DIR / 'data' / 'coda',
+            data_path=ROOT_DIR / 'data' / 'coda64_allclass',
+            save_path=ROOT_DIR / 'data' / 'coda64_allclass',
         )
 """
 Full Class List
