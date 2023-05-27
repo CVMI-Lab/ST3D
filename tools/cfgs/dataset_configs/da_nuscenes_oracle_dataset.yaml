@@ -19,21 +19,13 @@ POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 MIN_POINTS_OF_GT: 1
 
 DATA_AUGMENTOR:
-    DISABLE_AUG_LIST: ['placeholder']
+    DISABLE_AUG_LIST: ['random_object_scaling', 'normalize_object_size']
     AUG_CONFIG_LIST:
-        - NAME: gt_sampling
-          DB_INFO_PATH:
-            - nuscenes_dbinfos_10sweeps_withvelo.pkl
-          PREPARE: {
-            filter_by_min_points: ['car:5', 'pedestrian:5', 'bicycle:5'],
-          }
+        - NAME: random_object_scaling
+          SCALE_UNIFORM_NOISE: [0.75, 1.0]
 
-          SAMPLE_GROUPS: ['car:15', 'pedestrian:15', 'bicycle:15']
-
-          NUM_POINT_FEATURES: 5
-          DATABASE_WITH_FAKELIDAR: False
-          REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
-          LIMIT_WHOLE_SCENE: True
+        - NAME: normalize_object_size
+          SIZE_RES: [-0.75, -0.34, -0.2]
 
         - NAME: random_world_flip
           ALONG_AXIS_LIST: ['x', 'y']
@@ -59,7 +51,7 @@ DATA_PROCESSOR:
     - NAME: shuffle_points
       SHUFFLE_ENABLED: {
         'train': True,
-        'test': True
+        'test': False
       }
 
     - NAME: transform_points_to_voxels

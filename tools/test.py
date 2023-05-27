@@ -120,7 +120,7 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
 
         total_time = 0
         first_eval = False
-        model.load_params_from_file(filename=cur_ckpt, logger=logger, to_cpu=dist_test)
+        model.load_params_from_file(filename=cur_ckpt, logger=logger, to_cpu=dist_test, load_head=True)
         model.cuda()
 
         # start evaluation

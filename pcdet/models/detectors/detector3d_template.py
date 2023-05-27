@@ -345,7 +345,7 @@ class Detector3DTemplate(nn.Module):
             gt_iou = box_preds.new_zeros(box_preds.shape[0])
         return recall_dict
 
-    def _load_state_dict(self, model_state_disk, *, strict=True):
+    def _load_state_dict(self, model_state_disk, *, strict=True, load_head=False):
         state_dict = self.state_dict()  # local cache of state_dict
 
         spconv_keys = find_all_spconv_keys(self)
@@ -379,7 +379,7 @@ class Detector3DTemplate(nn.Module):
         else:
             state_dict.update(update_model_state)
             # Randomly initialize model weights for head
-            if cfg.get('FINETUNE', None) and cfg.get('FINETUNE')['STAGE']=='head':
+            if not load_head and cfg.get('FINETUNE', None) and cfg.get('FINETUNE')['STAGE']=='head':
                 state_keys = list(state_dict.keys())
                 remove_layers = ['point_head', 'roi_head', 'dense_head']
                 print("Randomly initializing weights for head layers...")
@@ -390,7 +390,7 @@ class Detector3DTemplate(nn.Module):
             self.load_state_dict(state_dict, strict=False)
         return state_dict, update_model_state
 
-    def load_params_from_file(self, filename, logger, to_cpu=False):
+    def load_params_from_file(self, filename, logger, to_cpu=False, load_head=False):
         if not os.path.isfile(filename):
             raise FileNotFoundError
 
@@ -403,7 +403,7 @@ class Detector3DTemplate(nn.Module):
         if version is not None:
             logger.info('==> Checkpoint trained from version: %s' % version)
 
-        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
+        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False, load_head=load_head)
 
         for key in state_dict:
             if key not in update_model_state:

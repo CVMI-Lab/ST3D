@@ -131,20 +131,28 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         classes = class_names
         print("classes for wandb ", classes)
         print("classes in result dict ", result_dict.keys())
-        wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
-        for c in classes:
-            wandb_keys.append('%s_3d/easy_R40'     % c)
-            wandb_keys.append('%s_3d/moderate_R40' % c)
-            wandb_keys.append('%s_3d/hard_R40'     % c)
-            wandb_keys.append('%s_bev/easy_R40'    % c)
-            wandb_keys.append('%s_bev/moderate_R40'% c)
-            wandb_keys.append('%s_bev/hard_R40'    % c)
+        # wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
+        # for c in classes:
+        #     wandb_keys.append('%s_3d/easy_R40'     % c)
+        #     wandb_keys.append('%s_3d/moderate_R40' % c)
+        #     wandb_keys.append('%s_3d/hard_R40'     % c)
+        #     wandb_keys.append('%s_bev/easy_R40'    % c)
+        #     wandb_keys.append('%s_bev/moderate_R40'% c)
+        #     wandb_keys.append('%s_bev/hard_R40'    % c)
         
-        wandb_dict = {}
-        for widx, wkey in enumerate(wandb_keys):
-            wandb_dict[wkey] = result_dict[wkey]
+        # wandb_dict = {}
+        # for idx, key in enumerate(result_dict)
+        #     wandb_dict[key] = result_dict[wkey]
+
+        # for widx, wkey in enumerate(wandb_keys):
+        #     # if wkey dne, its bc we use vehicle, so add wdb key to car value in result dict
+        #     if wkey not in result_dict and "Vehicle" in wkey:
+        #         print("key ", wkey, " does not exist, using ", wkey.replace("Vehicle", "Car"))
+        #         result_dict[wkey] = result_dict[wkey.replace("Vehicle", "Car")]
+        #         print("new result dict ", result_dict)
+            # wandb_dict[wkey] = result_dict[wkey]
         print("Logging results to wandb...")
-        wandb.log(wandb_dict)
+        wandb.log(result_dict)
 
     logger.info(result_str)
     ret_dict.update(result_dict)
