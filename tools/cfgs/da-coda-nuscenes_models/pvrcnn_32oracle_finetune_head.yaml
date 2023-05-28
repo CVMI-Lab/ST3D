@@ -41,16 +41,16 @@ MODEL:
         ANCHOR_GENERATOR_CONFIG: [
             {
                 'class_name': 'car',
-                'anchor_sizes': [[4.63, 1.97, 1.74]],
+                'anchor_sizes': [[4.2, 2.0, 1.6]],
                 'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.95],
+                'anchor_bottom_heights': [0],
                 'align_center': False,
                 'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.45
+                'matched_threshold': 0.55,
+                'unmatched_threshold': 0.4
             },
             {
-                'class_name': 'pedestrian',
+                'class_name': pedestrian,
                 'anchor_sizes': [[0.73, 0.67, 1.77]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [-0.935],
@@ -60,7 +60,7 @@ MODEL:
                 'unmatched_threshold': 0.4
             },
             {
-                'class_name': 'bicycle',
+                'class_name': bicycle,
                 'anchor_sizes': [[1.70, 0.60, 1.28]],
                 'anchor_rotations': [0, 1.57],
                 'anchor_bottom_heights': [-1.18],
@@ -172,12 +172,12 @@ MODEL:
             SAMPLE_ROI_BY_EACH_CLASS: True
             CLS_SCORE_TYPE: roi_iou
 
-            CLS_FG_THRESH: 0.75
-            CLS_BG_THRESH: 0.25
+            CLS_FG_THRESH: 0.75 # decreased form 0.75 to complement below
+            CLS_BG_THRESH: 0.25 # increased from 0.25 to make easier
             CLS_BG_THRESH_LO: 0.1
             HARD_BG_RATIO: 0.8
 
-            REG_FG_THRESH: 0.55
+            REG_FG_THRESH: 0.55 # Imcreased from 0.55 to make easier
 
         LOSS_CONFIG:
             CLS_LOSS: BinaryCrossEntropy
@@ -211,7 +211,7 @@ FINETUNE:
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 22 # 46gb
+    BATCH_SIZE_PER_GPU: 2 # 46gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

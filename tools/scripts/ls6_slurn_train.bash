@@ -3,8 +3,8 @@
 #SBATCH -o train_st3d_model.%j            # Name of stdout output file (%j expands to jobId)
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
-#SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 00:10:00                        # Run time (hh:mm:ss)
+#SBATCH -n 1                               # Total number of mpi tasks requested
+#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -33,11 +33,29 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 
 # For CODa oracle
 # export PORT=29500
-# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle.yaml
-# export EXTRA_TAG1=pvrcnn_oracle_coda_small_resamp 
-# export CKPT1=../output/coda_models/pvrcnn_oracle/pvrcnn_oracle_coda_small_resamp/ckpt/checkpoint_epoch_10.pth
-# export EPOCH1=80
-# export BATCH_SIZE1=24
+# export CONFIG_FILE1=cfgs/coda_models/cbgs_pp_multihead.yaml
+# export EXTRA_TAG1=coda_md_oracle_3class
+
+# For CODa 128 allclass to nuscenes head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda128-md-nus-finetune-head
+# export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass/coda_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+# export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_13.pth
+
+# For CODa 128 allclass to nuscenes headfull
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headfull.yaml
+# export EXTRA_TAG1=coda128-md-nus-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_12.pth
+
+# # For CODa 32 allclass to nuscenes head
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
+export EXTRA_TAG1=coda32-md-nus-finetune-head
+export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass32/coda32_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/coda32-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_8.pth
+
 
 # For waymo->coda (SN).
 # export PORT=29501
@@ -56,23 +74,33 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EPOCH1=30
 
 # Train kitti pp oracle
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-kitti-coda_models/cbgs_pp_multihead.yaml
-export EXTRA_TAG1=kitti_oracle
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-kitti-coda_models/cbgs_pp_multihead.yaml
+# export EXTRA_TAG1=kitti_oracle
 
 # Train kitti pvrcnn oracle
-export PORT=29501
-export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
-export EXTRA_TAG2=kitti_oracle
+# export PORT=29501
+# export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
+# export EXTRA_TAG2=kitti_oracle
+
+# Launch regular models from scratch
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task3
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task2
+
+#Launch pretrained model
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task4
+
+#Launch model from ckpt
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4
 
 # Uncomment to launch model training
-module load launcher_gpu
-export LAUNCHER_WORKDIR=/scratch/09156/arthurz/research/ST3D/tools
-export LAUNCHER_JOB_FILE=scripts/launcher_train_damodels
+# module load launcher_gpu
+# export LAUNCHER_WORKDIR=/scratch/09156/arthurz/research/ST3D/tools
+# export LAUNCHER_JOB_FILE=scripts/launcher_train_damodels
 
 # Uncomment to launch model training from ckpt
 # module load launcher_gpu
 # export LAUNCHER_WORKDIR=/scratch/09156/arthurz/research/ST3D/tools
 # export LAUNCHER_JOB_FILE=scripts/launcher_train_damodels_ckpt
 
-${LAUNCHER_DIR}/paramrun
+# ${LAUNCHER_DIR}/paramrun

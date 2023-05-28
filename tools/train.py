@@ -281,8 +281,10 @@ def main():
         headfull_stage = cfg.get('FINETUNE', None)['STAGE']=='headfull'
 
         if head_stage:
-            lr_search = [1e-2, 1e-3]
-            opt_search = ["adam_onecycle", "adam", "sgd"]
+            # lr_search = [1e-2, 1e-3]
+            # opt_search = ["adam_onecycle", "adam", "sgd"]
+            lr_search = [1e-2]
+            opt_search = ["adam_onecycle"]
         elif full_stage: 
             lr_search = [1e-2, 1e-3, 1e-4]
             opt_search = ["adam_onecycle", "adam", "sgd"]

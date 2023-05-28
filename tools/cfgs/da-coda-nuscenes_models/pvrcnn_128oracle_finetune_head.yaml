@@ -172,12 +172,12 @@ MODEL:
             SAMPLE_ROI_BY_EACH_CLASS: True
             CLS_SCORE_TYPE: roi_iou
 
-            CLS_FG_THRESH: 0.75
-            CLS_BG_THRESH: 0.25
+            CLS_FG_THRESH: 0.85 # decreased form 0.75 to complement below
+            CLS_BG_THRESH: 0.15 # increased from 0.25 to make easier
             CLS_BG_THRESH_LO: 0.1
             HARD_BG_RATIO: 0.8
 
-            REG_FG_THRESH: 0.55
+            REG_FG_THRESH: 0.15 # Imcreased from 0.55 to make easier
 
         LOSS_CONFIG:
             CLS_LOSS: BinaryCrossEntropy
@@ -211,7 +211,7 @@ FINETUNE:
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 22 # 46gb
+    BATCH_SIZE_PER_GPU: 16 # 46gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
