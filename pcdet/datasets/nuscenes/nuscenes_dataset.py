@@ -95,6 +95,8 @@ class NuScenesDataset(DatasetTemplate):
         info = self.infos[index]
         lidar_path = self.root_path / info['lidar_path']
         points = np.fromfile(str(lidar_path), dtype=np.float32, count=-1).reshape([-1, 5])[:, :4]
+        # ARTHUR Set nan points to 0
+        points[np.isnan(points)] = 0
         points = self.remove_ego_points(points, center_radius=1.5)
         sweep_points_list = [points]
         sweep_times_list = [np.zeros((points.shape[0], 1))]
@@ -171,6 +173,7 @@ class NuScenesDataset(DatasetTemplate):
 
         if self.dataset_cfg.get('SET_NAN_VELOCITY_TO_ZEROS', False) and not self.dataset_cfg.get('USE_PSEUDO_LABEL', None):
             gt_boxes = input_dict['gt_boxes']
+            print("setting nan box to zero")
             gt_boxes[np.isnan(gt_boxes)] = 0
             input_dict['gt_boxes'] = gt_boxes
 
