@@ -1,5 +1,5 @@
 from .detector3d_template import Detector3DTemplate
-
+import torch
 
 class PVRCNN(Detector3DTemplate):
     def __init__(self, model_cfg, num_class, dataset):
@@ -7,6 +7,7 @@ class PVRCNN(Detector3DTemplate):
         self.module_list = self.build_networks()
 
     def forward(self, batch_dict):
+        assert not torch.any(torch.isnan(batch_dict['gt_boxes']))
         for cur_module in self.module_list:
             batch_dict = cur_module(batch_dict)
 
