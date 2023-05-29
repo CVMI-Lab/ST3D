@@ -689,7 +689,7 @@ OPTIMIZATION:
     NUM_EPOCHS: 25
     BATCH_SIZE_PER_GPU: 3 # 36gb
     OPTIMIZER: adam_onecycle
-    LR: 0.01
+    LR: 0.001
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 
