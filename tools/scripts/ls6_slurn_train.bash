@@ -49,13 +49,24 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=coda128-md-nus-finetune-headfull
 # export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_12.pth
 
-# # For CODa 32 allclass to nuscenes head
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
-export EXTRA_TAG1=coda32-md-nus-finetune-head
-export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass32/coda32_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
-export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/coda32-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_8.pth
+# For CODa 32 allclass to nuscenes head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda32-md-nus-finetune-head
+# export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass32/coda32_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+# export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/coda32-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_8.pth
 
+# For Waymo to CODa 128 allclass head
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_allclass_finetune_head.yaml
+export EXTRA_TAG1=waymo-coda-md-allclass-finetune-head
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# For Waymo to CODa 32 allclass head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_allclass32_finetune_head.yaml
+# export EXTRA_TAG1=waymo-coda32-md-allclass-finetune-head
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
 # For waymo->coda (SN).
 # export PORT=29501
@@ -88,10 +99,10 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/cod
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task2
 
 #Launch pretrained model
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task4
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task4
 
 #Launch model from ckpt
-ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4
 
 # Uncomment to launch model training
 # module load launcher_gpu

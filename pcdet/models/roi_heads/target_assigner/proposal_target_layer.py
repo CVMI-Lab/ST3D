@@ -221,8 +221,14 @@ class ProposalTargetLayer(nn.Module):
                 original_gt_assignment = gt_mask.nonzero().view(-1)
 
                 iou3d = iou3d_nms_utils.boxes_iou3d_gpu(cur_roi, cur_gt)  # (M, N)
+                # Add nan filter here
                 cur_max_overlaps, cur_gt_assignment = torch.max(iou3d, dim=1)
                 max_overlaps[roi_mask] = cur_max_overlaps
                 gt_assignment[roi_mask] = original_gt_assignment[cur_gt_assignment]
+
+        # nan_mask = torch.isnan(max_overlaps)
+        # max_overlaps[nan_mask] = 0
+        # nan_mask = torch.isnan(gt_assignment)
+        # gt_assignment[nan_mask] = 0
 
         return max_overlaps, gt_assignment
