@@ -1,0 +1,29 @@
+TACC:  Starting up job 794503 
+TACC:  Starting parallel tasks... 
+Creating dataloader
+done
+Creating dataloader
+done
+Creating dataloader
+done
+Saving pseudolabels
+Saving pseudolabels
+Saving pseudolabels
+dumping psuedolabel results
+> /scratch/09156/arthurz/research/ST3D/pcdet/utils/self_training_utils.py(127)save_pseudo_label_epoch()
+-> gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch)
+(Pdb) dumping psuedolabel results
+> /scratch/09156/arthurz/research/ST3D/pcdet/utils/self_training_utils.py(127)save_pseudo_label_epoch()
+-> gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch)
+(Pdb) 
+dumping psuedolabel results
+> /scratch/09156/arthurz/research/ST3D/pcdet/utils/self_training_utils.py(127)save_pseudo_label_epoch()
+-> gather_and_dump_pseudo_label_result(rank, ps_label_dir, cur_epoch)
+(Pdb) TACC:  MPI job exited with code: 1 
+TACC:  Shutdown complete. Exiting. 
+TACC:  Starting up job 814082 
+TACC:  Starting parallel tasks... 
+Creating dataloader
+Creating dataloader
+TACC:  MPI job exited with code: 1 
+TACC:  Shutdown complete. Exiting. 

@@ -44,17 +44,18 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_13.pth
 
 # For CODa 128 allclass to nuscenes headfull
-# export PORT=29500
-# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headfull.yaml
-# export EXTRA_TAG1=coda128-md-nus-finetune-headfull
-# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_12.pth
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headfull.yaml
+export EXTRA_TAG1=coda128-md-nus-finetune-headfull
+export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head/coda128-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_12.pth
+export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headfull/coda128-md-nus-finetune-headfullLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_16.pth
 
 # # For CODa 32 allclass to nuscenes head
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
-export EXTRA_TAG1=coda32-md-nus-finetune-head
-export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass32/coda32_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
-export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/coda32-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_8.pth
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda32-md-nus-finetune-head
+# export PRETRAINED_MODEL1=../output/coda_models/pvrcnn_oracle_allclass32/coda32_md_allclass_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+# export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head/coda32-md-nus-finetune-headLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_8.pth
 
 
 # For waymo->coda (SN).
