@@ -174,7 +174,6 @@ class NuScenesDataset(DatasetTemplate):
 
         if self.dataset_cfg.get('SET_NAN_VELOCITY_TO_ZEROS', False) and not self.dataset_cfg.get('USE_PSEUDO_LABEL', None):
             gt_boxes = input_dict['gt_boxes']
-            print("setting nan box to zero")
             gt_boxes[np.isnan(gt_boxes)] = 0
             input_dict['gt_boxes'] = gt_boxes
 
