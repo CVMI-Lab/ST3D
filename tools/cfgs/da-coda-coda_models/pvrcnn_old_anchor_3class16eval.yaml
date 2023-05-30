@@ -1,14 +1,14 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_3class.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 128
+    RES: 16
 
 DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda128_oracle_dataset_3class.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
@@ -39,7 +39,6 @@ DATA_CONFIG_TAR3:
     SHIFT_COOR: [0.0, 0.0, 0.8]
     RES: 16
 
-
 MODEL:
     NAME: PVRCNN
 
@@ -48,21 +47,14 @@ MODEL:
 
     BACKBONE_3D:
         NAME: VoxelBackBone8x
+# export EXTRA_TAG1=coda-md-3class-32-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
-    MAP_TO_BEV:
-        NAME: HeightCompression
-        NUM_BEV_FEATURES: 256
+export PORT=29500
+export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class16.yaml
+export EXTRA_TAG1=coda-md-3class-16-finetune-headfull
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
-    BACKBONE_2D:
-        NAME: BaseBEVBackbone
-
-        LAYER_NUMS: [5, 5]
-        LAYER_STRIDES: [1, 2]
-        NUM_FILTERS: [128, 256]
-        UPSAMPLE_STRIDES: [1, 2]
-        NUM_UPSAMPLE_FILTERS: [256, 256]
-
-    DENSE_HEAD:
         NAME: AnchorHeadSingle
         CLASS_AGNOSTIC: False
 
@@ -238,9 +230,9 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: headfull
     WANDB: True
-    WANDB_NAME: coda-md-3class128_64-eval
+    WANDB_NAME: coda-md-3class-16-finetune-headfull
 
 OPTIMIZATION:
     NUM_EPOCHS: 50
