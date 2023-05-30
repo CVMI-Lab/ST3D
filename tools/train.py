@@ -283,20 +283,32 @@ def main():
         if head_stage:
             # lr_search = [1e-2, 1e-3]
             # opt_search = ["adam_onecycle", "adam", "sgd"]
-            lr_search = [1e-3]
+            # finetuning coda->waymo/nus is more sensitive to large grad updates
+            lr_search = [1e-2, 1e-3, 1e-4]
             opt_search = ["adam_onecycle"]
         elif full_stage: 
             lr_search = [1e-2, 1e-3, 1e-4]
-            opt_search = ["adam_onecycle", "adam", "sgd"]
+            opt_search = ["adam_onecycle"]
         elif headfull_stage:
-            lr_search = [1e-2, 1e-3, 1e-4]
+            # lr_search = [1e-2, 1e-3, 1e-4]
+            lr_search = [1e-2, 1e-3, 1e-4] 
             opt_search = ["adam_onecycle"]
         init_launch = True
 
         for lr in lr_search:
+            unstable_lr = False
             for opt in opt_search:
-                train_loop(init_launch, lr, opt)
-                init_launch = False
+                try:
+                    train_loop(init_launch, lr, opt)
+                    init_launch = False
+                except NotImplementedError as e:
+                    unstable_lr = True
+                    print("Learning rate ", lr, " unstable for training, reducing by 10x...")
+
+            if not unstable_lr:
+                print("Completed training with lr ", lr, " cleaning up...")
+                break
+
     else:
         init_launch = True
         train_loop()
