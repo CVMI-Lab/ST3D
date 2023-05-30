@@ -159,29 +159,32 @@ def main():
         assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
         args.batch_size = args.batch_size // total_gpus
 
-    output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / args.extra_tag
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    eval_output_dir = output_dir / 'eval'
-
     # Add automatic evaluation of multiple target datasets
     data_config_tar_list = ['DATA_CONFIG_TAR', 'DATA_CONFIG_TAR1', 'DATA_CONFIG_TAR2', 'DATA_CONFIG_TAR3']
 
     for data_config_tar in data_config_tar_list:
+        LR = str(cfg[data_config_tar].get('LR', '0.010000'))
+        OPT = cfg[data_config_tar].get('OPT', 'adam_onecycle')
+        output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / ("%sLR%sOPT%s"%(args.extra_tag, LR, OPT))
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        eval_output_dir = output_dir / 'eval'
+
+        if cfg.get(data_config_tar, None) is None:
+            continue
+        print("Evaluating base config ", cfg[data_config_tar].get('_BASE_CONFIG_', None))
+
+        DATA_CONFIG_TAR_RES = cfg[data_config_tar].get('RES', 'ORIGINAL')
+
         if not args.eval_all:
             num_list = re.findall(r'\d+', args.ckpt) if args.ckpt is not None else []
             epoch_id = num_list[-1] if num_list.__len__() > 0 else 'no_number'
             eval_output_dir = eval_output_dir / ('epoch_%s' % epoch_id) / cfg.DATA_CONFIG.DATA_SPLIT['test']
         else:
-            eval_output_dir = eval_output_dir / 'eval_all_default'
+            eval_output_dir = eval_output_dir / ('eval_all_default_%s' % str(DATA_CONFIG_TAR_RES))
 
         if args.eval_tag is not None:
             eval_output_dir = eval_output_dir / args.eval_tag
-
-        test_res = 'ORIGINAL'
-        if cfg.get(data_config_tar, None) is not None:
-            test_res = cfg[data_config_tar].get('RES', test_res)
-            eval_output_dir = eval_output_dir + str(test_res)
 
         eval_output_dir.mkdir(parents=True, exist_ok=True)
         log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
@@ -200,7 +203,7 @@ def main():
 
         ckpt_dir = args.ckpt_dir if args.ckpt_dir is not None else output_dir / 'ckpt'
 
-        if cfg.get('DATA_CONFIG_TAR', None):
+        if cfg.get(data_config_tar, None):
             test_set, test_loader, sampler = build_dataloader(
                 dataset_cfg=cfg.DATA_CONFIG_TAR,
                 class_names=cfg.DATA_CONFIG_TAR.CLASS_NAMES,
@@ -227,7 +230,7 @@ def main():
                 ft_cfg=cfg.get('FINETUNE', None)
                 if ft_cfg is not None:
                     # start a new wandb run to track this script
-                    wandb_name = "lr%0.6f_opt%s_res%s_rank%i_eval_all" % (cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, test_res, cfg.LOCAL_RANK)
+                    wandb_name = "eval%s_lr%0.6f_opt%s_rank%i_eval_all" % (DATA_CONFIG_TAR_RES, cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, cfg.LOCAL_RANK)
                     wandb.init(
                         # set the wandb project where this run will be logged
                         project=ft_cfg.WANDB_NAME,
@@ -237,7 +240,7 @@ def main():
                             "learning_rate": cfg.OPTIMIZATION.LR,
                             "optimizer": cfg.OPTIMIZATION.OPTIMIZER,
                             "architecture": "PVRCNN",
-                            "dataset": "CODa_dino",
+                            "dataset": "CODa",
                             "epochs": 50,
                             "name": wandb_name
                         },
