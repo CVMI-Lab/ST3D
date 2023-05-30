@@ -142,6 +142,7 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
 
 
 def main():
+    ### BEGIN HERE: Read args once cycle
     args, cfg = parse_config()
     if args.launcher == 'none':
         dist_test = False
@@ -158,6 +159,7 @@ def main():
         print("batch size ", args.batch_size)
         assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
         args.batch_size = args.batch_size // total_gpus
+    ### END HERE
 
     # Add automatic evaluation of multiple target datasets
     data_config_tar_list = ['DATA_CONFIG_TAR', 'DATA_CONFIG_TAR1', 'DATA_CONFIG_TAR2', 'DATA_CONFIG_TAR3']
