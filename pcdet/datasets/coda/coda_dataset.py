@@ -541,8 +541,8 @@ if __name__ == '__main__':
         create_coda_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Car', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'coda128_3class',
-            save_path=ROOT_DIR / 'data' / 'coda128_3class'
+            data_path=ROOT_DIR / 'data' / 'coda16_3class',
+            save_path=ROOT_DIR / 'data' / 'coda16_3class'
             # class_names=[
             #     'Car',
             #     'Pedestrian',
