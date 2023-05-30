@@ -69,6 +69,27 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=waymo-coda32-md-allclass-finetune-head
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
+# For Waymo to CODa x 3class headfull
+export PORT=29500
+export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class128.yaml
+export EXTRA_TAG1=coda-md-3class-128-finetune-headfull
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class64.yaml
+# export EXTRA_TAG1=coda-md-3class-64-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class32.yaml
+# export EXTRA_TAG1=coda-md-3class-32-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class16.yaml
+# export EXTRA_TAG1=coda-md-3class-16-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
 # For waymo->coda (SN).
 # export PORT=29501
 # export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor_sn.yaml
