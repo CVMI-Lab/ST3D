@@ -164,81 +164,91 @@ def main():
 
     eval_output_dir = output_dir / 'eval'
 
-    if not args.eval_all:
-        num_list = re.findall(r'\d+', args.ckpt) if args.ckpt is not None else []
-        epoch_id = num_list[-1] if num_list.__len__() > 0 else 'no_number'
-        eval_output_dir = eval_output_dir / ('epoch_%s' % epoch_id) / cfg.DATA_CONFIG.DATA_SPLIT['test']
-    else:
-        eval_output_dir = eval_output_dir / 'eval_all_default'
+    # Add automatic evaluation of multiple target datasets
+    data_config_tar_list = ['DATA_CONFIG_TAR', 'DATA_CONFIG_TAR1', 'DATA_CONFIG_TAR2', 'DATA_CONFIG_TAR3']
 
-    if args.eval_tag is not None:
-        eval_output_dir = eval_output_dir / args.eval_tag
-
-    eval_output_dir.mkdir(parents=True, exist_ok=True)
-    log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
-    logger = common_utils.create_logger(log_file, rank=cfg.LOCAL_RANK)
-
-    # log to file
-    logger.info('**********************Start logging**********************')
-    gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
-    logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
-
-    if dist_test:
-        logger.info('total_batch_size: %d' % (total_gpus * args.batch_size))
-    for key, val in vars(args).items():
-        logger.info('{:16} {}'.format(key, val))
-    log_config_to_file(cfg, logger=logger)
-
-    ckpt_dir = args.ckpt_dir if args.ckpt_dir is not None else output_dir / 'ckpt'
-
-    if cfg.get('DATA_CONFIG_TAR', None):
-        test_set, test_loader, sampler = build_dataloader(
-            dataset_cfg=cfg.DATA_CONFIG_TAR,
-            class_names=cfg.DATA_CONFIG_TAR.CLASS_NAMES,
-            batch_size=args.batch_size,
-            dist=dist_test, workers=args.workers, logger=logger, training=False
-        )
-    else:
-        test_set, test_loader, sampler = build_dataloader(
-            dataset_cfg=cfg.DATA_CONFIG,
-            class_names=cfg.CLASS_NAMES,
-            batch_size=args.batch_size,
-            dist=dist_test, workers=args.workers, logger=logger, training=False
-        )
-
-    model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=test_set)
-
-    if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
-        model = DSNorm.convert_dsnorm(model)
-
-    state_name = 'model_state'
-
-    with torch.no_grad():
-        if args.eval_all:
-            ft_cfg=cfg.get('FINETUNE', None)
-            if ft_cfg is not None:
-                # start a new wandb run to track this script
-                wandb_name = "lr%0.6f_opt%s_rank%i_eval_all" % (cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, cfg.LOCAL_RANK)
-                wandb.init(
-                    # set the wandb project where this run will be logged
-                    project=ft_cfg.WANDB_NAME,
-                    
-                    # track hyperparameters and run metadata
-                    config={
-                        "learning_rate": cfg.OPTIMIZATION.LR,
-                        "optimizer": cfg.OPTIMIZATION.OPTIMIZER,
-                        "architecture": "PVRCNN",
-                        "dataset": "CODa_dino",
-                        "epochs": 50,
-                        "name": wandb_name
-                    },
-                    name=wandb_name
-                )            
-            repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger,
-                             ckpt_dir, dist_test=dist_test, ft_cfg=ft_cfg)
+    for data_config_tar in data_config_tar_list:
+        if not args.eval_all:
+            num_list = re.findall(r'\d+', args.ckpt) if args.ckpt is not None else []
+            epoch_id = num_list[-1] if num_list.__len__() > 0 else 'no_number'
+            eval_output_dir = eval_output_dir / ('epoch_%s' % epoch_id) / cfg.DATA_CONFIG.DATA_SPLIT['test']
         else:
-            eval_single_ckpt(model, test_loader, args, eval_output_dir, logger,
-                             epoch_id, dist_test=dist_test)
+            eval_output_dir = eval_output_dir / 'eval_all_default'
+
+        if args.eval_tag is not None:
+            eval_output_dir = eval_output_dir / args.eval_tag
+
+        test_res = 'ORIGINAL'
+        if cfg.get(data_config_tar, None) is not None:
+            test_res = cfg[data_config_tar].get('RES', test_res)
+            eval_output_dir = eval_output_dir + str(test_res)
+
+        eval_output_dir.mkdir(parents=True, exist_ok=True)
+        log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+        logger = common_utils.create_logger(log_file, rank=cfg.LOCAL_RANK)
+
+        # log to file
+        logger.info('**********************Start logging**********************')
+        gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
+        logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
+
+        if dist_test:
+            logger.info('total_batch_size: %d' % (total_gpus * args.batch_size))
+        for key, val in vars(args).items():
+            logger.info('{:16} {}'.format(key, val))
+        log_config_to_file(cfg, logger=logger)
+
+        ckpt_dir = args.ckpt_dir if args.ckpt_dir is not None else output_dir / 'ckpt'
+
+        if cfg.get('DATA_CONFIG_TAR', None):
+            test_set, test_loader, sampler = build_dataloader(
+                dataset_cfg=cfg.DATA_CONFIG_TAR,
+                class_names=cfg.DATA_CONFIG_TAR.CLASS_NAMES,
+                batch_size=args.batch_size,
+                dist=dist_test, workers=args.workers, logger=logger, training=False
+            )
+        else:
+            test_set, test_loader, sampler = build_dataloader(
+                dataset_cfg=cfg.DATA_CONFIG,
+                class_names=cfg.CLASS_NAMES,
+                batch_size=args.batch_size,
+                dist=dist_test, workers=args.workers, logger=logger, training=False
+            )
+
+        model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=test_set)
+
+        if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
+            model = DSNorm.convert_dsnorm(model)
+
+        state_name = 'model_state'
+
+        with torch.no_grad():
+            if args.eval_all:
+                ft_cfg=cfg.get('FINETUNE', None)
+                if ft_cfg is not None:
+                    # start a new wandb run to track this script
+                    wandb_name = "lr%0.6f_opt%s_res%s_rank%i_eval_all" % (cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, test_res, cfg.LOCAL_RANK)
+                    wandb.init(
+                        # set the wandb project where this run will be logged
+                        project=ft_cfg.WANDB_NAME,
+                        
+                        # track hyperparameters and run metadata
+                        config={
+                            "learning_rate": cfg.OPTIMIZATION.LR,
+                            "optimizer": cfg.OPTIMIZATION.OPTIMIZER,
+                            "architecture": "PVRCNN",
+                            "dataset": "CODa_dino",
+                            "epochs": 50,
+                            "name": wandb_name
+                        },
+                        name=wandb_name
+                    )            
+                repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger,
+                                ckpt_dir, dist_test=dist_test, ft_cfg=ft_cfg)
+                wandb.finish()
+            else:
+                eval_single_ckpt(model, test_loader, args, eval_output_dir, logger,
+                                epoch_id, dist_test=dist_test)
 
 
 if __name__ == '__main__':
