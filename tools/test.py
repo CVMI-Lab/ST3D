@@ -142,29 +142,35 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
 
 
 def main():
-    ### BEGIN HERE: Read args once cycle
-    args, cfg = parse_config()
-    if args.launcher == 'none':
-        dist_test = False
-        total_gpus = 1
-    else:
-        total_gpus, cfg.LOCAL_RANK = getattr(common_utils, 'init_dist_%s' % args.launcher)(
-            args.tcp_port, args.local_rank, backend='nccl'
-        )
-        dist_test = True
-
-    if args.batch_size is None:
-        args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
-    else:
-        print("batch size ", args.batch_size)
-        assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
-        args.batch_size = args.batch_size // total_gpus
-    ### END HERE
-
     # Add automatic evaluation of multiple target datasets
-    data_config_tar_list = ['DATA_CONFIG_TAR', 'DATA_CONFIG_TAR1', 'DATA_CONFIG_TAR2', 'DATA_CONFIG_TAR3']
+    data_config_tar_list = ['DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+    launched_once = False
 
     for data_config_tar in data_config_tar_list:
+         ### BEGIN HERE: Read args once cycle
+        args, cfg = parse_config()
+        if args.launcher == 'none':
+            dist_test = False
+            total_gpus = 1
+        else:
+            if not launched_once:
+                total_gpus, cfg.LOCAL_RANK = getattr(common_utils, 'init_dist_%s' % args.launcher)(
+                    args.tcp_port, args.local_rank, backend='nccl'
+                )
+                dist_test = True
+                launched_once=True
+
+        if args.batch_size is None:
+            args.batch_size = cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU
+        else:
+            print("batch size ", args.batch_size)
+            assert args.batch_size % total_gpus == 0, 'Batch size should match the number of gpus'
+            args.batch_size = args.batch_size // total_gpus
+        ### END HERE
+
+        if cfg.get(data_config_tar, None) is None:
+            continue
+
         LR = str(cfg[data_config_tar].get('LR', '0.010000'))
         OPT = cfg[data_config_tar].get('OPT', 'adam_onecycle')
         output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / ("%sLR%sOPT%s"%(args.extra_tag, LR, OPT))
@@ -172,8 +178,6 @@ def main():
 
         eval_output_dir = output_dir / 'eval'
 
-        if cfg.get(data_config_tar, None) is None:
-            continue
         print("Evaluating base config ", cfg[data_config_tar].get('_BASE_CONFIG_', None))
 
         DATA_CONFIG_TAR_RES = cfg[data_config_tar].get('RES', 'ORIGINAL')
@@ -207,8 +211,8 @@ def main():
 
         if cfg.get(data_config_tar, None):
             test_set, test_loader, sampler = build_dataloader(
-                dataset_cfg=cfg.DATA_CONFIG_TAR,
-                class_names=cfg.DATA_CONFIG_TAR.CLASS_NAMES,
+                dataset_cfg=cfg[data_config_tar],
+                class_names=cfg[data_config_tar].CLASS_NAMES,
                 batch_size=args.batch_size,
                 dist=dist_test, workers=args.workers, logger=logger, training=False
             )

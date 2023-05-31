@@ -16,7 +16,7 @@ DATA_CONFIG_TAR:
     OPT: adam_onecycle
     RES: 128
 
-DATA_CONFIG_TAR1:
+DATA1_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda64_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
@@ -26,7 +26,7 @@ DATA_CONFIG_TAR1:
     OPT: adam_onecycle
     RES: 64
 
-DATA_CONFIG_TAR2:
+DATA2_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
@@ -36,7 +36,7 @@ DATA_CONFIG_TAR2:
     OPT: adam_onecycle
     RES: 32
 
-DATA_CONFIG_TAR3:
+DATA3_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
