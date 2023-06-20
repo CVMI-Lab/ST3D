@@ -301,7 +301,7 @@ def main():
                 try:
                     train_loop(init_launch, lr, opt)
                     init_launch = False
-                except NotImplementedError as e:
+                except NotImplementedError or AssertionError as e:
                     unstable_lr = True
                     print("Learning rate ", lr, " unstable for training, reducing by 10x...")
 

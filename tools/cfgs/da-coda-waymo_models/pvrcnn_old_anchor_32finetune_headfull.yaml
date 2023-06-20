@@ -3,6 +3,10 @@ CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/waymo_dataset.yaml
 
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/waymo_dataset.yaml
+    CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+
 MODEL:
     NAME: PVRCNN
 
@@ -203,7 +207,7 @@ MODEL:
 FINETUNE:
     STAGE: headfull
     WANDB: True
-    WANDB_NAME: coda32-md-waymo-finetune-headfull-coarse
+    WANDB_NAME: coda32-md-waymo-finetune-headfull
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
