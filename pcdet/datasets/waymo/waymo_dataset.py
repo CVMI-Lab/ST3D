@@ -149,8 +149,11 @@ class WaymoDataset(DatasetTemplate):
             if self.dataset_cfg.get('USE_PSEUDO_LABEL', None) and self.training:
                 input_dict['gt_boxes'] = None
 
-            if self.dataset_cfg.get('USE_PSEUDO_LABEL', None) and self.training:
-                input_dict['gt_boxes'] = None
+            if self.training and self.dataset_cfg.get('FILTER_EMPTY_BOXES_FOR_TRAIN', False):
+                mask = (annos['num_points_in_gt'] > 0)  # filter empty boxes
+                annos['name'] = annos['name'][mask]
+                gt_boxes_lidar = gt_boxes_lidar[mask]
+                annos['num_points_in_gt'] = annos['num_points_in_gt'][mask]
 
             # for debug only
             # gt_boxes_mask = np.array([n in self.class_names for n in input_dict['gt_names']], dtype=np.bool_)

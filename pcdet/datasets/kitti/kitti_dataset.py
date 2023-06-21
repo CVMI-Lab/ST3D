@@ -361,6 +361,7 @@ class KittiDataset(DatasetTemplate):
 
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
+        get_item_list = self.dataset_cfg.get('GET_ITEM_LIST', ['points'])
 
         img_shape = info['image']['image_shape']
         if self.dataset_cfg.FOV_POINTS_ONLY:
@@ -394,6 +395,9 @@ class KittiDataset(DatasetTemplate):
                 'gt_boxes': gt_boxes_lidar
             })
 
+            if "gt_boxes2d" in get_item_list:
+                input_dict['gt_boxes2d'] = annos["bbox"]
+
             if self.dataset_cfg.get('REMOVE_ORIGIN_GTS', None) and self.training:
                 input_dict['points'] = box_utils.remove_points_in_boxes3d(input_dict['points'], input_dict['gt_boxes'])
                 mask = np.zeros(gt_boxes_lidar.shape[0], dtype=np.bool_)
@@ -410,6 +414,23 @@ class KittiDataset(DatasetTemplate):
             road_plane = self.get_road_plane(sample_idx)
             if road_plane is not None:
                 input_dict['road_plane'] = road_plane
+
+        if "points" in get_item_list:
+            points = self.get_lidar(sample_idx)
+            if self.dataset_cfg.FOV_POINTS_ONLY:
+                pts_rect = calib.lidar_to_rect(points[:, 0:3])
+                fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
+                points = points[fov_flag]
+            input_dict['points'] = points
+
+        if "images" in get_item_list:
+            input_dict['images'] = self.get_image(sample_idx)
+
+        if "depth_maps" in get_item_list:
+            input_dict['depth_maps'] = self.get_depth_map(sample_idx)
+
+        if "calib_matricies" in get_item_list:
+            input_dict["trans_lidar_to_cam"], input_dict["trans_cam_to_img"] = kitti_utils.calib_to_matricies(calib)
 
         # load saved pseudo label for unlabel data
         if self.dataset_cfg.get('USE_PSEUDO_LABEL', None) and self.training:
