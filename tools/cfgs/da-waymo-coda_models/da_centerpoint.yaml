@@ -1,9 +1,7 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
-# ['car','truck', 'construction_vehicle', 'bus', 'trailer',
-#               'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
 
 MODEL:
     NAME: CenterPoint
@@ -32,27 +30,19 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car'],
-            ['pedestrian'],
-            ['bicycle'] 
-            # ['truck', 'construction_vehicle'],
-            # ['bus', 'trailer'],
-            # ['barrier'],
-            # ['motorcycle', 'bicycle'],
-            # ['pedestrian', 'traffic_cone'],
+            ['Vehicle', 'Pedestrian', 'Cyclist']
         ]
 
         SHARED_CONV_CHANNEL: 64
         USE_BIAS_BEFORE_NORM: True
         NUM_HM_CONV: 2
         SEPARATE_HEAD_CFG:
-            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot'] #, 'vel']
+            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']
             HEAD_DICT: {
                 'center': {'out_channels': 2, 'num_conv': 2},
                 'center_z': {'out_channels': 1, 'num_conv': 2},
                 'dim': {'out_channels': 3, 'num_conv': 2},
                 'rot': {'out_channels': 2, 'num_conv': 2},
-                # 'vel': {'out_channels': 2, 'num_conv': 2},
             }
 
         TARGET_ASSIGNER_CONFIG:
@@ -64,8 +54,8 @@ MODEL:
         LOSS_CONFIG:
             LOSS_WEIGHTS: {
                 'cls_weight': 1.0,
-                'loc_weight': 0.25,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.2, 0.2] #, 1.0, 1.0]
+                'loc_weight': 2.0,
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
 
         POST_PROCESSING:
@@ -74,24 +64,18 @@ MODEL:
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
-                NMS_THRESH: 0.2
-                NMS_PRE_MAXSIZE: 1000
-                NMS_POST_MAXSIZE: 83
+                NMS_THRESH: 0.7
+                NMS_PRE_MAXSIZE: 4096
+                NMS_POST_MAXSIZE: 500
 
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
 
-        EVAL_METRIC: nuscenes
-
-FINETUNE:
-    STAGE: scratch
-    WANDB: True
-    WANDB_NAME: da-nus-centerpoint-voxel
-    ARCH: CenterPoint
+        EVAL_METRIC: kitti
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 22 # 35GB
+    BATCH_SIZE_PER_GPU: 22 # 34GB
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle
