@@ -1,10 +1,10 @@
 CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_coda_dataset.yaml
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    # MAX_SWEEPS: 1
+    # PRED_VELOCITY: False
+    BALANCED_RESAMPLING: True
     
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
@@ -21,7 +21,7 @@ DATA_CONFIG:
 
         - NAME: transform_points_to_voxels
           VOXEL_SIZE: [0.1, 0.1, 6.0]
-          MAX_POINTS_PER_VOXEL: 5
+          MAX_POINTS_PER_VOXEL: 20
           MAX_NUMBER_OF_VOXELS: {
             'train': 80000,
             'test': 90000
@@ -140,7 +140,7 @@ MODEL:
         OUTPUT_RAW_SCORE: False
         POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
-        EVAL_METRIC: kitti
+        EVAL_METRIC: nuscenes
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: True
@@ -152,12 +152,12 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: nuscenes-pp
+    WANDB_NAME: da-nuscenes-cbgs-pp
     ARCH: PointPillars
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 6 #40gb
-    NUM_EPOCHS: 50
+    BATCH_SIZE_PER_GPU: 4 # 34 gb
+    NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle
     LR: 0.001
