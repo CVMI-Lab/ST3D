@@ -85,10 +85,10 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=coda-md-3class-32-finetune-headfull
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
-export PORT=29500
-export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class16.yaml
-export EXTRA_TAG1=coda-md-3class-16-finetune-headfull
-export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class16.yaml
+# export EXTRA_TAG1=coda-md-3class-16-finetune-headfull
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_oracleLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
 # For waymo->coda (SN).
 # export PORT=29501
@@ -116,12 +116,59 @@ export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor
 # export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
 # export EXTRA_TAG2=kitti_oracle
 
+# Launch Domain Adaptation Models (SOTA architectures)
+
+#KITTI_pp
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-kitti-coda_models/da_pointpillar_1x.yaml
+# export EXTRA_TAG1=da_pp_1x
+
+# #KITTI_centerpoint_voxel
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-kitti-coda_models/da_centerpoint.yaml
+# export EXTRA_TAG1=da_centerpoint_voxelres
+
+# #KITTI_pvrcnn
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-kitti-coda_models/pvrcnn/da_pvrcnn.yaml
+# export EXTRA_TAG1=da_pvrcnn_anchorhead
+
+# # nuScenes pp
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/cbgs_pp_multihead.yaml
+# export EXTRA_TAG1=da_pp_multihead
+
+# # nuScenes centerpoint voxel
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/da_cbgs_voxel01_res3d_centerpoint.yaml
+# export EXTRA_TAG1=da_centerpoint_voxelres
+
+# # nuScenes pvrcnn
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/da_pvrcnn.yaml
+# export EXTRA_TAG1=da_pvrcnn_centerhead
+
+# # Waymo pp
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/da_pointpillar_1x.yaml
+# export EXTRA_TAG1=da_pp_1x
+
+# # Waymo centerpoint voxel
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/da_centerpoint.yaml
+# export EXTRA_TAG1=da_centerpoint_voxelres
+
+# # Waymo pvrcnn
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/da_pvrcnn_with_centerhead_rpn.yaml
+export EXTRA_TAG1=da_pvrcnn_centerhead
+
 # Launch regular models from scratch
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task3
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task2
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task1
 
 #Launch pretrained model
-ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
 
 #Launch model from ckpt
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4

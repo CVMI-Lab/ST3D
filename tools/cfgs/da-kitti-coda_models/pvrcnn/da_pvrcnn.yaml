@@ -238,7 +238,7 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: kitti-pvrcnn-pcdet
+    WANDB_NAME: da-kitti-pvrcnn-ahead
     ARCH: PVRCNN
 
 OPTIMIZATION:

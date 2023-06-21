@@ -194,7 +194,7 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: False
-    WANDB_NAME: da-nuscenes-pvrcnn-ch
+    WANDB_NAME: da-nus-pvrcnn-ch
     ARCH: PVRCNN
 
 OPTIMIZATION:

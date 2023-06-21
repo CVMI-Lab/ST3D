@@ -152,7 +152,7 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: da-nuscenes-cbgs-pp
+    WANDB_NAME: da-nus-cbgs-pp
     ARCH: PointPillars
 
 OPTIMIZATION:
