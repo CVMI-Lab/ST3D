@@ -59,14 +59,14 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=coda-md-3class-32-finetune-headfull
 
 # #CODa64
-# export PORT=29500
-# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class64.yaml
-# export EXTRA_TAG1=coda-md-3class-64-finetune-headfull
+export PORT=29500
+export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class64.yaml
+export EXTRA_TAG1=coda-md-3class-64-finetune-headfull
 
 # #CODa128
-export PORT=29500
-export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class128.yaml
-export EXTRA_TAG1=coda-md-3class-128-finetune-headfull
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/coda_models/pvrcnn_oracle_3class128.yaml
+# export EXTRA_TAG1=coda-md-3class-128-finetune-headfull
 
 #Launch pretrained model
 ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_test.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --eval_all >> launcher_eval_models_task0
