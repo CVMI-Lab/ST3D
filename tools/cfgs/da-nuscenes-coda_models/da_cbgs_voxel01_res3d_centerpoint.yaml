@@ -81,12 +81,12 @@ MODEL:
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
 
-        EVAL_METRIC: nuscenes
+        EVAL_METRIC: kitti
 
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: da-nus-centerpoint-voxel
+    WANDB_NAME: da-nus-centerpoint-voxelres
     ARCH: CenterPoint
 
 

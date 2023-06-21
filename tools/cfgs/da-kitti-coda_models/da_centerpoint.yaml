@@ -105,7 +105,7 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: da-kitti-centerpoint
+    WANDB_NAME: da-kitti-centerpoint-voxelres
     ARCH: CenterPoint
 
 

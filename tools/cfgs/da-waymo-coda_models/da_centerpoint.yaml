@@ -73,6 +73,11 @@ MODEL:
 
         EVAL_METRIC: kitti
 
+FINETUNE:
+    STAGE: scratch
+    WANDB: True
+    WANDB_NAME: da-waymo-centerpoint-voxelres
+    ARCH: CenterPoint
 
 OPTIMIZATION:
     BATCH_SIZE_PER_GPU: 22 # 34GB
