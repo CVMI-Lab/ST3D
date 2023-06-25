@@ -1,13 +1,65 @@
 CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
-# ['car','truck', 'construction_vehicle', 'bus', 'trailer',
-#               'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
+# 'truck', 'construction_vehicle', 'bus', 'trailer',
+              # 'barrier', 'motorcycle', 'bicycle', 'pedestrian', 'traffic_cone']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    POINT_CLOUD_RANGE: [-54.0, -54.0, -5.0, 54.0, 54.0, 3.0]
 
-DATA1_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
-    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+    SHIFT_COOR: [0.0, 0.0, 1.8]
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+            - NAME: gt_sampling
+              DB_INFO_PATH:
+                - nuscenes_dbinfos_10sweeps_withvelo.pkl
+              PREPARE: {
+                filter_by_min_points: [
+                    'car:5', 'pedestrian:5', 'bicycle:5'
+                ],
+              }
+
+              SAMPLE_GROUPS: [
+                'car:2', 'pedestrian:2', 'bicycle:6',
+              ]
+
+              NUM_POINT_FEATURES: 5
+              DATABASE_WITH_FAKELIDAR: False
+              REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+              LIMIT_WHOLE_SCENE: True
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: ['x', 'y']
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [0.9, 1.1]
+            
+            - NAME: random_world_translation
+              NOISE_TRANSLATE_STD: [0.5, 0.5, 0.5]
+
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': True
+          }
+
+        - NAME: transform_points_to_voxels
+          VOXEL_SIZE: [0.075, 0.075, 0.2]
+          MAX_POINTS_PER_VOXEL: 10
+          MAX_NUMBER_OF_VOXELS: {
+            'train': 120000,
+            'test': 160000
+          }
+
 
 MODEL:
     NAME: CenterPoint
@@ -38,12 +90,7 @@ MODEL:
         CLASS_NAMES_EACH_HEAD: [
             ['car'],
             ['pedestrian'],
-            ['bicycle'] 
-            # ['truck', 'construction_vehicle'],
-            # ['bus', 'trailer'],
-            # ['barrier'],
-            # ['motorcycle', 'bicycle'],
-            # ['pedestrian', 'traffic_cone'],
+            ['bicycle']
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -74,7 +121,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+            POST_CENTER_LIMIT_RANGE: [-61.2, -61.2, -10.0, 61.2, 61.2, 10.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -85,23 +132,20 @@ MODEL:
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
 
-        EVAL_METRIC: kitti
+        EVAL_METRIC: nuscenes
 
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: da-nus-centerpoint-voxelres
+    WANDB_NAME: da-nus-centerpoint-0075voxelres
     ARCH: CenterPoint
 
-
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 24 # 35GB
-    # BATCH_SIZE_PER_GPU: 22 # 35GB
-    BATCH_SIZE_PER_GPU: 5 # 10.5 GB
-    NUM_EPOCHS: 50
+    BATCH_SIZE_PER_GPU: 28 # 45 GB
+    NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle
-    LR: 0.003
+    LR: 0.001
     WEIGHT_DECAY: 0.01
     MOMENTUM: 0.9
 

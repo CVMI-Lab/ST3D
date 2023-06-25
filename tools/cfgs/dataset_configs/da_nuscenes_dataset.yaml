@@ -18,8 +18,7 @@ INFO_PATH: {
     'test': [nuscenes_infos_10sweeps_val.pkl],
 }
 
-POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
-MIN_POINTS_OF_GT: 1
+POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
 
 DATA_AUGMENTOR:
     DISABLE_AUG_LIST: ['placeholder']
@@ -88,9 +87,9 @@ DATA_PROCESSOR:
       }
 
     - NAME: transform_points_to_voxels
-      VOXEL_SIZE: [0.1, 0.1, 0.15]
-      MAX_POINTS_PER_VOXEL: 5
+      VOXEL_SIZE: [0.1, 0.1, 0.2]
+      MAX_POINTS_PER_VOXEL: 10
       MAX_NUMBER_OF_VOXELS: {
-        'train': 80000,
-        'test': 90000
+        'train': 60000,
+        'test': 60000
       }

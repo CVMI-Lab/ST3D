@@ -172,6 +172,9 @@ def main():
             continue
 
     for data_config_tar in data_config_tar_list:
+        if cfg.get(data_config_tar, None) is None:
+            print("Missing data config %s, skipping..." % data_config_tar)
+            continue
         LR = str(cfg[data_config_tar].get('LR', '0.010000'))
         OPT = cfg[data_config_tar].get('OPT', 'adam_onecycle')
         output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / ("%sLR%sOPT%s"%(args.extra_tag, LR, OPT))

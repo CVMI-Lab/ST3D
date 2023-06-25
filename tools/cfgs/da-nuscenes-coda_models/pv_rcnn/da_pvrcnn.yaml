@@ -2,6 +2,9 @@ CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    BALANCED_RESAMPLING: True
+    
+    SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
     NAME: PVRCNN
@@ -60,7 +63,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -198,7 +201,8 @@ FINETUNE:
     ARCH: PVRCNN
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 10 # 36GB
+    # BATCH_SIZE_PER_GPU: 10 # 36GB
+    BATCH_SIZE_PER_GPU: 6 # 22gb
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle

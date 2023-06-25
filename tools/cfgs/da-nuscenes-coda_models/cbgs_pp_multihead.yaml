@@ -8,7 +8,7 @@ DATA_CONFIG:
     
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
-    # POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
     DATA_PROCESSOR:
         - NAME: mask_points_and_boxes_outside_range
           REMOVE_OUTSIDE_BOXES: True
@@ -20,11 +20,11 @@ DATA_CONFIG:
           }
 
         - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 6.0]
+          VOXEL_SIZE: [0.2, 0.2, 8.0]
           MAX_POINTS_PER_VOXEL: 20
           MAX_NUMBER_OF_VOXELS: {
-            'train': 80000,
-            'test': 90000
+            'train': 30000,
+            'test': 30000
           }
 
 MODEL:
@@ -108,7 +108,7 @@ MODEL:
         SEPARATE_REG_CONFIG: 
             NUM_MIDDLE_CONV: 1
             NUM_MIDDLE_FILTER: 64
-            REG_LIST: ['reg:2', 'height:1', 'size:3', 'angle:2']
+            REG_LIST: ['reg:2', 'height:1', 'size:3', 'angle:2'] #, 'velo:2']
 
         TARGET_ASSIGNER_CONFIG:
             NAME: AxisAlignedTargetAssigner
@@ -118,10 +118,9 @@ MODEL:
             MATCH_HEIGHT: False
             BOX_CODER: ResidualCoder
             BOX_CODER_CONFIG: {
-                'code_size': 7,
+                'code_size': 7, #9,
                 'encode_angle_by_sincos': True
             }
-
 
         LOSS_CONFIG:
             REG_LOSS_TYPE: WeightedL1Loss
@@ -131,16 +130,15 @@ MODEL:
                 'cls_weight': 1.0,
                 'loc_weight': 0.25,
                 'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0] # , 0.2, 0.2]
             }
 
     POST_PROCESSING:
         RECALL_THRESH_LIST: [ 0.3, 0.5, 0.7 ]
         SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
-        POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
-        EVAL_METRIC: nuscenes
+        EVAL_METRIC: kitti
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: True
@@ -156,7 +154,8 @@ FINETUNE:
     ARCH: PointPillars
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 4 # 34 gb
+    # BATCH_SIZE_PER_GPU: 4 # 34 gb
+    BATCH_SIZE_PER_GPU: 32 # 45 gb
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle

@@ -114,7 +114,7 @@ MODEL:
         OUTPUT_RAW_SCORE: False
         # POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
-        EVAL_METRIC: waymo
+        EVAL_METRIC: kitti
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
