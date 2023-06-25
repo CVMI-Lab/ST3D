@@ -233,6 +233,42 @@ class WaymoDataset(DatasetTemplate):
         if 'annos' not in self.infos[0].keys():
             return 'No ground-truth boxes for evaluation', {}
 
+        def combine_stat_dict_parts(stat_dict_metric, combined_stat_dict=None):
+            assert len(stat_dict_metric)>0, "Error: Must have at least one eval metric!" 
+
+            num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS = stat_dict_metric[0]["precision_top"].shape
+            num_metric = len(stat_dict_metric)
+            if combined_stat_dict is None:
+                print("reinitialized")
+                combined_stat_dict = {
+                    "precision_top": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "precision_bot": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "recall_top": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "recall_bot": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "aos_top": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "aos_bot": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+                    "thresholds": np.zeros([num_metric, num_class, num_difficulty, num_minoverlap], dtype=np.int)
+                }
+
+            # Combine all stat dicts for each metric together
+            for metric, stat_dict in stat_dict_metric.items():
+                for m in range(num_class):
+                    for l in range(num_difficulty):
+                        for k in range(num_minoverlap):
+                            num_thresholds = int(stat_dict["thresholds"][m, l, k])
+                            combined_stat_dict["thresholds"][metric,m,l,k] = num_thresholds
+
+                            for i in range(num_thresholds):
+                                combined_stat_dict["precision_top"][metric,m,l,k,i] += stat_dict['precision_top'][m, l, k, i]
+                                combined_stat_dict["precision_bot"][metric,m,l,k,i] += stat_dict['precision_bot'][m, l, k, i]
+                                combined_stat_dict["recall_top"][metric,m,l,k,i] += stat_dict['recall_top'][m, l, k, i]
+                                combined_stat_dict["recall_bot"][metric,m,l,k,i] += stat_dict['recall_bot'][m, l, k, i]
+                                combined_stat_dict["aos_top"][metric,m,l,k,i] += stat_dict['aos_top'][m, l, k, i]
+                                combined_stat_dict["aos_bot"][metric,m,l,k,i] += stat_dict['aos_bot'][m, l, k, i]
+
+
+            return combined_stat_dict
+
         def kitti_eval(eval_det_annos, eval_gt_annos):
             from ..kitti.kitti_object_eval_python import eval as kitti_eval
             from ..kitti import kitti_utils
@@ -250,9 +286,47 @@ class WaymoDataset(DatasetTemplate):
                 info_with_fakelidar=self.dataset_cfg.get('INFO_WITH_FAKELIDAR', False)
             )
             kitti_class_names = [map_name_to_kitti[x] for x in class_names]
+            # Save eval_det_annos and eval_gt_annos to load in later
+            # eval_det_annos_np = np.array(eval_det_annos)
+            # eval_gt_annos_np = np.array(eval_gt_annos)
+
+            # # Split up eval results into multiple batches with max batch size
+            # total_items = len(eval_gt_annos)
+            # num_batches = 5
+            # batch_size = int(total_items/num_batches)
+            
+            # # Save all statistics from subparts
+            # full_stat_dict = None
+
+            # for batch_idx in range(0, total_items, batch_size):
+            #     batch_idx_end = min(batch_idx+batch_size, total_items)
+
+            #     #Eval single part
+            #     part_eval_det_annos = eval_det_annos[batch_idx:batch_idx_end]
+            #     part_eval_gt_annos = eval_gt_annos[batch_idx:batch_idx_end]
+            #     ap_result_str, ap_dict, ret_stat_dicts = kitti_eval.get_official_eval_result(
+            #         gt_annos=part_eval_gt_annos, dt_annos=part_eval_det_annos, current_classes=kitti_class_names,
+            #         ret_stat_dict=True
+            #     )
+            #     if batch_idx >0:
+            #         assert not np.array_equal(combined_stat_dict["precision_top"][0], ret_stat_dicts[0]["precision_top"]), \
+            #             "Precision tops are equal for some reason"
+            #         assert not np.array_equal(combined_stat_dict["precision_bot"][0], ret_stat_dicts[0]["precision_bot"]), \
+            #             "Precision bots are equal for some reason"
+            #     full_stat_dict = combine_stat_dict_parts(ret_stat_dicts, combined_stat_dict=full_stat_dict)
+
+
+            # # Combine statistic subparts for final evaluation
+            # new_ap_result_str, new_ap_dict = kitti_eval.get_official_eval_result(
+            #     gt_annos=eval_gt_annos, dt_annos=eval_det_annos, current_classes=kitti_class_names,
+            #     fuse_stat_dict = full_stat_dict
+            # )
+            
+            # Original
             ap_result_str, ap_dict = kitti_eval.get_official_eval_result(
                 gt_annos=eval_gt_annos, dt_annos=eval_det_annos, current_classes=kitti_class_names
             )
+
             return ap_result_str, ap_dict
 
         def waymo_eval(eval_det_annos, eval_gt_annos):
@@ -273,6 +347,8 @@ class WaymoDataset(DatasetTemplate):
         eval_det_annos = copy.deepcopy(det_annos)
         eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.infos]
 
+        # Dump cuda cache to prevent overflow
+        torch.cuda.empty_cache()
         if kwargs['eval_metric'] == 'kitti':
             ap_result_str, ap_dict = kitti_eval(eval_det_annos, eval_gt_annos)
         elif kwargs['eval_metric'] == 'waymo':

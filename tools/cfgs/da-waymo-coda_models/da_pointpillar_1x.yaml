@@ -112,7 +112,7 @@ MODEL:
         OUTPUT_RAW_SCORE: False
         # POST_CENTER_LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
-        EVAL_METRIC: waymo
+        EVAL_METRIC: kitti
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
@@ -129,7 +129,8 @@ FINETUNE:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 8 # 37gb
+    # BATCH_SIZE_PER_GPU: 8 # 37gb
+    BATCH_SIZE_PER_GPU: 4 # 20gb
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle

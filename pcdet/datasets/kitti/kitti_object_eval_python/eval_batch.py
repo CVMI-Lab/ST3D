@@ -356,7 +356,7 @@ def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=1500 ): # 1500 pa
     split_parts = get_split_parts(num_examples, num_parts)
     parted_overlaps = []
     example_idx = 0
-
+    
     for num_part in split_parts:
         gt_annos_part = gt_annos[example_idx:example_idx + num_part]
         dt_annos_part = dt_annos[example_idx:example_idx + num_part]
@@ -484,7 +484,19 @@ def eval_class(gt_annos,
     recall = np.zeros(
         [num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
     aos = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    stat_dict = {
+        "precision_top": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "precision_bot": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "recall_top": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "recall_bot": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "aos_top": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "aos_bot": np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS]),
+        "thresholds": np.zeros([num_class, num_difficulty, num_minoverlap], dtype=np.int32)
+    } # ARTHUR
 
+    precision_check = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    recall_check = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    aos_check = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
     for m, current_class in enumerate(current_classes):
         for l, difficulty in enumerate(difficultys):
             rets = _prepare_data(gt_annos, dt_annos, current_class, difficulty)
@@ -540,24 +552,57 @@ def eval_class(gt_annos,
                         compute_aos=compute_aos)
                     idx += num_part
                 
+                # The part that needs to be batched and saved irreversible divide!!!
+                stat_dict["thresholds"][m, l, k] = len(thresholds) # Arthur save thresholds
+                
                 for i in range(len(thresholds)):
                     recall[m, l, k, i] = pr[i, 0] / (pr[i, 0] + pr[i, 2])
                     precision[m, l, k, i] = pr[i, 0] / (pr[i, 0] + pr[i, 1])
+                    # Arthur save copy in stat dict for later
+                    stat_dict['recall_top'][m, l, k, i] = pr[i, 0]
+                    stat_dict['recall_bot'][m, l, k, i] = pr[i, 0] + pr[i, 2]
+                    stat_dict['precision_top'][m, l, k, i] = pr[i, 0]
+                    stat_dict['precision_bot'][m, l, k, i] = pr[i, 0] + pr[i, 1]
                     
                     if compute_aos:
                         aos[m, l, k, i] = pr[i, 3] / (pr[i, 0] + pr[i, 1])
 
-                for i in range(len(thresholds)):
-                    precision[m, l, k, i] = np.max(
-                        precision[m, l, k, i:], axis=-1)
-                    recall[m, l, k, i] = np.max(recall[m, l, k, i:], axis=-1)
-                    if compute_aos:
-                        aos[m, l, k, i] = np.max(aos[m, l, k, i:], axis=-1)
+                        # Arthur save copy in stat dict for later
+                        stat_dict['aos_top'][m, l, k, i] = pr[i, 3]
+                        stat_dict['aos_bot'][m, l, k, i] = pr[i, 0] + pr[i, 1]
+                    
+                        assert not (pr[i, 0] + pr[i, 1])==0, "recall is zero"
 
+                    # if (pr[i, 0] + pr[i, 1])==0:
+                    #     import pdb; pdb.set_trace()
+                    assert not (pr[i, 0] + pr[i, 2])==0, "recall is zero"
+                    assert not (pr[i, 0] + pr[i, 1])==0, "precision is zero"
+
+                # for i in range(len(thresholds)):
+                #     precision[m, l, k, i] = np.max(
+                #         precision[m, l, k, i:], axis=-1)
+                #     recall[m, l, k, i] = np.max(recall[m, l, k, i:], axis=-1)
+                #     if compute_aos:
+                #         aos[m, l, k, i] = np.max(aos[m, l, k, i:], axis=-1)
+
+    num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS = stat_dict["precision_top"].shape
+    for m in range(num_class):
+        for l in range(num_difficulty):
+            for k in range(num_minoverlap):
+                for i in range(stat_dict["thresholds"][m, l, k].astype(np.int)):
+                    precision_check[m,l,k,i] = stat_dict['precision_top'][m, l, k, i] / stat_dict['precision_bot'][m, l, k, i]
+                    recall_check[m,l,k,i] = stat_dict['recall_top'][m, l, k, i] / stat_dict['recall_bot'][m, l, k, i]
+                    if compute_aos:
+                        aos_check[m,l,k,i] = stat_dict['aos_top'][m, l, k, i] / stat_dict['aos_bot'][m, l, k, i]
+    # Sanity check here
+    assert np.array_equal(precision, precision_check), "Precision check failed"
+    assert np.array_equal(recall, recall_check), "Recall cehck failed"
+    assert np.array_equal(aos, aos_check), "aos cehck failed"
     ret_dict = {
         "recall": recall,
         "precision": precision,
-        "orientation": aos
+        "orientation": aos,
+        "stat_dict": copy.deepcopy(stat_dict) # Arthur
     }
     return ret_dict
 
@@ -592,13 +637,16 @@ def do_eval(gt_annos,
             compute_aos=False,
             PR_detail_dict=None):
 
+    ret_stat_dicts = {} # Arthur
     # min_overlaps: [num_minoverlap, metric, num_class]
     difficultys = [0, 1, 2]
+    import pdb; pdb.set_trace()
     ret = eval_class(gt_annos, dt_annos, current_classes, difficultys, 0,
                      min_overlaps, compute_aos)
     # ret: [num_class, num_diff, num_minoverlap, num_sample_points]
     mAP_bbox = get_mAP(ret["precision"])
     mAP_bbox_R40 = get_mAP_R40(ret["precision"])
+    ret_stat_dicts[0] = ret["stat_dict"]
 
     if PR_detail_dict is not None:
         PR_detail_dict['bbox'] = ret['precision']
@@ -615,6 +663,7 @@ def do_eval(gt_annos,
                      min_overlaps)
     mAP_bev = get_mAP(ret["precision"])
     mAP_bev_R40 = get_mAP_R40(ret["precision"])
+    ret_stat_dicts[1] = ret["stat_dict"]
 
     if PR_detail_dict is not None:
         PR_detail_dict['bev'] = ret['precision']
@@ -623,11 +672,12 @@ def do_eval(gt_annos,
                      min_overlaps)
     mAP_3d = get_mAP(ret["precision"])
     mAP_3d_R40 = get_mAP_R40(ret["precision"])
+    ret_stat_dicts[2] = ret["stat_dict"]
 
     if PR_detail_dict is not None:
         PR_detail_dict['3d'] = ret['precision']
 
-    return mAP_bbox, mAP_bev, mAP_3d, mAP_aos, mAP_bbox_R40, mAP_bev_R40, mAP_3d_R40, mAP_aos_R40
+    return mAP_bbox, mAP_bev, mAP_3d, mAP_aos, mAP_bbox_R40, mAP_bev_R40, mAP_3d_R40, mAP_aos_R40, copy.deepcopy(ret_stat_dicts)
 
 
 def do_coco_style_eval(gt_annos, dt_annos, current_classes, overlap_ranges,
@@ -718,7 +768,7 @@ def fuse_stat_dict_parts(sd_full, PR_detail_dict=None, num_metrics=int(3), compu
     return mAP_bbox, mAP_bev, mAP_3d, mAP_aos, mAP_bbox_R40, mAP_bev_R40, mAP_3d_R40, mAP_aos_R40
 
 
-def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None):
+def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None, ret_stat_dict=False, fuse_stat_dict=None):
     overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7,
                              0.5, 0.7], [0.7, 0.5, 0.5, 0.7, 0.5, 0.7],
                             [0.7, 0.5, 0.5, 0.7, 0.5, 0.7]])
@@ -766,9 +816,13 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
             if anno['alpha'][0] != -10:
                 compute_aos = True
             break
-
-    mAPbbox, mAPbev, mAP3d, mAPaos, mAPbbox_R40, mAPbev_R40, mAP3d_R40, mAPaos_R40 = do_eval(
-        gt_annos, dt_annos, current_classes, min_overlaps, compute_aos, PR_detail_dict=PR_detail_dict)
+    
+    if fuse_stat_dict is None: # Need to compute statistics
+        mAPbbox, mAPbev, mAP3d, mAPaos, mAPbbox_R40, mAPbev_R40, mAP3d_R40, mAPaos_R40, ret_stat_dicts = do_eval(
+            gt_annos, dt_annos, current_classes, min_overlaps, compute_aos, PR_detail_dict=PR_detail_dict)
+    else: # Fuse fed in statistics
+        mAPbbox, mAPbev, mAP3d, mAPaos, mAPbbox_R40, mAPbev_R40, mAP3d_R40, mAPaos_R40 = fuse_stat_dict_parts(
+            fuse_stat_dict, PR_detail_dict=PR_detail_dict, compute_aos=compute_aos)
 
 
     ret_dict = {}
@@ -852,7 +906,10 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
     ret_dict['m3d/map_R40'] /= len(current_classes)
     ret_dict['mbev/map_R40'] /= len(current_classes)
 
-    return result, ret_dict
+    if ret_stat_dict:
+        return result, ret_dict, copy.deepcopy(ret_stat_dicts)
+    else:
+        return result, ret_dict
 
 
 def get_coco_eval_result(gt_annos, dt_annos, current_classes):

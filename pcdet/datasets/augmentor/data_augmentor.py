@@ -122,6 +122,29 @@ class DataAugmentor(object):
         data_dict['points'] = points
         return data_dict
 
+    def random_world_translation(self, data_dict=None, config=None):
+        if data_dict is None:
+            return partial(self.random_world_translation, config=config)
+        noise_translate_std = config['NOISE_TRANSLATE_STD']
+        assert len(noise_translate_std) == 3
+        noise_translate = np.array([
+            np.random.normal(0, noise_translate_std[0], 1),
+            np.random.normal(0, noise_translate_std[1], 1),
+            np.random.normal(0, noise_translate_std[2], 1),
+        ], dtype=np.float32).T
+
+        gt_boxes, points = data_dict['gt_boxes'], data_dict['points']
+        points[:, :3] += noise_translate
+        gt_boxes[:, :3] += noise_translate
+                
+        if 'roi_boxes' in data_dict.keys():
+            data_dict['roi_boxes'][:, :3] += noise_translate
+        
+        data_dict['gt_boxes'] = gt_boxes
+        data_dict['points'] = points
+        data_dict['noise_translate'] = noise_translate
+        return data_dict
+
     def normalize_object_size(self, data_dict=None, config=None):
         if data_dict is None:
             return partial(self.normalize_object_size, config=config)

@@ -72,7 +72,7 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         if cfg.LOCAL_RANK == 0:
             progress_bar.set_postfix(disp_dict)
             progress_bar.update()
-
+    
     if cfg.LOCAL_RANK == 0:
         progress_bar.close()
 
@@ -103,7 +103,7 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         logger.info('recall_rcnn_%s: %f' % (cur_thresh, cur_rcnn_recall))
         ret_dict['recall/roi_%s' % str(cur_thresh)] = cur_roi_recall
         ret_dict['recall/rcnn_%s' % str(cur_thresh)] = cur_rcnn_recall
-
+    
     total_pred_objects = 0
     for anno in det_annos:
         total_pred_objects += anno['name'].__len__()
@@ -113,6 +113,8 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
     with open(result_dir / 'result.pkl', 'wb') as f:
         pickle.dump(det_annos, f)
 
+    # Arthur Temporarily load this for testing
+    # det_annos = pickle.load(open("/robodata/arthurz/Benchmarks/unsupda/ST3D/output/da-waymo-coda_models/da_centerpoint/da_centerpoint_voxelresLR0.003000OPTadam_onecycle/eval/eval_with_train/epoch_2/val/result.pkl", "rb"))
     result_str, result_dict = dataset.evaluation(
         det_annos, class_names,
         eval_metric=cfg.MODEL.POST_PROCESSING.EVAL_METRIC,
