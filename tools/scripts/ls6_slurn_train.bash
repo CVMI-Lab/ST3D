@@ -116,6 +116,18 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
 # export EXTRA_TAG2=kitti_oracle
 
+# Launch CODa to AV dataset models
+
+# CODa32 nuscenes oracle
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_coda.yaml
+export EXTRA_TAG1=coda32pcdet
+
+# CODa128 nuscenes oracle
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_coda.yaml
+export EXTRA_TAG1=coda32pcdet
+
 # Launch Domain Adaptation Models (SOTA architectures)
 
 #KITTI_pp
@@ -144,9 +156,9 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export EXTRA_TAG1=da_centerpoint_voxelres
 
 # # nuScenes pvrcnn
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/da_pvrcnn.yaml
-export EXTRA_TAG1=novel_da_pvrcnn
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/da_pvrcnn.yaml
+# export EXTRA_TAG1=novel_da_pvrcnn
 
 # # Waymo pp
 # export PORT=29500

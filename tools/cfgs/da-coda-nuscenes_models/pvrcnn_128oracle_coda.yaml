@@ -1,17 +1,30 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_coda_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8]
 
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_coda_dataset.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
+    # Match nuScenes dataloader config
+    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': False
+          }
+
+        - NAME: transform_points_to_voxels
+          VOXEL_SIZE: [0.1, 0.1, 0.2]
+          MAX_POINTS_PER_VOXEL: 10
+          MAX_NUMBER_OF_VOXELS: {
+            'train': 60000,
+            'test': 60000
+          }
 
 MODEL:
     NAME: PVRCNN
@@ -40,7 +53,7 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            [ 'Car', 'Pedestrian', 'Cyclist' ]
+            ['Car', 'Pedestrian', 'Cyclist']
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -70,7 +83,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -202,13 +215,16 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: head
+    STAGE: scratch
     WANDB: False
-    WANDB_NAME: waymost3d-codamd-finetune-head
+    WANDB_NAME: da-coda128-nus-pvrcnn-pretrain
+    ARCH: PVRCNN
 
 OPTIMIZATION:
-    NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 20 #46GB
+    BATCH_SIZE_PER_GPU: 10 # 36GB
+    # BATCH_SIZE_PER_GPU: 6 # 22gb
+    NUM_EPOCHS: 50
+
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
@@ -217,11 +233,11 @@ OPTIMIZATION:
     MOMS: [0.95, 0.85]
     PCT_START: 0.4
     DIV_FACTOR: 10
-    DECAY_STEP_LIST: [15, 20]
+    DECAY_STEP_LIST: [35, 45]
     LR_DECAY: 0.1
     LR_CLIP: 0.0000001
 
-    LR_WARMUP: True
+    LR_WARMUP: False
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10

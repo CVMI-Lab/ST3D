@@ -1,9 +1,18 @@
-CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] 
+# ['Vehicle', 'Pedestrian', 'Cyclist'] # change back is eval on waymo
 
+# Change if using waymo
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
     PROCESSED_DATA_TAG: 'waymo_processed_data'
     INFO_WITH_FAKELIDAR: False
+
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_coda_dataset.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+    SHIFT_COOR: [0.0, 0.0, 0.8]
 
 MODEL:
     NAME: PVRCNN
@@ -32,7 +41,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            [ 'Vehicle', 'Pedestrian', 'Cyclist' ]
+            ['Car', 'Pedestrian', 'Cyclist']
+            # [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
         ]
 
         SHARED_CONV_CHANNEL: 64

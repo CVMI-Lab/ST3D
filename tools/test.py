@@ -190,11 +190,10 @@ def main():
             num_list = re.findall(r'\d+', args.ckpt) if args.ckpt is not None else []
             epoch_id = num_list[-1] if num_list.__len__() > 0 else 'no_number'
             eval_output_dir = eval_output_dir / ('epoch_%s' % epoch_id) / cfg.DATA_CONFIG.DATA_SPLIT['test']
+        elif args.eval_tag is not None:
+            eval_output_dir = eval_output_dir / args.eval_tag
         else:
             eval_output_dir = eval_output_dir / ('eval_all_default_%s' % str(DATA_CONFIG_TAR_RES))
-
-        if args.eval_tag is not None:
-            eval_output_dir = eval_output_dir / args.eval_tag
 
         eval_output_dir.mkdir(parents=True, exist_ok=True)
         log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))

@@ -7,7 +7,7 @@ FILTER_MIN_POINTS_IN_GT: 1
 
 DATA_SPLIT: {
     'train': train,
-    'test': val
+    'test': test
 }
 
 INFO_PATH: {
