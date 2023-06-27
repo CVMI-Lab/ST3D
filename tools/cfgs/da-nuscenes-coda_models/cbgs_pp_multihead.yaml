@@ -154,8 +154,8 @@ FINETUNE:
     ARCH: PointPillars
 
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 4 # 34 gb
-    BATCH_SIZE_PER_GPU: 32 # 45 gb
+    BATCH_SIZE_PER_GPU: 16 # 34 gb
+    # BATCH_SIZE_PER_GPU: 32 # 45 gb
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle

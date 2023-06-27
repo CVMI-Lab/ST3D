@@ -140,13 +140,13 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 
 # # nuScenes centerpoint voxel
 # export PORT=29500
-# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/da_cbgs_voxel01_res3d_centerpoint.yaml
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/da_cbgs_voxel0075_res3d_centerpoint.yaml
 # export EXTRA_TAG1=da_centerpoint_voxelres
 
 # # nuScenes pvrcnn
-# export PORT=29500
-# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/da_pvrcnn.yaml
-# export EXTRA_TAG1=da_pvrcnn_centerhead
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pv_rcnn/da_pvrcnn.yaml
+export EXTRA_TAG1=novel_da_pvrcnn
 
 # # Waymo pp
 # export PORT=29500
@@ -159,9 +159,9 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export EXTRA_TAG1=da_centerpoint_voxelres
 
 # # Waymo pvrcnn
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/da_pvrcnn_with_centerhead_rpn.yaml
-export EXTRA_TAG1=da_pvrcnn_centerhead
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/da_pvrcnn_with_centerhead_rpn.yaml
+# export EXTRA_TAG1=da_pvrcnn_centerhead
 
 # Launch regular models from scratch
 ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
