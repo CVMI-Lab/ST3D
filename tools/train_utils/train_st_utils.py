@@ -10,10 +10,12 @@ from pcdet.models.model_utils.dsnorm import set_ds_source, set_ds_target
 
 from .train_utils import save_checkpoint, checkpoint_state
 
+import wandb
 
 def train_one_epoch_st(model, optimizer, source_reader, target_loader, model_func, lr_scheduler,
                        accumulated_iter, optim_cfg, rank, tbar, total_it_each_epoch,
-                       dataloader_iter, tb_log=None, leave_pbar=False, ema_model=None, cur_epoch=None):
+                       dataloader_iter, tb_log=None, leave_pbar=False, ema_model=None, cur_epoch=None,
+                       ft_cfg=None):
     if total_it_each_epoch == len(target_loader):
         dataloader_iter = iter(target_loader)
 
@@ -52,6 +54,9 @@ def train_one_epoch_st(model, optimizer, source_reader, target_loader, model_fun
                 source_batch['SEP_LOSS_WEIGHTS'] = cfg.SELF_TRAIN.SRC.SEP_LOSS_WEIGHTS
 
             loss, tb_dict, disp_dict = model_func(model, source_batch)
+
+            if ft_cfg is not None:
+                wandb.log({"loss": loss, "lr": cur_lr, "iter": cur_it})
             loss = cfg.SELF_TRAIN.SRC.get('LOSS_WEIGHT', 1.0) * loss
             loss.backward()
             loss_meter.update(loss.item())
@@ -131,10 +136,30 @@ def train_model_st(model, optimizer, source_loader, target_loader, model_func, l
                    start_epoch, total_epochs, start_iter, rank, tb_log, ckpt_save_dir, ps_label_dir,
                    source_sampler=None, target_sampler=None, lr_warmup_scheduler=None, ckpt_save_interval=1,
                    max_ckpt_save_num=50, merge_all_iters_to_one_epoch=False, logger=None, ema_model=None,
-                   log_wandb=False):
+                   log_wandb=False, ft_cfg=None):
     accumulated_iter = start_iter
     source_reader = common_utils.DataReader(source_loader, source_sampler)
     source_reader.construct_iter()
+
+    if ft_cfg is not None:
+        # start a new wandb run to track this script
+        wandb_name = "lr%0.6f_opt%s_rank%i" % (optim_cfg.LR, optim_cfg.OPTIMIZER, rank)
+        model_architecture_name = ft_cfg.ARCH if 'ARCH' in ft_cfg else "PVRCNN"
+        wandb.init(
+            # set the wandb project where this run will be logged
+            project=ft_cfg.WANDB_NAME,
+            
+            # track hyperparameters and run metadata
+            config={
+                "learning_rate": optim_cfg.LR,
+                "optimizer": optim_cfg.OPTIMIZER,
+                "architecture": model_architecture_name,
+                "dataset": "CODa",
+                "epochs": 25,
+                "name": wandb_name
+            },
+            name=wandb_name
+        )
 
     # for continue training.
     # if already exist generated pseudo label result
@@ -195,7 +220,8 @@ def train_model_st(model, optimizer, source_loader, target_loader, model_func, l
                 rank=rank, tbar=tbar, tb_log=tb_log,
                 leave_pbar=(cur_epoch + 1 == total_epochs),
                 total_it_each_epoch=total_it_each_epoch,
-                dataloader_iter=dataloader_iter, ema_model=ema_model, cur_epoch=cur_epoch
+                dataloader_iter=dataloader_iter, ema_model=ema_model, cur_epoch=cur_epoch,
+                ft_cfg=ft_cfg
             )
 
             # save trained model
