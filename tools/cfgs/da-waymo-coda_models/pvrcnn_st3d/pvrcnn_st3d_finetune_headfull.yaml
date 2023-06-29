@@ -205,11 +205,13 @@ FINETUNE:
     STAGE: headfull
     WANDB: True
     WANDB_NAME: waymost3d-codamd-finetune-headfull
+    LR_SEARCH: True
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
     # BATCH_SIZE_PER_GPU: 16 #46GB
-    BATCH_SIZE_PER_GPU: 4 # 24GB
+    BATCH_SIZE_PER_GPU: 8 #46GB
+    # BATCH_SIZE_PER_GPU: 4 # 24GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

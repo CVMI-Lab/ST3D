@@ -226,41 +226,42 @@ FINETUNE:
     WANDB_NAME: waymost3d-codamd-selftrain
 
 OPTIMIZATION:
-    NUM_EPOCHS: 50 # Set to this to eval all epochs
+    NUM_EPOCHS: 30 # Set to this to eval all epochs
     # BATCH_SIZE_PER_GPU: 20 #46GB
     BATCH_SIZE_PER_GPU: 4
     OPTIMIZER: adam_onecycle
     LR: 0.0015
-    WEIGHT_DECAY: 0.001
+    WEIGHT_DECAY: 0.01
     MOMENTUM: 0.9
 
     MOMS: [0.95, 0.85]
     PCT_START: 0.4
     DIV_FACTOR: 10
-    DECAY_STEP_LIST: [15, 20]
+    DECAY_STEP_LIST: [35, 45]
     LR_DECAY: 0.1
     LR_CLIP: 0.0000001
 
     EP_PER_CYCLE: 4
 
-    LR_WARMUP: True
+    LR_WARMUP: False
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
 
+# Copied from st3d++ for second iou, all same except memory voting
 SELF_TRAIN:
     SRC:
         USE_DATA: True
         USE_GRAD: True
         LOSS_WEIGHT: 1.0
-        SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
+        SEP_LOSS_WEIGHTS: [3.0, 1.0, 1.0]
     TAR:
         USE_DATA: True
         LOSS_WEIGHT: 1.0
-        SEP_LOSS_WEIGHTS: [1.0,1.0,1.0]
+        SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
 
-    SCORE_THRESH: [0.4, 0.3, 0.3]
-    NEG_THRESH: [0.2, 0.1, 0.1]
+    SCORE_THRESH: [0.6, 0.55, 0.55]
+    NEG_THRESH: [0.25, 0.2, 0.2]
     UPDATE_PSEUDO_LABEL: [0]
     UPDATE_PSEUDO_LABEL_INTERVAL: 4
     INIT_PS: None
@@ -284,6 +285,6 @@ SELF_TRAIN:
             NMS_THRESH: 0.1
 
         MEMORY_VOTING:
-            ENABLED: True
+            ENABLED: False
             IGNORE_THRESH: 2
             RM_THRESH: 3
