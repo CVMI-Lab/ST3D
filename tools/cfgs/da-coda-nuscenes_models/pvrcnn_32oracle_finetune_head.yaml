@@ -4,7 +4,7 @@ DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_oracle_dataset.yaml
     MAX_SWEEPS: 1
     PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
+    BALANCED_RESAMPLING: True
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
@@ -30,68 +30,53 @@ MODEL:
         NUM_UPSAMPLE_FILTERS: [256, 256]
 
     DENSE_HEAD:
-        NAME: AnchorHeadSingle
+        NAME: CenterHead
         CLASS_AGNOSTIC: False
 
-        USE_DIRECTION_CLASSIFIER: True
-        DIR_OFFSET: 0.78539
-        DIR_LIMIT_OFFSET: 0.0
-        NUM_DIR_BINS: 2
-
-        ANCHOR_GENERATOR_CONFIG: [
-            {
-                'class_name': 'car',
-                'anchor_sizes': [[4.2, 2.0, 1.6]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [0],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.55,
-                'unmatched_threshold': 0.4
-            },
-            {
-                'class_name': pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
-            },
-            {
-                'class_name': bicycle,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.5,
-                'unmatched_threshold': 0.35
-            }
+        CLASS_NAMES_EACH_HEAD: [
+            ['car', 'pedestrian', 'bicycle']
         ]
 
+        SHARED_CONV_CHANNEL: 64
+        USE_BIAS_BEFORE_NORM: True
+        NUM_HM_CONV: 2
+        SEPARATE_HEAD_CFG:
+            HEAD_ORDER: [ 'center', 'center_z', 'dim', 'rot' ]
+            HEAD_DICT: {
+                'center': { 'out_channels': 2, 'num_conv': 2 },
+                'center_z': { 'out_channels': 1, 'num_conv': 2 },
+                'dim': { 'out_channels': 3, 'num_conv': 2 },
+                'rot': { 'out_channels': 2, 'num_conv': 2 },
+            }
+
         TARGET_ASSIGNER_CONFIG:
-            NAME: AxisAlignedTargetAssigner
-            POS_FRACTION: -1.0
-            SAMPLE_SIZE: 512
-            NORM_BY_NUM_EXAMPLES: False
-            MATCH_HEIGHT: False
-            BOX_CODER: ResidualCoder
+            FEATURE_MAP_STRIDE: 8
+            NUM_MAX_OBJS: 500
+            GAUSSIAN_OVERLAP: 0.1
+            MIN_RADIUS: 2
 
         LOSS_CONFIG:
             LOSS_WEIGHTS: {
                 'cls_weight': 1.0,
                 'loc_weight': 2.0,
-                'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ]
             }
+
+        POST_PROCESSING:
+            SCORE_THRESH: 0.1
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+            MAX_OBJ_PER_SAMPLE: 500
+            NMS_CONFIG:
+                NMS_TYPE: nms_gpu
+                NMS_THRESH: 0.7
+                NMS_PRE_MAXSIZE: 4096
+                NMS_POST_MAXSIZE: 500
 
     PFE:
         NAME: VoxelSetAbstraction
         POINT_SOURCE: raw_points
         NUM_KEYPOINTS: 4096
-        NUM_OUTPUT_FEATURES: 128
+        NUM_OUTPUT_FEATURES: 90
         SAMPLE_METHOD: FPS
 
         FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
@@ -156,6 +141,12 @@ MODEL:
                 NMS_PRE_MAXSIZE: 1024
                 NMS_POST_MAXSIZE: 100
                 NMS_THRESH: 0.7
+                SCORE_THRESH: 0.1
+
+#                NMS_PRE_MAXSIZE: 4096
+#                NMS_POST_MAXSIZE: 500
+#                NMS_THRESH: 0.85
+
 
         ROI_GRID_POOL:
             GRID_SIZE: 6
@@ -172,12 +163,12 @@ MODEL:
             SAMPLE_ROI_BY_EACH_CLASS: True
             CLS_SCORE_TYPE: roi_iou
 
-            CLS_FG_THRESH: 0.75 # decreased form 0.75 to complement below
-            CLS_BG_THRESH: 0.25 # increased from 0.25 to make easier
+            CLS_FG_THRESH: 0.75
+            CLS_BG_THRESH: 0.25
             CLS_BG_THRESH_LO: 0.1
             HARD_BG_RATIO: 0.8
 
-            REG_FG_THRESH: 0.55 # Imcreased from 0.55 to make easier
+            REG_FG_THRESH: 0.55
 
         LOSS_CONFIG:
             CLS_LOSS: BinaryCrossEntropy
@@ -200,20 +191,21 @@ MODEL:
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
             NMS_TYPE: nms_gpu
-            NMS_THRESH: 0.1
+            NMS_THRESH: 0.7
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
     STAGE: head
     WANDB: True
-    WANDB_NAME: coda32-md-nus-finetune-head
+    WANDB_NAME: da-coda32-md-nus-finetune-head
 
 OPTIMIZATION:
     NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 16 # 46gb
+    # BATCH_SIZE_PER_GPU: 16 # 40gb
+    BATCH_SIZE_PER_GPU: 12 # 34gb
     OPTIMIZER: adam_onecycle
-    LR: 0.001
+    LR: 0.01
     WEIGHT_DECAY: 0.001
     MOMENTUM: 0.9
 

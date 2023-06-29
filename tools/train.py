@@ -158,7 +158,7 @@ def main():
         start_epoch = it = 0
         last_epoch = -1
         if args.pretrained_model is not None:
-            model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist, logger=logger)
+            model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist, logger=logger, load_head=True)
 
         if args.ckpt is not None:
             it, start_epoch = model.load_params_with_optimizer(args.ckpt, to_cpu=dist, optimizer=optimizer, logger=logger)
