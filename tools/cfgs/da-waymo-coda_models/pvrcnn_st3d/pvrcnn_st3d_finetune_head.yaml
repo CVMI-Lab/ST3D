@@ -40,7 +40,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            [ 'Car', 'Pedestrian', 'Cyclist' ]
+            ['Car', 'Pedestrian', 'Cyclist']
+            # [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
         ]
 
         SHARED_CONV_CHANNEL: 64

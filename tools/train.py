@@ -279,6 +279,7 @@ def main():
         head_stage = cfg.get('FINETUNE', None)['STAGE']=='head'
         full_stage = cfg.get('FINETUNE', None)['STAGE']=='full'
         headfull_stage = cfg.get('FINETUNE', None)['STAGE']=='headfull'
+        dolr_search = cfg.get('FINETUNE', None).get('LR_SEARCH', False)
 
         if head_stage:
             # lr_search = [1e-2, 1e-3]
@@ -305,7 +306,7 @@ def main():
                     unstable_lr = True
                     print("Learning rate ", lr, " unstable for training, reducing by 10x...")
 
-            if not unstable_lr:
+            if not dolr_search and not unstable_lr:
                 print("Completed training with lr ", lr, " cleaning up...")
                 break
 
