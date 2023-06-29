@@ -13,6 +13,25 @@ DATA_CONFIG_TAR:
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 0.8]
 
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: [ 'placeholder' ]
+        AUG_CONFIG_LIST:
+            - NAME: random_object_scaling
+              SCALE_UNIFORM_NOISE: [ 0.95, 1.05 ]
+
+            - NAME: random_object_rotation
+              ROT_PROB: 0.8
+              ROT_UNIFORM_NOISE: [ -0.38539816, 0.38539816 ]
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: [ 'x', 'y' ]
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [ -0.78539816, 0.78539816 ]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [ 0.97, 1.03 ]
+
 MODEL:
     NAME: PVRCNN
 
@@ -209,7 +228,7 @@ FINETUNE:
 OPTIMIZATION:
     NUM_EPOCHS: 50 # Set to this to eval all epochs
     # BATCH_SIZE_PER_GPU: 20 #46GB
-    BATCH_SIZE_PER_GPU: 6 
+    BATCH_SIZE_PER_GPU: 4
     OPTIMIZER: adam_onecycle
     LR: 0.0015
     WEIGHT_DECAY: 0.001

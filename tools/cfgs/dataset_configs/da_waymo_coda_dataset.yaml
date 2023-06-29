@@ -61,6 +61,6 @@ DATA_PROCESSOR:
 TEST:
     BOX_FILTER: {
         'USE_IMAGE_AREA_FILTER': True,
-        'FOV_FILTER': True,
+        'FOV_FILTER': False,
         'LIMIT_RANGE': [-75.2, -75.2, -2, 75.2, 75.2, 4]
     }

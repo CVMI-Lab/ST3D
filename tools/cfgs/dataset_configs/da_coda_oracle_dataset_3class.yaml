@@ -2,6 +2,7 @@ DATASET: 'CODataset'
 DATA_PATH: '../data/coda128_3class'
 
 POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+FOV_POINTS_ONLY: False
 
 DATA_SPLIT: {
     'train': train,
@@ -61,6 +62,6 @@ DATA_PROCESSOR:
 TEST:
     BOX_FILTER: {
         'USE_IMAGE_AREA_FILTER': True,
-        'FOV_FILTER': True,
+        'FOV_FILTER': False,
         'LIMIT_RANGE': [-75.2, -75.2, -2, 75.2, 75.2, 4]
     }

@@ -134,9 +134,35 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=coda32pcdet
 
 # CODa128 waymo oracle
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_128oracle_coda.yaml
-export EXTRA_TAG1=coda128pcdet
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_128oracle_coda.yaml
+# export EXTRA_TAG1=coda128pcdet
+
+# Launch CODa to AV dataset finetune head models
+
+# CODa32 nuscenes head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda32pcdet
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_coda/coda32pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# CODa128 nuscenes head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda128pcdet
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_coda/coda128pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# CODa32 waymo head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_32oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda32pcdet
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/pvrcnn_32oracle_coda/coda32pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# CODa128 waymo head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_128oracle_finetune_head.yaml
+# export EXTRA_TAG1=coda128pcdet
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/pvrcnn_128oracle_coda/coda128pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
 
 # Launch Domain Adaptation Models (SOTA architectures)
 
@@ -186,11 +212,11 @@ export EXTRA_TAG1=coda128pcdet
 # export EXTRA_TAG1=da_pvrcnn_centerhead
 
 # Launch regular models from scratch
-ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task1
 
 #Launch pretrained model
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
 
 #Launch model from ckpt
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4
