@@ -1,35 +1,11 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] 
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': True
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.15]
-          MAX_POINTS_PER_VOXEL: 5
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 80000,
-            'test': 90000
-          }
-
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
-    RES: waymo
-    TARGET: True
-    BALANCED_RESAMPLING: False
-    CLASS_NAMES: [ 'Vehicle', 'Pedestrian', 'Cyclist' ]
-    SHIFT_COOR: [0.0, 0.0, 1.8]
+    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    RES: 128
 
 MODEL:
     NAME: PVRCNN
@@ -58,8 +34,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            # ['Car', 'Pedestrian', 'Cyclist'] # Change back if train/eval on coda
-            [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
+            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
+            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -172,7 +148,6 @@ MODEL:
 #                NMS_POST_MAXSIZE: 500
 #                NMS_THRESH: 0.85
 
-
         ROI_GRID_POOL:
             GRID_SIZE: 6
             MLPS: [[64, 64], [64, 64]]
@@ -205,7 +180,7 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-
+        
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
         SCORE_THRESH: 0.1
@@ -216,21 +191,18 @@ MODEL:
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
             NMS_TYPE: nms_gpu
-            NMS_THRESH: 0.7
+            NMS_THRESH: 0.1
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
-    WANDB: True
-    WANDB_NAME: da-coda128-waymo-pvrcnn-pretrain
-    ARCH: PVRCNN
+    STAGE: head
+    WANDB: False
+    WANDB_NAME: coda-md-3class-128-finetune-head
 
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 4
-    BATCH_SIZE_PER_GPU: 8 # Eval 20GB
-    NUM_EPOCHS: 50
-
+    NUM_EPOCHS: 25
+    BATCH_SIZE_PER_GPU: 12 # 44gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

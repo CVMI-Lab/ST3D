@@ -147,7 +147,6 @@ MODEL:
 #                NMS_POST_MAXSIZE: 500
 #                NMS_THRESH: 0.85
 
-
         ROI_GRID_POOL:
             GRID_SIZE: 6
             MLPS: [[64, 64], [64, 64]]
@@ -180,6 +179,20 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
+        
+    POST_PROCESSING:
+        RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+        SCORE_THRESH: 0.1
+        OUTPUT_RAW_SCORE: False
+
+        EVAL_METRIC: kitti
+
+        NMS_CONFIG:
+            MULTI_CLASSES_NMS: False
+            NMS_TYPE: nms_gpu
+            NMS_THRESH: 0.1
+            NMS_PRE_MAXSIZE: 4096
+            NMS_POST_MAXSIZE: 500
 
 FINETUNE:
     STAGE: scratch
