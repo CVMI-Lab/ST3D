@@ -1,11 +1,11 @@
 CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 128
+    RES: 32
 
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
@@ -228,13 +228,13 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: head
-    WANDB: False
-    WANDB_NAME: coda-md-3class-128-finetune-head
+    STAGE: headfull
+    WANDB: True
+    WANDB_NAME: coda-md-3class-32-finetune-headfull
 
 OPTIMIZATION:
-    NUM_EPOCHS: 25
-    BATCH_SIZE_PER_GPU: 12 # 44gb
+    NUM_EPOCHS: 50
+    BATCH_SIZE_PER_GPU: 10 # 38gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

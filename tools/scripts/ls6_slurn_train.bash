@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 1                               # Total number of mpi tasks requested
-#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 30:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -140,6 +140,20 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 
 # Launch CODa to AV dataset finetune head models
 
+# # Single Stage FT
+
+# # CODa32 nuscenes single stage
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_32oracle_coda_finetune_headfull.yaml
+# export EXTRA_TAG1=bestcoda32
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/pvrcnn_32oracle_coda/coda32pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_36.pth
+
+# # CODa128 waymo single stage
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_128oracle_coda_finetune_headfull.yaml
+# export EXTRA_TAG1=bestcoda128
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/pvrcnn_128oracle_coda/coda128pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
 # CODa32 nuscenes head
 # export PORT=29500
 # export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml
@@ -213,11 +227,11 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 
 # Launch CODa sensor specific finetuning
 
-# CODa 16 FT head
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class16finetune_head.yaml
-export EXTRA_TAG1=coda16bestwaymo
-export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
+# # CODa 16 FT head
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class16finetune_head.yaml
+# export EXTRA_TAG1=coda16bestwaymo
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
 # # CODa 32 FT head
 # export PORT=29500
@@ -236,6 +250,30 @@ export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pr
 # export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class128finetune_head.yaml
 # export EXTRA_TAG1=coda128bestwaymo
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
+
+# CODa 16 FT head full
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class16finetune_headfull.yaml
+export EXTRA_TAG1=coda16bestwaymo
+export PRETRAINED_MODEL1=../output/da-coda-coda_models/centerhead/pvrcnn_3class16finetune_head/coda16bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_25.pth
+
+# # CODa 32 FT head full
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class32finetune_headfull.yaml
+# export EXTRA_TAG1=coda32bestwaymo
+# export PRETRAINED_MODEL1=../output/da-coda-coda_models/centerhead/pvrcnn_3class32finetune_head/coda32bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_25.pth
+
+# # CODa 64 FT head full
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class64finetune_headfull.yaml
+# export EXTRA_TAG1=coda64bestwaymo
+# export PRETRAINED_MODEL1=../output/da-coda-coda_models/centerhead/pvrcnn_3class64finetune_head/coda64bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_25.pth
+
+# # CODa 128 FT head full
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class128finetune_headfull.yaml
+# export EXTRA_TAG1=coda128bestwaymo
+# export PRETRAINED_MODEL1=../output/da-coda-coda_models/centerhead/pvrcnn_3class128finetune_head/coda128bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_25.pth
 
 # Launch regular models from scratch
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0

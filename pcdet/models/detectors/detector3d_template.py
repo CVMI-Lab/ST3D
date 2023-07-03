@@ -475,7 +475,9 @@ class Detector3DTemplate(nn.Module):
             if isinstance(cls_preds, list):
                 cls_preds = torch.cat(cls_preds).squeeze()
             else:
-                cls_preds = cls_preds.squeeze()
+                # Fix issue where only one cls_preds would result in shape error
+                if cls_preds.ndim > 1:
+                    cls_preds = cls_preds.squeeze(dim=-1)
 
             src_iou_preds = iou_preds
             src_box_preds = box_preds
@@ -531,13 +533,16 @@ class Detector3DTemplate(nn.Module):
                 thresh_list=post_process_cfg.RECALL_THRESH_LIST
             )
 
-            record_dict = {
-                'pred_boxes': final_boxes,
-                'pred_scores': final_scores,
-                'pred_labels': final_labels,
-                'pred_cls_scores': cls_preds[selected],
-                'pred_iou_scores': iou_preds[selected]
-            }
+            try:
+                record_dict = {
+                    'pred_boxes': final_boxes,
+                    'pred_scores': final_scores,
+                    'pred_labels': final_labels,
+                    'pred_cls_scores': cls_preds[selected],
+                    'pred_iou_scores': iou_preds[selected]
+                }
+            except Exception as e:
+                import pdb; pdb.set_trace()
 
             pred_dicts.append(record_dict)
 

@@ -28,7 +28,7 @@ def parse_config():
 
     parser.add_argument('--batch_size', type=int, default=None, required=False, help='batch size for training')
     parser.add_argument('--epochs', type=int, default=None, required=False, help='number of epochs to train for')
-    parser.add_argument('--workers', type=int, default=1, help='number of workers for dataloader')
+    parser.add_argument('--workers', type=int, default=4, help='number of workers for dataloader')
     parser.add_argument('--extra_tag', type=str, default='default', help='extra tag for this experiment')
     parser.add_argument('--ckpt', type=str, default=None, help='checkpoint to start from')
     parser.add_argument('--pretrained_model', type=str, default=None, help='pretrained_model')
@@ -237,6 +237,7 @@ def main():
 
         logger.info('**********************End training %s/%s(%s)**********************\n\n\n'
                     % (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
+        wandb.finish()
 
         logger.info('**********************Start evaluation %s/%s(%s)**********************' %
                     (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
@@ -244,32 +245,85 @@ def main():
         if args.eval_fov_only:
             cfg.DATA_CONFIG_TAR.FOV_POINTS_ONLY = True
 
-        if cfg.get('DATA_CONFIG_TAR', None) and not args.eval_src:
-            test_set, test_loader, sampler = build_dataloader(
-                dataset_cfg=cfg.DATA_CONFIG_TAR,
-                class_names=cfg.DATA_CONFIG_TAR.CLASS_NAMES,
-                batch_size=args.batch_size,
-                dist=dist_train, workers=args.workers, logger=logger, training=False
-            )
-        else:
-            test_set, test_loader, sampler = build_dataloader(
-                dataset_cfg=cfg.DATA_CONFIG,
-                class_names=cfg.CLASS_NAMES,
-                batch_size=args.batch_size,
-                dist=dist_train, workers=args.workers, logger=logger, training=False
-            )
+        # Add automatic evaluation of multiple target datasets
+        data_config_tar_list = ['DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+        for data_config_tar in data_config_tar_list:
+            if cfg.get(data_config_tar, None) is None:
+                print("Missing data config %s, skipping..." % data_config_tar)
+                continue
+            
+            LR = str(cfg[data_config_tar].get('LR', '0.010000'))
+            OPT = cfg[data_config_tar].get('OPT', 'adam_onecycle')
+            output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / ("%sLR%sOPT%s"%(args.extra_tag, LR, OPT))
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-        eval_output_dir = output_dir / 'eval' / 'eval_with_train'
-        eval_output_dir.mkdir(parents=True, exist_ok=True)
-        # Only evaluate the last args.num_epochs_to_eval epochs
-        args.start_epoch = max(args.epochs - args.num_epochs_to_eval, 0)
+            eval_output_dir = output_dir / 'eval'
 
-        repeat_eval_ckpt(
-            model.module if dist_train else model,
-            test_loader, args, eval_output_dir, logger, ckpt_dir,
-            dist_test=dist_train, ft_cfg=cfg.get('FINETUNE', None)
-        )
-        wandb.finish()
+            print("Evaluating base config ", cfg[data_config_tar].get('_BASE_CONFIG_', None))
+
+            DATA_CONFIG_TAR_RES = cfg[data_config_tar].get('RES', 'ORIGINAL')
+
+            # By default eval all
+            eval_output_dir = eval_output_dir / ('eval_all_default_%s' % str(DATA_CONFIG_TAR_RES))
+            eval_output_dir.mkdir(parents=True, exist_ok=True)
+            log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
+            logger = common_utils.create_logger(log_file, rank=cfg.LOCAL_RANK)
+
+            # log to file
+            logger.info('**********************Start logging**********************')
+            gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
+            logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
+
+            if dist_train:
+                logger.info('total_batch_size: %d' % (total_gpus * args.batch_size))
+            for key, val in vars(args).items():
+                logger.info('{:16} {}'.format(key, val))
+            log_config_to_file(cfg, logger=logger)
+
+            if cfg[data_config_tar] and not args.eval_src:
+                test_set, test_loader, sampler = build_dataloader(
+                    dataset_cfg=cfg[data_config_tar],
+                    class_names=cfg[data_config_tar].CLASS_NAMES,
+                    batch_size=args.batch_size,
+                    dist=dist_train, workers=args.workers, logger=logger, training=False
+                )
+            else:
+                test_set, test_loader, sampler = build_dataloader(
+                    dataset_cfg=cfg.DATA_CONFIG,
+                    class_names=cfg.CLASS_NAMES,
+                    batch_size=args.batch_size,
+                    dist=dist_train, workers=args.workers, logger=logger, training=False
+                )
+
+                # Only evaluate the last args.num_epochs_to_eval epochs
+                args.start_epoch = max(args.epochs - args.num_epochs_to_eval, 0)
+
+            ft_cfg=cfg.get('FINETUNE', None)
+            if ft_cfg is not None:
+                wandb_name = "eval%s_lr%0.6f_opt%s_rank%i_eval_all" % (DATA_CONFIG_TAR_RES, cfg.OPTIMIZATION.LR , cfg.OPTIMIZATION.OPTIMIZER, cfg.LOCAL_RANK)
+                wandb.init(
+                    # set the wandb project where this run will be logged
+                    project=ft_cfg.WANDB_NAME,
+                    
+                    # track hyperparameters and run metadata
+                    config={
+                        "learning_rate": cfg.OPTIMIZATION.LR,
+                        "optimizer": cfg.OPTIMIZATION.OPTIMIZER,
+                        "architecture": "PVRCNN",
+                        "dataset": "CODa",
+                        "epochs": args.epochs,
+                        "name": wandb_name
+                    },
+                    name=wandb_name
+                )    
+                repeat_eval_ckpt(
+                    model.module if dist_train else model,
+                    test_loader, args, eval_output_dir, logger, ckpt_dir,
+                    dist_test=dist_train, ft_cfg=cfg.get('FINETUNE', None)
+                )
+                wandb.finish()
+                    
+                
         logger.info('**********************End evaluation %s/%s(%s)**********************' %
                     (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))
 
