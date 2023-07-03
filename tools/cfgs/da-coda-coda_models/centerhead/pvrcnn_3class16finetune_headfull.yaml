@@ -31,13 +31,13 @@ DATA2_CONFIG_TAR:
     SHIFT_COOR: [0.0, 0.0, 0.8]
     RES: 32
 
-DATA3_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_3class.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 16
+# DATA3_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_3class.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+#     SHIFT_COOR: [0.0, 0.0, 0.8]
+#     RES: 16
 
 MODEL:
     NAME: PVRCNN

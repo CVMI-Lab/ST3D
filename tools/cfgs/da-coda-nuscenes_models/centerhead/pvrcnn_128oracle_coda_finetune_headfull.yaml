@@ -1,43 +1,9 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle'] # only used during train, not test
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
     BALANCED_RESAMPLING: True
-    FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 32
-
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 128
-
-DATA1_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda64_oracle_dataset_3class.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 64
-
-# DATA2_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class.yaml
-#     TARGET: True
-#     FOV_POINTS_ONLY: False
-#     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-#     SHIFT_COOR: [0.0, 0.0, 0.8]
-#     RES: 32
-
-DATA3_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_3class.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 16
+    SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
     NAME: PVRCNN
@@ -66,8 +32,7 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
-            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            ['car', 'pedestrian', 'bicycle']
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -97,7 +62,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -180,6 +145,7 @@ MODEL:
 #                NMS_POST_MAXSIZE: 500
 #                NMS_THRESH: 0.85
 
+
         ROI_GRID_POOL:
             GRID_SIZE: 6
             MLPS: [[64, 64], [64, 64]]
@@ -212,7 +178,7 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-        
+
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
         SCORE_THRESH: 0.1
@@ -223,18 +189,22 @@ MODEL:
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
             NMS_TYPE: nms_gpu
-            NMS_THRESH: 0.1
+            NMS_THRESH: 0.7
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
     STAGE: headfull
-    WANDB: True
-    WANDB_NAME: coda-md-3class-32-finetune-headfull
+    WANDB: False
+    WANDB_NAME: coda128-nus-pvrcnn-finetune-headfull
+    ARCH: PVRCNN
 
 OPTIMIZATION:
-    NUM_EPOCHS: 50
-    BATCH_SIZE_PER_GPU: 10 # 38gb
+    BATCH_SIZE_PER_GPU: 12 # 38GB
+    # BATCH_SIZE_PER_GPU: 6 # 22gb training
+    # BATCH_SIZE_PER_GPU: 6 # eval on nuscenes
+    NUM_EPOCHS: 30
+
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
