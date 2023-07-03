@@ -246,7 +246,11 @@ def main():
             cfg.DATA_CONFIG_TAR.FOV_POINTS_ONLY = True
 
         # Add automatic evaluation of multiple target datasets
-        data_config_tar_list = ['DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+        if args.eval_src:
+            data_config_tar_list = ['DATA_CONFIG']
+        else:
+            data_config_tar_list = ['DATA_CONFIG', 'DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+
         for data_config_tar in data_config_tar_list:
             if cfg.get(data_config_tar, None) is None:
                 print("Missing data config %s, skipping..." % data_config_tar)
@@ -280,7 +284,7 @@ def main():
                 logger.info('{:16} {}'.format(key, val))
             log_config_to_file(cfg, logger=logger)
 
-            if cfg[data_config_tar] and not args.eval_src:
+            if cfg[data_config_tar] and not args.eval_src and data_config_tar!='DATA_CONFIG':
                 test_set, test_loader, sampler = build_dataloader(
                     dataset_cfg=cfg[data_config_tar],
                     class_names=cfg[data_config_tar].CLASS_NAMES,
@@ -315,7 +319,8 @@ def main():
                         "name": wandb_name
                     },
                     name=wandb_name
-                )    
+                )
+
                 repeat_eval_ckpt(
                     model.module if dist_train else model,
                     test_loader, args, eval_output_dir, logger, ckpt_dir,
