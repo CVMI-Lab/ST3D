@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 1                               # Total number of mpi tasks requested
-#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 30:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -115,6 +115,8 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export PORT=29501
 # export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
 # export EXTRA_TAG2=kitti_oracle
+
+
 
 # Launch CODa to AV dataset models
 
@@ -288,6 +290,22 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export CONFIG_FILE1=cfgs/da-coda-coda_models/centerhead/pvrcnn_3class128finetune_headfull.yaml
 # export EXTRA_TAG1=coda128bestwaymo
 # export PRETRAINED_MODEL1=../output/da-coda-coda_models/centerhead/pvrcnn_3class128finetune_head/coda128bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_25.pth
+
+# Launch AV to CODa Traning
+
+# Pretraining
+# # Nuscenes using best codacfg
+# export PORT=29500
+# export CONFG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes.yaml
+# export EXTRA_TAG1=bestcoda128
+
+# Single Stage Finetuning
+
+# Waymo single stage finetuning
+export PORT=29500
+export CONFG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_finetune_coda.yaml
+export EXTRA_TAG1=singlestagecoda128
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
 # Launch regular models from scratch
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
