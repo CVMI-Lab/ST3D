@@ -294,25 +294,25 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # Launch AV to CODa Traning
 
 # Pretraining
-# # Nuscenes using best codacfg
-# export PORT=29500
-# export CONFG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes.yaml
-# export EXTRA_TAG1=bestcoda128
+# Nuscenes using best codacfg
+export PORT=29500
+export CONFG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes.yaml
+export EXTRA_TAG1=bestcoda128
 
 # Single Stage Finetuning
 
-# Waymo single stage finetuning
-export PORT=29500
-export CONFG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_finetune_coda.yaml
-export EXTRA_TAG1=singlestagecoda128
-export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
+# # Waymo single stage finetuning
+# export PORT=29500
+# export CONFG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_finetune_coda.yaml
+# export EXTRA_TAG1=singlestagecoda128
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
 # Launch regular models from scratch
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task1
 
 #Launch pretrained model
-ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
 
 #Launch model from ckpt
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4
