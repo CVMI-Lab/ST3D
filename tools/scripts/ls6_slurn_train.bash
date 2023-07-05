@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 1                               # Total number of mpi tasks requested
-#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 30:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -132,12 +132,33 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 
 # CODa32 waymo oracle
 # export PORT=29500
-# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_32oracle_coda.yaml
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_allclass32oracle_coda.yaml
 # export EXTRA_TAG1=coda32pcdet
 
 # CODa128 waymo oracle
 # export PORT=29500
-# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_128oracle_coda.yaml
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/pvrcnn_allclass128oracle_coda.yaml
+# export EXTRA_TAG1=coda128pcdet
+
+## All Class pretraining
+# CODa32 nuscenes oracle
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda.yaml
+export EXTRA_TAG1=coda32pcdet
+
+# CODa128 nuscenes oracle
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda.yaml
+# export EXTRA_TAG1=coda128pcdet
+
+# CODa32 waymo oracle
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda.yaml
+# export EXTRA_TAG1=coda32pcdet
+
+# CODa128 waymo oracle
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda.yaml
 # export EXTRA_TAG1=coda128pcdet
 
 # Launch CODa to AV dataset finetune head models
@@ -294,10 +315,10 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # Launch AV to CODa Traning
 
 # Pretraining
-# Nuscenes using best codacfg
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes.yaml
-export EXTRA_TAG1=bestcoda128
+# # Nuscenes using best codacfg
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes.yaml
+# export EXTRA_TAG1=bestcoda128
 
 # Single Stage Finetuning
 
