@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 1                               # Total number of mpi tasks requested
-#SBATCH -t 30:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 48:00:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -141,10 +141,10 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export EXTRA_TAG1=coda128pcdet
 
 ## All Class pretraining
-# CODa32 nuscenes oracle
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda.yaml
-export EXTRA_TAG1=coda32pcdet
+# # CODa32 nuscenes oracle
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda.yaml
+# export EXTRA_TAG1=coda32pcdet
 
 # CODa128 nuscenes oracle
 # export PORT=29500
@@ -160,6 +160,47 @@ export EXTRA_TAG1=coda32pcdet
 # export PORT=29500
 # export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda.yaml
 # export EXTRA_TAG1=coda128pcdet
+
+## All Class finetune head
+
+# CODa32 nuscenes 
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head.yaml
+# export EXTRA_TAG1=coda32nusconfig
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda/coda32pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# # CODa32 waymo 
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head.yaml
+# export EXTRA_TAG1=coda32waymoconfig
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda/coda32pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# # CODa128 nuscenes 
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head.yaml
+# export EXTRA_TAG1=coda128nusconfig
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda/coda128pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+# # CODa 128 waymo
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head.yaml
+# export EXTRA_TAG1=coda128waymoconfig
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda/coda128pcdetLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_50.pth
+
+## All Class finetune headfull
+
+# CODa32 nuscenes 
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_headfull.yaml
+export EXTRA_TAG1=coda32nusconfig
+export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head/coda32nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
+
+# # CODa32 waymo 
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_headfull.yaml
+# export EXTRA_TAG1=coda32waymoconfig
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head/coda32waymoconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
+
 
 # Launch CODa to AV dataset finetune head models
 
@@ -329,11 +370,11 @@ export EXTRA_TAG1=coda32pcdet
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
 # Launch regular models from scratch
-ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
+# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task1
 
 #Launch pretrained model
-# ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
+ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --pretrained_model ${PRETRAINED_MODEL1} >> launcher_train_models_task3
 
 #Launch model from ckpt
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --ckpt ${CKPT1} >> launcher_train_models_task4

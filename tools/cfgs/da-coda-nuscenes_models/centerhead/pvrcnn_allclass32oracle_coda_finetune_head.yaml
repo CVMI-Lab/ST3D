@@ -1,38 +1,9 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle'] # only used during train, not test
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
     BALANCED_RESAMPLING: True
     SHIFT_COOR: [0.0, 0.0, 1.8]
-
-    POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
-
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': True
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.15]
-          MAX_POINTS_PER_VOXEL: 5
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 80000,
-            'test': 90000
-          }
-
-# Uncomment to eval on CODa
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 128
 
 MODEL:
     NAME: PVRCNN
@@ -61,8 +32,7 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car', 'pedestrian', 'bicycle'] # change to this to train on nuscenes
-            # ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            ['car', 'pedestrian', 'bicycle']
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -92,7 +62,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -175,6 +145,7 @@ MODEL:
 #                NMS_POST_MAXSIZE: 500
 #                NMS_THRESH: 0.85
 
+
         ROI_GRID_POOL:
             GRID_SIZE: 6
             MLPS: [[64, 64], [64, 64]]
@@ -207,7 +178,7 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-        
+
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
         SCORE_THRESH: 0.1
@@ -218,20 +189,23 @@ MODEL:
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
             NMS_TYPE: nms_gpu
-            NMS_THRESH: 0.1
+            NMS_THRESH: 0.7
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: head
     WANDB: True
-    WANDB_NAME: nus-codacfg-pvrcnn
+    WANDB_NAME: coda32allclass-nus-pvrcnn-finetune-head
+    ARCH: PVRCNN
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 44gb
-    # BATCH_SIZE_PER_GPU: 8 # 36GB
-    # BATCH_SIZE_PER_GPU: 6 # 22 GB
+    # BATCH_SIZE_PER_GPU: 18 # 38GB
+    # BATCH_SIZE_PER_GPU: 12 # 34GB
+    # BATCH_SIZE_PER_GPU: 6 # 22gb training
+    BATCH_SIZE_PER_GPU: 6 # eval on nuscenes
+    NUM_EPOCHS: 10
+
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
