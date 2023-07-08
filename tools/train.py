@@ -249,7 +249,7 @@ def main():
         if args.eval_src:
             data_config_tar_list = ['DATA_CONFIG']
         else:
-            data_config_tar_list = ['DATA_CONFIG_TAR', 'DATA_CONFIG', 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+            data_config_tar_list = ['DATA_CONFIG', 'DATA_CONFIG_TAR', 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
 
         for data_config_tar in data_config_tar_list:
             if cfg.get(data_config_tar, None) is None:
