@@ -195,6 +195,12 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export EXTRA_TAG1=coda32nusconfig
 # export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head/coda32nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
 
+# CODa32 nuscenes 
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_headfull.yaml
+export EXTRA_TAG1=coda128nusconfig
+export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head/coda128nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
+
 # # CODa32 waymo 
 # export PORT=29500
 # export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_headfull.yaml
@@ -202,10 +208,10 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head/coda32waymoconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
 
 # # CODa128 Waymo
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_headfull.yaml
-export EXTRA_TAG1=coda128waymoconfig
-export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head/coda128waymoconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_headfull.yaml
+# export EXTRA_TAG1=coda128waymoconfig
+# export PRETRAINED_MODEL1=../output/da-coda-waymo_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head/coda128waymoconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
 
 # Launch CODa to AV dataset finetune head models
 

@@ -1,9 +1,8 @@
-CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist'] 
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle'] # only used during train, not test
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
-    PROCESSED_DATA_TAG: 'waymo_processed_data'
-    INFO_WITH_FAKELIDAR: False
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    BALANCED_RESAMPLING: True
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
@@ -33,7 +32,7 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
+            ['car', 'pedestrian', 'bicycle']
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -63,7 +62,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -195,16 +194,17 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: head
-    WANDB: True
-    WANDB_NAME: coda32allclass-waymo-pvrcnn-finetune-head
+    STAGE: headfull
+    WANDB: False
+    WANDB_NAME: coda128allclass-nus-pvrcnn-finetune-headfull
     ARCH: PVRCNN
 
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 10 # Train 38 GB
-    # BATCH_SIZE_PER_GPU: 12 # Train 40GB
-    BATCH_SIZE_PER_GPU: 8 # Eval 20GB
-    NUM_EPOCHS: 10
+    # BATCH_SIZE_PER_GPU: 18 # 38GB
+    BATCH_SIZE_PER_GPU: 10 # 34GB
+    # BATCH_SIZE_PER_GPU: 6 # 22gb training
+    # BATCH_SIZE_PER_GPU: 6 # eval on nuscenes
+    NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle
     LR: 0.01
