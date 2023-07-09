@@ -143,7 +143,7 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
 
 def main():
     # Add automatic evaluation of multiple target datasets
-    data_config_tar_list = ['DATA_CONFIG', 'DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
+    data_config_tar_list = ['DATA_CONFIG_TAR' , 'DATA1_CONFIG_TAR', 'DATA2_CONFIG_TAR', 'DATA3_CONFIG_TAR']
     launched_once = False
 
     for data_config_tar in data_config_tar_list:
@@ -194,7 +194,7 @@ def main():
             eval_output_dir = eval_output_dir / args.eval_tag
         else:
             eval_output_dir = eval_output_dir / ('eval_all_default_%s' % str(DATA_CONFIG_TAR_RES))
-
+        
         eval_output_dir.mkdir(parents=True, exist_ok=True)
         log_file = eval_output_dir / ('log_eval_%s.txt' % datetime.datetime.now().strftime('%Y%m%d-%H%M%S'))
         logger = common_utils.create_logger(log_file, rank=cfg.LOCAL_RANK)

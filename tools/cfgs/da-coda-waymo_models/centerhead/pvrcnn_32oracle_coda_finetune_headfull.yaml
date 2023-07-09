@@ -6,6 +6,15 @@ DATA_CONFIG:
     INFO_WITH_FAKELIDAR: False
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    BALANCED_RESAMPLING: True
+    SHIFT_COOR: [0.0, 0.0, 1.8]
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['car', 'pedestrian', 'bicycle'] 
+    RES: evalnus
+
 MODEL:
     NAME: PVRCNN
 
@@ -33,7 +42,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
+            # [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
+            ['car', 'pedestrian', 'bicycle'] # Change to if eval on nus
         ]
 
         SHARED_CONV_CHANNEL: 64

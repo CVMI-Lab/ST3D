@@ -167,6 +167,11 @@ def main():
             ckpt_list = glob.glob(str(ckpt_dir / '*checkpoint_epoch_*.pth'))
             if len(ckpt_list) > 0:
                 ckpt_list.sort(key=os.path.getmtime)
+                # sort by epoch instead because diff machines use diff times
+
+                # Extract and sort by epoch number instead
+                # ckpt_list = sorted(ckpt_list, key = lambda gp: 
+                #     int(os.path.basename(str(gp)).split('/')[-1].split('.')[0].split('_')[-1]) )
                 it, start_epoch = model.load_params_with_optimizer(
                     ckpt_list[-1], to_cpu=dist, optimizer=optimizer, logger=logger
                 )
@@ -256,9 +261,7 @@ def main():
                 print("Missing data config %s, skipping..." % data_config_tar)
                 continue
             
-            LR = str(cfg[data_config_tar].get('LR', '0.010000'))
-            OPT = cfg[data_config_tar].get('OPT', 'adam_onecycle')
-            output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / ("%sLR%sOPT%s"%(args.extra_tag, LR, OPT))
+            output_dir = cfg.ROOT_DIR / 'output' / cfg.EXP_GROUP_PATH / cfg.TAG / args.extra_tag # dont append rest bc train loop already did it
             output_dir.mkdir(parents=True, exist_ok=True)
 
             eval_output_dir = output_dir / 'eval'
