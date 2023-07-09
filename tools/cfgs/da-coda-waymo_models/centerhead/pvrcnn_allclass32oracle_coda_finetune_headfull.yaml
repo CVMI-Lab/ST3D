@@ -34,6 +34,7 @@ MODEL:
 
         CLASS_NAMES_EACH_HEAD: [
             [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
+            # ['car', 'pedestrian', 'bicycle']  # Change to if eval on nuscenes
         ]
 
         SHARED_CONV_CHANNEL: 64
