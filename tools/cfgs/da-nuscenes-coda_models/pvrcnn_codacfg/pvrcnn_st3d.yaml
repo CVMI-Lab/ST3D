@@ -50,8 +50,10 @@ DATA_CONFIG_TAR:
     TARGET: True
     FOV_POINTS_ONLY: False
     USE_PSEUDO_LABEL: True
+    LR: '0.001500'
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 0.8]
+    RES: coda128
 
     DATA_AUGMENTOR:
         DISABLE_AUG_LIST: [ 'placeholder' ]
@@ -99,8 +101,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car', 'pedestrian', 'cyclist'] # change to this to train on nuscenes
-            # ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            # ['car', 'pedestrian', 'cyclist'] # change to this to train on nuscenes
+            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -268,8 +270,8 @@ FINETUNE:
 OPTIMIZATION:
     NUM_EPOCHS: 30
     # BATCH_SIZE_PER_GPU: 12 # 44gb
-    BATCH_SIZE_PER_GPU: 8 # 36GB
-    # BATCH_SIZE_PER_GPU: 6 # 22 GB
+    # BATCH_SIZE_PER_GPU: 8 # 36GB
+    BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle
     LR: 0.0015 # match st3d++ for nus to kitti
     WEIGHT_DECAY: 0.01 # match st3d++ for nus to kitti

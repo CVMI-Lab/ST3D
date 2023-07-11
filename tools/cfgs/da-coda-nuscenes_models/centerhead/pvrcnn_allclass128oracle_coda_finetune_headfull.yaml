@@ -201,8 +201,8 @@ FINETUNE:
 
 OPTIMIZATION:
     # BATCH_SIZE_PER_GPU: 18 # 38GB
-    BATCH_SIZE_PER_GPU: 12 # 34GB
-    # BATCH_SIZE_PER_GPU: 6 # 22gb training
+    # BATCH_SIZE_PER_GPU: 12 # 34GB
+    BATCH_SIZE_PER_GPU: 8 # 22gb training
     # BATCH_SIZE_PER_GPU: 6 # eval on nuscenes
     NUM_EPOCHS: 30
 
