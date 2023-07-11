@@ -195,11 +195,11 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export EXTRA_TAG1=coda32nusconfig
 # export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass32oracle_coda_finetune_head/coda32nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
 
-# CODa32 nuscenes 
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_headfull.yaml
-export EXTRA_TAG1=coda128nusconfig
-export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head/coda128nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
+# # CODa128 nuscenes 
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_headfull.yaml
+# export EXTRA_TAG1=coda128nusconfig
+# export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_allclass128oracle_coda_finetune_head/coda128nusconfigLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_10.pth
 
 # # CODa32 waymo 
 # export PORT=29500
@@ -215,7 +215,7 @@ export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_all
 
 # Launch CODa to AV dataset finetune head models
 
-# # Single Stage FT
+# # Single Stage FT 3 class
 
 # # CODa32 nuscenes single stage
 # export PORT=29500
@@ -379,6 +379,23 @@ export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_all
 # export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_finetune_coda.yaml
 # export EXTRA_TAG1=singlestagecoda128
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
+
+# # CODa single stage finetuning
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_finetune_coda.yaml
+# export EXTRA_TAG1=singlestagecoda128
+# export PRETRAINED_MODEL1=../output/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes/bestcoda128LR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_23.pth
+
+# Self Training
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_st3d.yaml
+export EXTRA_TAG1=nuscodacfg
+export PRETRAINED_MODEL1=../output/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_nuscenes/bestcoda128LR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_23.pth
+
+export PORT=29500
+export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_st3d.yaml
+export EXTRA_TAG1=waymocodacfg
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
 # Launch regular models from scratch
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0

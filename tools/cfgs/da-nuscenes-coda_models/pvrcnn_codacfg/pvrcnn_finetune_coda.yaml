@@ -1,38 +1,10 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
-    BALANCED_RESAMPLING: True
-    SHIFT_COOR: [0.0, 0.0, 1.8]
-
-    POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
-
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': True
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.15]
-          MAX_POINTS_PER_VOXEL: 5
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 80000,
-            'test': 90000
-          }
-
-# Uncomment to eval on CODa
-DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
-    TARGET: True
+    BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 128
 
 MODEL:
     NAME: PVRCNN
@@ -223,13 +195,13 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: headfull
     WANDB: True
-    WANDB_NAME: nus-codacfg-pvrcnn
+    WANDB_NAME: nus-codacfg-pvrcnn-finetune-headfull
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 44gb
+    NUM_EPOCHS: 50
+    BATCH_SIZE_PER_GPU: 10 # 40gb
     # BATCH_SIZE_PER_GPU: 8 # 36GB
     # BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle

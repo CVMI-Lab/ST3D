@@ -5,6 +5,14 @@ DATA_CONFIG:
     BALANCED_RESAMPLING: True
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    RES: waymo
+    TARGET: True
+    BALANCED_RESAMPLING: False
+    CLASS_NAMES: [ 'Vehicle', 'Pedestrian', 'Cyclist' ]
+    SHIFT_COOR: [0.0, 0.0, 1.8]
+
 MODEL:
     NAME: PVRCNN
 
@@ -32,7 +40,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car', 'pedestrian', 'bicycle']
+            # ['car', 'pedestrian', 'bicycle'] # Change back if eval on nus
+            [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
         ]
 
         SHARED_CONV_CHANNEL: 64
