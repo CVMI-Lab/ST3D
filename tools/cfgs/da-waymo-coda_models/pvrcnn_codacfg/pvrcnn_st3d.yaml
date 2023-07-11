@@ -53,8 +53,10 @@ DATA_CONFIG_TAR:
     TARGET: True
     FOV_POINTS_ONLY: False
     USE_PSEUDO_LABEL: True
+    LR: '0.001500'
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
     SHIFT_COOR: [0.0, 0.0, 0.8]
+    RES: coda128
 
     DATA_AUGMENTOR:
         DISABLE_AUG_LIST: [ 'placeholder' ]
@@ -102,8 +104,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
-            # ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
+            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64

@@ -73,9 +73,10 @@ def get_no_evaluated_ckpt(ckpt_dir, ckpt_record_file, args):
     # import pdb; pdb.set_trace()
     #Sort by epoch num
     ckpt_list = sorted(ckpt_list, key=lambda x:int(re.findall("(\d+)",x)[-1]), reverse=False)
-    # print("ckpt list ", ckpt_list)
-    evaluated_ckpt_list = [float(x.strip()) for x in open(ckpt_record_file, 'r').readlines()]
+    print("ckpt list ", ckpt_list)
 
+    evaluated_ckpt_list = [float(x.strip()) for x in open(ckpt_record_file, 'r').readlines()]
+    print("evaluated ckpt list ", evaluated_ckpt_list)
     for cur_ckpt in ckpt_list:
         num_list = re.findall('checkpoint_epoch_(.*).pth', cur_ckpt)
         if num_list.__len__() == 0:
