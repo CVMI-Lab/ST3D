@@ -1,38 +1,76 @@
-CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+CLASS_NAMES: ['car', 'pedestrian', 'cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
-    BALANCED_RESAMPLING: True
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_coda_dataset.yaml
+    MAX_SWEEPS: 1
+    PRED_VELOCITY: False
+    BALANCED_RESAMPLING: False
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
-    POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['gt_sampling', 'random_object_scaling', 'normalize_object_size']
+        AUG_CONFIG_LIST:
+            - NAME: gt_sampling
+              DB_INFO_PATH:
+                  - nuscenes_dbinfos_10sweeps_withvelo.pkl
+              PREPARE: {
+                  filter_by_min_points: [
+                    'car:5', 'pedestrian:5', 'cyclist:5'
+                  ],
+              }
 
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
+              SAMPLE_GROUPS: [
+                'car:10', 'pedestrian:10', 'cyclist:10'
+              ]
 
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': True
-          }
+              NUM_POINT_FEATURES: 5
+              DATABASE_WITH_FAKELIDAR: False
+              REMOVE_VELOCITY: True
+              REMOVE_EXTRA_WIDTH: [ 0.0, 0.0, 0.0 ]
+              LIMIT_WHOLE_SCENE: True
+              SHIFT_COOR: [0.0, 0.0, 1.8]
 
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.15]
-          MAX_POINTS_PER_VOXEL: 5
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 80000,
-            'test': 90000
-          }
+            - NAME: random_object_scaling
+              SCALE_UNIFORM_NOISE: [0.9, 1.05]
 
-# Uncomment to eval on CODa
+            - NAME: normalize_object_size
+              SIZE_RES: [0.09, -0.06, 0.0]
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: ['x', 'y']
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [-0.3925, 0.3925]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [0.95, 1.05]
+
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
+    USE_PSEUDO_LABEL: True
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 128
+    SHIFT_COOR: [0.0, 0.0, 0.8]
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: [ 'placeholder' ]
+        AUG_CONFIG_LIST:
+            - NAME: random_object_scaling
+              SCALE_UNIFORM_NOISE: [ 0.95, 1.05 ]
+
+            - NAME: random_object_rotation
+              ROT_PROB: 0.8
+              ROT_UNIFORM_NOISE: [ -0.38539816, 0.38539816 ]
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: [ 'x', 'y' ]
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [ -0.78539816, 0.78539816 ]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [ 0.97, 1.03 ]
 
 MODEL:
     NAME: PVRCNN
@@ -61,8 +99,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            # ['car', 'pedestrian', 'bicycle'] # change to this to train on nuscenes
-            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            ['car', 'pedestrian', 'cyclist'] # change to this to train on nuscenes
+            # ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -225,16 +263,16 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: nus-codacfg-pvrcnn
+    WANDB_NAME: nuscenesst3d-codamd-finetune-head
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 44gb
-    # BATCH_SIZE_PER_GPU: 8 # 36GB
+    # BATCH_SIZE_PER_GPU: 12 # 44gb
+    BATCH_SIZE_PER_GPU: 8 # 36GB
     # BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle
-    LR: 0.01
-    WEIGHT_DECAY: 0.001
+    LR: 0.0015 # match st3d++ for nus to kitti
+    WEIGHT_DECAY: 0.01 # match st3d++ for nus to kitti
     MOMENTUM: 0.9
 
     MOMS: [0.95, 0.85]
@@ -248,3 +286,39 @@ OPTIMIZATION:
     WARMUP_EPOCH: 1
 
     GRAD_NORM_CLIP: 10
+
+# Copied from st3d++ for pvrcnn iou, all same except memory voting
+SELF_TRAIN:
+    SRC:
+        USE_DATA: True
+        USE_GRAD: True
+        LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+    TAR:
+        USE_DATA: True
+        LOSS_WEIGHT: 1.0
+        SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+
+    SCORE_THRESH: [0.6, 0.55, 0.55]
+    NEG_THRESH: [0.25, 0.2, 0.2]
+    UPDATE_PSEUDO_LABEL: [0]
+    UPDATE_PSEUDO_LABEL_INTERVAL: 4
+    INIT_PS: None
+    DSNORM: True
+
+    MEMORY_ENSEMBLE:
+        ENABLED: True
+        NAME: consistency_ensemble
+        IOU_THRESH: 0.1
+
+        NMS_CONFIG:
+            NMS_TYPE: nms_gpu
+            MULTI_CLASSES_NMS: False
+            NMS_PRE_MAXSIZE: 512
+            NMS_POST_MAXSIZE: 100
+            NMS_THRESH: 0.1
+
+        MEMORY_VOTING:
+            ENABLED: False
+            IGNORE_THRESH: 2
+            RM_THRESH: 3
