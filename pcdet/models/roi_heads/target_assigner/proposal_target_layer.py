@@ -145,7 +145,7 @@ class ProposalTargetLayer(nn.Module):
             rand_num = np.floor(np.random.rand(self.roi_sampler_cfg.ROI_PER_IMAGE) * fg_num_rois)
             rand_num = torch.from_numpy(rand_num).type_as(max_overlaps).long()
             fg_inds = fg_inds[rand_num]
-            bg_inds = []
+            bg_inds = fg_inds[fg_inds < 0] # fix from https://github.com/open-mmlab/OpenPCDet/pull/893/commits/3cac9dfcfbf403d91158388d4d222a30ddcdc945
 
         elif bg_num_rois > 0 and fg_num_rois == 0:
             # sampling bg
@@ -218,11 +218,20 @@ class ProposalTargetLayer(nn.Module):
             if roi_mask.sum() > 0 and gt_mask.sum() > 0:
                 cur_roi = rois[roi_mask]
                 cur_gt = gt_boxes[gt_mask]
+                assert not torch.any(torch.isnan(rois))
+                assert not torch.any(torch.isnan(gt_boxes))
                 original_gt_assignment = gt_mask.nonzero().view(-1)
 
                 iou3d = iou3d_nms_utils.boxes_iou3d_gpu(cur_roi, cur_gt)  # (M, N)
+                # Add nan filter here
                 cur_max_overlaps, cur_gt_assignment = torch.max(iou3d, dim=1)
                 max_overlaps[roi_mask] = cur_max_overlaps
                 gt_assignment[roi_mask] = original_gt_assignment[cur_gt_assignment]
+        assert not torch.any(torch.isnan(max_overlaps))
+        assert not torch.any(torch.isnan(gt_assignment))
+        # nan_mask = torch.isnan(max_overlaps)
+        # max_overlaps[nan_mask] = 0
+        # nan_mask = torch.isnan(gt_assignment)
+        # gt_assignment[nan_mask] = 0
 
         return max_overlaps, gt_assignment

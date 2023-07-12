@@ -294,7 +294,7 @@ SELF_TRAIN:
     NEG_THRESH: [0.2]
     UPDATE_PSEUDO_LABEL: [0]
     UPDATE_PSEUDO_LABEL_INTERVAL: 4
-    INIT_PS: None
+    INIT_PS: None #/robodata/arthurz/Benchmarks/unsupda/ST3D/output/da-nuscenes-coda_models/pvrcnn_st3d/pvrcnn_st3d/pvrcnn_pretrain_coda_small/ps_label/ps_label_e0.pkl
 
     PROG_AUG:
         ENABLED: True

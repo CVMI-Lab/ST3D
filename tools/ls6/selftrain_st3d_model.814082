@@ -1,0 +1,1052 @@
+Launcher: Setup complete.
+
+------------- SUMMARY ---------------
+   Number of hosts:    1
+   Working directory:  /scratch/09156/arthurz/research/ST3D/tools
+   Processes per host: 3
+   Total processes:    3
+   Total jobs:         2
+   Scheduling method:  dynamic
+
+-------------------------------------
+Launcher: Starting parallel tasks...
+using /tmp/launcher.814082.hostlist.fNRa022i to get hosts
+starting job on c308-001
+Launcher: Task 2 running job 1 on c308-001.ls6.tacc.utexas.edu (ibrun -n 3 -o 0 task_affinity singularity exec --nv ../st3d.sif python train.py --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} --batch_size ${BATCH_SIZE1} --pretrained_model ${PRETRAINED_MODEL1} --epochs ${EPOCH1} >> launcher_selftrain_models_task${LAUNCHER_TSK_ID} &)
+Launcher: Job 1 completed in 0 seconds.
+Launcher: Task 2 running job 2 on c308-001.ls6.tacc.utexas.edu (wait)
+scontrol: error: host list is empty
+scontrol: error: host list is empty
+WARNING: Environment variable CUDA_VISIBLE_DEVICES already has value [0,1,2], will not forward new value [2] from parent process environment
+WARNING: Environment variable CUDA_VISIBLE_DEVICES already has value [0,1,2], will not forward new value [2] from parent process environment
+WARNING: Environment variable CUDA_VISIBLE_DEVICES already has value [0,1,2], will not forward new value [2] from parent process environment
+libuuid.so: cannot open shared object file: No such file or directory[2023-04-18 13:37:17,092  train.py 97  INFO]  **********************Start logging**********************
+[2023-04-18 13:37:17,099  train.py 97  INFO]  **********************Start logging**********************
+[2023-04-18 13:37:18,102  train.py 99  INFO]  CUDA_VISIBLE_DEVICES=0,1,2
+[2023-04-18 13:37:18,103  train.py 99  INFO]  CUDA_VISIBLE_DEVICES=0,1,2
+[2023-04-18 13:37:18,103  train.py 104  INFO]  cfg_file         cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
+[2023-04-18 13:37:18,103  train.py 97  INFO]  **********************Start logging**********************
+[2023-04-18 13:37:18,103  train.py 104  INFO]  cfg_file         cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
+[2023-04-18 13:37:18,103  train.py 104  INFO]  batch_size       8
+[2023-04-18 13:37:18,104  train.py 99  INFO]  CUDA_VISIBLE_DEVICES=0,1,2
+[2023-04-18 13:37:18,104  train.py 104  INFO]  batch_size       8
+[2023-04-18 13:37:18,104  train.py 104  INFO]  epochs           50
+[2023-04-18 13:37:18,104  train.py 104  INFO]  cfg_file         cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
+[2023-04-18 13:37:18,105  train.py 104  INFO]  epochs           50
+[2023-04-18 13:37:18,105  train.py 104  INFO]  workers          4
+[2023-04-18 13:37:18,105  train.py 104  INFO]  batch_size       8
+[2023-04-18 13:37:18,105  train.py 104  INFO]  workers          4
+[2023-04-18 13:37:18,105  train.py 104  INFO]  extra_tag        pvrcnn_old_anchor
+[2023-04-18 13:37:18,105  train.py 104  INFO]  epochs           50
+[2023-04-18 13:37:18,106  train.py 104  INFO]  extra_tag        pvrcnn_old_anchor
+[2023-04-18 13:37:18,106  train.py 104  INFO]  ckpt             None
+[2023-04-18 13:37:18,106  train.py 104  INFO]  workers          4
+[2023-04-18 13:37:18,106  train.py 104  INFO]  ckpt             None
+[2023-04-18 13:37:18,106  train.py 104  INFO]  pretrained_model ../output/da-waymo-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_24.pth
+[2023-04-18 13:37:18,106  train.py 104  INFO]  extra_tag        pvrcnn_old_anchor
+[2023-04-18 13:37:18,106  train.py 104  INFO]  pretrained_model ../output/da-waymo-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_24.pth
+[2023-04-18 13:37:18,107  train.py 104  INFO]  launcher         none
+[2023-04-18 13:37:18,107  train.py 104  INFO]  ckpt             None
+[2023-04-18 13:37:18,107  train.py 104  INFO]  launcher         none
+[2023-04-18 13:37:18,107  train.py 104  INFO]  tcp_port         18888
+[2023-04-18 13:37:18,107  train.py 104  INFO]  pretrained_model ../output/da-waymo-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_24.pth
+[2023-04-18 13:37:18,107  train.py 104  INFO]  tcp_port         18888
+[2023-04-18 13:37:18,108  train.py 104  INFO]  sync_bn          False
+[2023-04-18 13:37:18,108  train.py 104  INFO]  launcher         none
+[2023-04-18 13:37:18,108  train.py 104  INFO]  sync_bn          False
+[2023-04-18 13:37:18,108  train.py 104  INFO]  fix_random_seed  False
+[2023-04-18 13:37:18,108  train.py 104  INFO]  tcp_port         18888
+[2023-04-18 13:37:18,108  train.py 104  INFO]  fix_random_seed  False
+[2023-04-18 13:37:18,108  train.py 104  INFO]  ckpt_save_interval 1
+[2023-04-18 13:37:18,109  train.py 104  INFO]  sync_bn          False
+[2023-04-18 13:37:18,109  train.py 104  INFO]  ckpt_save_interval 1
+[2023-04-18 13:37:18,109  train.py 104  INFO]  local_rank       0
+[2023-04-18 13:37:18,109  train.py 104  INFO]  fix_random_seed  False
+[2023-04-18 13:37:18,109  train.py 104  INFO]  local_rank       0
+[2023-04-18 13:37:18,109  train.py 104  INFO]  max_ckpt_save_num 50
+[2023-04-18 13:37:18,110  train.py 104  INFO]  ckpt_save_interval 1
+[2023-04-18 13:37:18,110  train.py 104  INFO]  max_ckpt_save_num 50
+[2023-04-18 13:37:18,110  train.py 104  INFO]  merge_all_iters_to_one_epoch False
+[2023-04-18 13:37:18,110  train.py 104  INFO]  local_rank       0
+[2023-04-18 13:37:18,110  train.py 104  INFO]  merge_all_iters_to_one_epoch False
+[2023-04-18 13:37:18,110  train.py 104  INFO]  set_cfgs         None
+[2023-04-18 13:37:18,110  train.py 104  INFO]  max_ckpt_save_num 50
+[2023-04-18 13:37:18,111  train.py 104  INFO]  set_cfgs         None
+[2023-04-18 13:37:18,111  train.py 104  INFO]  max_waiting_mins 0
+[2023-04-18 13:37:18,111  train.py 104  INFO]  merge_all_iters_to_one_epoch False
+[2023-04-18 13:37:18,111  train.py 104  INFO]  max_waiting_mins 0
+[2023-04-18 13:37:18,111  train.py 104  INFO]  start_epoch      0
+[2023-04-18 13:37:18,111  train.py 104  INFO]  set_cfgs         None
+[2023-04-18 13:37:18,112  train.py 104  INFO]  start_epoch      0
+[2023-04-18 13:37:18,112  train.py 104  INFO]  save_to_file     False
+[2023-04-18 13:37:18,112  train.py 104  INFO]  max_waiting_mins 0
+[2023-04-18 13:37:18,112  train.py 104  INFO]  save_to_file     False
+[2023-04-18 13:37:18,112  train.py 104  INFO]  eval_fov_only    False
+[2023-04-18 13:37:18,112  train.py 104  INFO]  start_epoch      0
+[2023-04-18 13:37:18,112  train.py 104  INFO]  eval_fov_only    False
+[2023-04-18 13:37:18,113  train.py 104  INFO]  eval_src         False
+[2023-04-18 13:37:18,113  train.py 104  INFO]  save_to_file     False
+[2023-04-18 13:37:18,113  train.py 104  INFO]  eval_src         False
+[2023-04-18 13:37:18,113  train.py 104  INFO]  num_epochs_to_eval 30
+[2023-04-18 13:37:18,113  train.py 104  INFO]  eval_fov_only    False
+[2023-04-18 13:37:18,113  train.py 104  INFO]  num_epochs_to_eval 30
+[2023-04-18 13:37:18,114  config.py 13  INFO]  cfg.ROOT_DIR: /scratch/09156/arthurz/research/ST3D
+[2023-04-18 13:37:18,114  train.py 104  INFO]  eval_src         False
+[2023-04-18 13:37:18,114  config.py 13  INFO]  cfg.ROOT_DIR: /scratch/09156/arthurz/research/ST3D
+[2023-04-18 13:37:18,114  config.py 13  INFO]  cfg.LOCAL_RANK: 0
+[2023-04-18 13:37:18,114  train.py 104  INFO]  num_epochs_to_eval 30
+[2023-04-18 13:37:18,114  config.py 13  INFO]  cfg.LOCAL_RANK: 0
+[2023-04-18 13:37:18,115  config.py 13  INFO]  cfg.CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,115  config.py 13  INFO]  cfg.ROOT_DIR: /scratch/09156/arthurz/research/ST3D
+[2023-04-18 13:37:18,115  config.py 13  INFO]  cfg.CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,115  config.py 10  INFO]  
+cfg.DATA_CONFIG = edict()
+[2023-04-18 13:37:18,115  config.py 13  INFO]  cfg.LOCAL_RANK: 0
+[2023-04-18 13:37:18,115  config.py 10  INFO]  
+cfg.DATA_CONFIG = edict()
+[2023-04-18 13:37:18,116  config.py 13  INFO]  cfg.DATA_CONFIG.DATASET: WaymoDataset
+[2023-04-18 13:37:18,116  config.py 13  INFO]  cfg.CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,116  config.py 13  INFO]  cfg.DATA_CONFIG.DATASET: WaymoDataset
+[2023-04-18 13:37:18,116  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PATH: ../data/waymo
+[2023-04-18 13:37:18,116  config.py 10  INFO]  
+cfg.DATA_CONFIG = edict()
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PATH: ../data/waymo
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.PROCESSED_DATA_TAG: waymo_processed_data
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.DATASET: WaymoDataset
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.PROCESSED_DATA_TAG: waymo_processed_data
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PATH: ../data/waymo
+[2023-04-18 13:37:18,117  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,118  config.py 13  INFO]  cfg.DATA_CONFIG.MIN_POINTS_OF_GT: 1
+[2023-04-18 13:37:18,118  config.py 13  INFO]  cfg.DATA_CONFIG.PROCESSED_DATA_TAG: waymo_processed_data
+[2023-04-18 13:37:18,118  config.py 13  INFO]  cfg.DATA_CONFIG.MIN_POINTS_OF_GT: 1
+[2023-04-18 13:37:18,118  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,118  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,118  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,118  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,119  config.py 13  INFO]  cfg.DATA_CONFIG.MIN_POINTS_OF_GT: 1
+[2023-04-18 13:37:18,119  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,119  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,119  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,119  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,119  config.py 10  INFO]  
+cfg.DATA_CONFIG.SAMPLED_INTERVAL = edict()
+[2023-04-18 13:37:18,119  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,120  config.py 10  INFO]  
+cfg.DATA_CONFIG.SAMPLED_INTERVAL = edict()
+[2023-04-18 13:37:18,120  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.train: 5
+[2023-04-18 13:37:18,120  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,120  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.train: 5
+[2023-04-18 13:37:18,120  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.test: 1
+[2023-04-18 13:37:18,121  config.py 10  INFO]  
+cfg.DATA_CONFIG.SAMPLED_INTERVAL = edict()
+[2023-04-18 13:37:18,121  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.test: 1
+[2023-04-18 13:37:18,121  config.py 13  INFO]  cfg.DATA_CONFIG.INFO_WITH_FAKELIDAR: False
+[2023-04-18 13:37:18,121  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.train: 5
+[2023-04-18 13:37:18,121  config.py 13  INFO]  cfg.DATA_CONFIG.INFO_WITH_FAKELIDAR: False
+[2023-04-18 13:37:18,122  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,122  config.py 13  INFO]  cfg.DATA_CONFIG.SAMPLED_INTERVAL.test: 1
+[2023-04-18 13:37:18,122  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,122  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_rotation', 'random_object_scaling', 'normalize_object_size']
+[2023-04-18 13:37:18,122  config.py 13  INFO]  cfg.DATA_CONFIG.INFO_WITH_FAKELIDAR: False
+[2023-04-18 13:37:18,122  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_rotation', 'random_object_scaling', 'normalize_object_size']
+[2023-04-18 13:37:18,122  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.75, 0.95]}, {'NAME': 'normalize_object_size', 'SIZE_RES': [-0.91, -0.49, -0.26]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,123  config.py 10  INFO]  
+cfg.DATA_CONFIG.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,123  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.75, 0.95]}, {'NAME': 'normalize_object_size', 'SIZE_RES': [-0.91, -0.49, -0.26]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,123  config.py 10  INFO]  
+cfg.DATA_CONFIG.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,123  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_rotation', 'random_object_scaling', 'normalize_object_size']
+[2023-04-18 13:37:18,123  config.py 10  INFO]  
+cfg.DATA_CONFIG.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,123  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,124  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.75, 0.95]}, {'NAME': 'normalize_object_size', 'SIZE_RES': [-0.91, -0.49, -0.26]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,124  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,124  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,124  config.py 10  INFO]  
+cfg.DATA_CONFIG.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,124  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,124  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity', 'elongation']
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity', 'elongation']
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': True}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': True}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG._BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+[2023-04-18 13:37:18,125  config.py 13  INFO]  cfg.DATA_CONFIG.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity', 'elongation']
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG._BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+[2023-04-18 13:37:18,126  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR = edict()
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': True}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,126  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR = edict()
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATASET: CODataset
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG._BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATASET: CODataset
+[2023-04-18 13:37:18,126  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PATH: ../data/coda
+[2023-04-18 13:37:18,127  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR = edict()
+[2023-04-18 13:37:18,127  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PATH: ../data/coda
+[2023-04-18 13:37:18,127  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,127  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATASET: CODataset
+[2023-04-18 13:37:18,136  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,144  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,145  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PATH: ../data/coda
+[2023-04-18 13:37:18,145  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,145  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,146  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,146  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,146  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,146  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_SPLIT = edict()
+[2023-04-18 13:37:18,146  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,147  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.INFO_PATH = edict()
+[2023-04-18 13:37:18,147  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.train: train
+[2023-04-18 13:37:18,147  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.INFO_PATH = edict()
+[2023-04-18 13:37:18,147  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.train: ['coda_infos_train.pkl']
+[2023-04-18 13:37:18,148  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_SPLIT.test: val
+[2023-04-18 13:37:18,148  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.train: ['coda_infos_train.pkl']
+[2023-04-18 13:37:18,148  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.test: ['coda_infos_val.pkl']
+[2023-04-18 13:37:18,148  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.INFO_PATH = edict()
+[2023-04-18 13:37:18,148  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.test: ['coda_infos_val.pkl']
+[2023-04-18 13:37:18,148  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,149  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.train: ['coda_infos_train.pkl']
+[2023-04-18 13:37:18,149  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,149  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_scaling', 'random_object_rotation']
+[2023-04-18 13:37:18,149  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.INFO_PATH.test: ['coda_infos_val.pkl']
+[2023-04-18 13:37:18,149  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_scaling', 'random_object_rotation']
+[2023-04-18 13:37:18,149  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.9, 1.1]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,149  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR = edict()
+[2023-04-18 13:37:18,150  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.9, 1.1]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,150  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,150  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.DISABLE_AUG_LIST: ['random_object_scaling', 'random_object_rotation']
+[2023-04-18 13:37:18,150  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,150  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,150  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_AUGMENTOR.AUG_CONFIG_LIST: [{'NAME': 'random_object_scaling', 'SCALE_UNIFORM_NOISE': [0.9, 1.1]}, {'NAME': 'random_object_rotation', 'ROT_PROB': 1.0, 'ROT_UNIFORM_NOISE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_flip', 'ALONG_AXIS_LIST': ['x', 'y']}, {'NAME': 'random_world_rotation', 'WORLD_ROT_ANGLE': [-0.78539816, 0.78539816]}, {'NAME': 'random_world_scaling', 'WORLD_SCALE_RANGE': [0.95, 1.05]}]
+[2023-04-18 13:37:18,151  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,151  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,151  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING = edict()
+[2023-04-18 13:37:18,151  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,151  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.encoding_type: absolute_coordinates_encoding
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.used_feature_list: ['x', 'y', 'z']
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,152  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST = edict()
+[2023-04-18 13:37:18,152  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.POINT_FEATURE_ENCODING.src_feature_list: ['x', 'y', 'z', 'intensity']
+[2023-04-18 13:37:18,153  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST = edict()
+[2023-04-18 13:37:18,153  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER = edict()
+[2023-04-18 13:37:18,153  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.DATA_PROCESSOR: [{'NAME': 'mask_points_and_boxes_outside_range', 'REMOVE_OUTSIDE_BOXES': True}, {'NAME': 'shuffle_points', 'SHUFFLE_ENABLED': {'train': True, 'test': False}}, {'NAME': 'transform_points_to_voxels', 'VOXEL_SIZE': [0.1, 0.1, 0.15], 'MAX_POINTS_PER_VOXEL': 5, 'MAX_NUMBER_OF_VOXELS': {'train': 80000, 'test': 90000}}]
+[2023-04-18 13:37:18,153  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER = edict()
+[2023-04-18 13:37:18,153  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.USE_IMAGE_AREA_FILTER: True
+[2023-04-18 13:37:18,153  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST = edict()
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.USE_IMAGE_AREA_FILTER: True
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.FOV_FILTER: True
+[2023-04-18 13:37:18,154  config.py 10  INFO]  
+cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER = edict()
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.FOV_FILTER: True
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.USE_IMAGE_AREA_FILTER: True
+[2023-04-18 13:37:18,154  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR._BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.FOV_FILTER: True
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR._BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TARGET: True
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TEST.BOX_FILTER.LIMIT_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+[2023-04-18 13:37:18,155  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TARGET: True
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.FOV_POINTS_ONLY: False
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR._BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.FOV_POINTS_ONLY: False
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.USE_PSEUDO_LABEL: True
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.TARGET: True
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.USE_PSEUDO_LABEL: True
+[2023-04-18 13:37:18,156  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.FOV_POINTS_ONLY: False
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.SHIFT_COOR: [0.0, 0.0, 0.8]
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.USE_PSEUDO_LABEL: True
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.SHIFT_COOR: [0.0, 0.0, 0.8]
+[2023-04-18 13:37:18,157  config.py 10  INFO]  
+cfg.MODEL = edict()
+[2023-04-18 13:37:18,157  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+[2023-04-18 13:37:18,158  config.py 10  INFO]  
+cfg.MODEL = edict()
+[2023-04-18 13:37:18,158  config.py 13  INFO]  cfg.MODEL.NAME: PVRCNN
+[2023-04-18 13:37:18,158  config.py 13  INFO]  cfg.DATA_CONFIG_TAR.SHIFT_COOR: [0.0, 0.0, 0.8]
+[2023-04-18 13:37:18,158  config.py 13  INFO]  cfg.MODEL.NAME: PVRCNN
+[2023-04-18 13:37:18,158  config.py 10  INFO]  
+cfg.MODEL.VFE = edict()
+[2023-04-18 13:37:18,158  config.py 10  INFO]  
+cfg.MODEL = edict()
+[2023-04-18 13:37:18,159  config.py 10  INFO]  
+cfg.MODEL.VFE = edict()
+[2023-04-18 13:37:18,159  config.py 13  INFO]  cfg.MODEL.VFE.NAME: MeanVFE
+[2023-04-18 13:37:18,159  config.py 13  INFO]  cfg.MODEL.NAME: PVRCNN
+[2023-04-18 13:37:18,159  config.py 13  INFO]  cfg.MODEL.VFE.NAME: MeanVFE
+[2023-04-18 13:37:18,159  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_3D = edict()
+[2023-04-18 13:37:18,160  config.py 10  INFO]  
+cfg.MODEL.VFE = edict()
+[2023-04-18 13:37:18,160  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_3D = edict()
+[2023-04-18 13:37:18,160  config.py 13  INFO]  cfg.MODEL.BACKBONE_3D.NAME: VoxelBackBone8x
+[2023-04-18 13:37:18,160  config.py 13  INFO]  cfg.MODEL.VFE.NAME: MeanVFE
+[2023-04-18 13:37:18,160  config.py 13  INFO]  cfg.MODEL.BACKBONE_3D.NAME: VoxelBackBone8x
+[2023-04-18 13:37:18,160  config.py 10  INFO]  
+cfg.MODEL.MAP_TO_BEV = edict()
+[2023-04-18 13:37:18,161  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_3D = edict()
+[2023-04-18 13:37:18,161  config.py 10  INFO]  
+cfg.MODEL.MAP_TO_BEV = edict()
+[2023-04-18 13:37:18,161  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+[2023-04-18 13:37:18,161  config.py 13  INFO]  cfg.MODEL.BACKBONE_3D.NAME: VoxelBackBone8x
+[2023-04-18 13:37:18,161  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+[2023-04-18 13:37:18,161  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+[2023-04-18 13:37:18,161  config.py 10  INFO]  
+cfg.MODEL.MAP_TO_BEV = edict()
+[2023-04-18 13:37:18,162  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+[2023-04-18 13:37:18,162  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_2D = edict()
+[2023-04-18 13:37:18,162  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NAME: HeightCompression
+[2023-04-18 13:37:18,162  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_2D = edict()
+[2023-04-18 13:37:18,162  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+[2023-04-18 13:37:18,162  config.py 13  INFO]  cfg.MODEL.MAP_TO_BEV.NUM_BEV_FEATURES: 256
+[2023-04-18 13:37:18,163  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+[2023-04-18 13:37:18,163  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+[2023-04-18 13:37:18,163  config.py 10  INFO]  
+cfg.MODEL.BACKBONE_2D = edict()
+[2023-04-18 13:37:18,163  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+[2023-04-18 13:37:18,163  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+[2023-04-18 13:37:18,163  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NAME: BaseBEVBackbone
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_NUMS: [5, 5]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [1, 2]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.LAYER_STRIDES: [1, 2]
+[2023-04-18 13:37:18,164  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [1, 2]
+[2023-04-18 13:37:18,165  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+[2023-04-18 13:37:18,165  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_FILTERS: [128, 256]
+[2023-04-18 13:37:18,165  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+[2023-04-18 13:37:18,165  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD = edict()
+[2023-04-18 13:37:18,166  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.UPSAMPLE_STRIDES: [1, 2]
+[2023-04-18 13:37:18,166  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD = edict()
+[2023-04-18 13:37:18,166  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NAME: AnchorHeadSingle
+[2023-04-18 13:37:18,166  config.py 13  INFO]  cfg.MODEL.BACKBONE_2D.NUM_UPSAMPLE_FILTERS: [256, 256]
+[2023-04-18 13:37:18,166  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NAME: AnchorHeadSingle
+[2023-04-18 13:37:18,167  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+[2023-04-18 13:37:18,167  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD = edict()
+[2023-04-18 13:37:18,167  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+[2023-04-18 13:37:18,167  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.USE_DIRECTION_CLASSIFIER: True
+[2023-04-18 13:37:18,167  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NAME: AnchorHeadSingle
+[2023-04-18 13:37:18,167  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.USE_DIRECTION_CLASSIFIER: True
+[2023-04-18 13:37:18,168  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_OFFSET: 0.78539
+[2023-04-18 13:37:18,168  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.CLASS_AGNOSTIC: False
+[2023-04-18 13:37:18,168  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_OFFSET: 0.78539
+[2023-04-18 13:37:18,168  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_LIMIT_OFFSET: 0.0
+[2023-04-18 13:37:18,169  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.USE_DIRECTION_CLASSIFIER: True
+[2023-04-18 13:37:18,169  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_LIMIT_OFFSET: 0.0
+[2023-04-18 13:37:18,169  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NUM_DIR_BINS: 2
+[2023-04-18 13:37:18,169  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_OFFSET: 0.78539
+[2023-04-18 13:37:18,170  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NUM_DIR_BINS: 2
+[2023-04-18 13:37:18,170  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.ANCHOR_GENERATOR_CONFIG: [{'class_name': 'Vehicle', 'anchor_sizes': [[4.2, 2.0, 1.6]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.55, 'unmatched_threshold': 0.4}, {'class_name': 'Pedestrian', 'anchor_sizes': [[0.91, 0.86, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'Cyclist', 'anchor_sizes': [[1.78, 0.84, 1.78]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}]
+[2023-04-18 13:37:18,170  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.DIR_LIMIT_OFFSET: 0.0
+[2023-04-18 13:37:18,170  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.ANCHOR_GENERATOR_CONFIG: [{'class_name': 'Vehicle', 'anchor_sizes': [[4.2, 2.0, 1.6]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.55, 'unmatched_threshold': 0.4}, {'class_name': 'Pedestrian', 'anchor_sizes': [[0.91, 0.86, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'Cyclist', 'anchor_sizes': [[1.78, 0.84, 1.78]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}]
+[2023-04-18 13:37:18,170  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG = edict()
+[2023-04-18 13:37:18,170  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.NUM_DIR_BINS: 2
+[2023-04-18 13:37:18,171  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG = edict()
+[2023-04-18 13:37:18,171  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NAME: AxisAlignedTargetAssigner
+[2023-04-18 13:37:18,171  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.ANCHOR_GENERATOR_CONFIG: [{'class_name': 'Vehicle', 'anchor_sizes': [[4.2, 2.0, 1.6]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.55, 'unmatched_threshold': 0.4}, {'class_name': 'Pedestrian', 'anchor_sizes': [[0.91, 0.86, 1.73]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}, {'class_name': 'Cyclist', 'anchor_sizes': [[1.78, 0.84, 1.78]], 'anchor_rotations': [0, 1.57], 'anchor_bottom_heights': [0], 'align_center': False, 'feature_map_stride': 8, 'matched_threshold': 0.5, 'unmatched_threshold': 0.35}]
+[2023-04-18 13:37:18,171  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NAME: AxisAlignedTargetAssigner
+[2023-04-18 13:37:18,171  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.POS_FRACTION: -1.0
+[2023-04-18 13:37:18,171  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG = edict()
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.POS_FRACTION: -1.0
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.SAMPLE_SIZE: 512
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NAME: AxisAlignedTargetAssigner
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.SAMPLE_SIZE: 512
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NORM_BY_NUM_EXAMPLES: False
+[2023-04-18 13:37:18,172  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.POS_FRACTION: -1.0
+[2023-04-18 13:37:18,173  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NORM_BY_NUM_EXAMPLES: False
+[2023-04-18 13:37:18,173  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MATCH_HEIGHT: False
+[2023-04-18 13:37:18,173  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.SAMPLE_SIZE: 512
+[2023-04-18 13:37:18,173  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MATCH_HEIGHT: False
+[2023-04-18 13:37:18,173  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,174  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.NORM_BY_NUM_EXAMPLES: False
+[2023-04-18 13:37:18,174  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,174  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,174  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.MATCH_HEIGHT: False
+[2023-04-18 13:37:18,174  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,174  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,174  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.TARGET_ASSIGNER_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,175  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,175  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+[2023-04-18 13:37:18,175  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,175  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+[2023-04-18 13:37:18,175  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+[2023-04-18 13:37:18,175  config.py 10  INFO]  
+cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,176  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+[2023-04-18 13:37:18,176  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.dir_weight: 0.2
+[2023-04-18 13:37:18,176  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.cls_weight: 1.0
+[2023-04-18 13:37:18,176  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.dir_weight: 0.2
+[2023-04-18 13:37:18,176  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,177  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.loc_weight: 2.0
+[2023-04-18 13:37:18,177  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,177  config.py 10  INFO]  
+cfg.MODEL.PFE = edict()
+[2023-04-18 13:37:18,177  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.dir_weight: 0.2
+[2023-04-18 13:37:18,177  config.py 10  INFO]  
+cfg.MODEL.PFE = edict()
+[2023-04-18 13:37:18,177  config.py 13  INFO]  cfg.MODEL.PFE.NAME: VoxelSetAbstraction
+[2023-04-18 13:37:18,178  config.py 13  INFO]  cfg.MODEL.DENSE_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,178  config.py 13  INFO]  cfg.MODEL.PFE.NAME: VoxelSetAbstraction
+[2023-04-18 13:37:18,178  config.py 13  INFO]  cfg.MODEL.PFE.POINT_SOURCE: raw_points
+[2023-04-18 13:37:18,178  config.py 10  INFO]  
+cfg.MODEL.PFE = edict()
+[2023-04-18 13:37:18,178  config.py 13  INFO]  cfg.MODEL.PFE.POINT_SOURCE: raw_points
+[2023-04-18 13:37:18,178  config.py 13  INFO]  cfg.MODEL.PFE.NUM_KEYPOINTS: 4096
+[2023-04-18 13:37:18,179  config.py 13  INFO]  cfg.MODEL.PFE.NAME: VoxelSetAbstraction
+[2023-04-18 13:37:18,179  config.py 13  INFO]  cfg.MODEL.PFE.NUM_KEYPOINTS: 4096
+[2023-04-18 13:37:18,179  config.py 13  INFO]  cfg.MODEL.PFE.NUM_OUTPUT_FEATURES: 128
+[2023-04-18 13:37:18,179  config.py 13  INFO]  cfg.MODEL.PFE.POINT_SOURCE: raw_points
+[2023-04-18 13:37:18,179  config.py 13  INFO]  cfg.MODEL.PFE.NUM_OUTPUT_FEATURES: 128
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.SAMPLE_METHOD: FPS
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.NUM_KEYPOINTS: 4096
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.SAMPLE_METHOD: FPS
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.NUM_OUTPUT_FEATURES: 128
+[2023-04-18 13:37:18,180  config.py 13  INFO]  cfg.MODEL.PFE.FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
+[2023-04-18 13:37:18,180  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER = edict()
+[2023-04-18 13:37:18,181  config.py 13  INFO]  cfg.MODEL.PFE.SAMPLE_METHOD: FPS
+[2023-04-18 13:37:18,181  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER = edict()
+[2023-04-18 13:37:18,181  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.raw_points = edict()
+[2023-04-18 13:37:18,181  config.py 13  INFO]  cfg.MODEL.PFE.FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
+[2023-04-18 13:37:18,181  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.raw_points = edict()
+[2023-04-18 13:37:18,181  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,182  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER = edict()
+[2023-04-18 13:37:18,182  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,182  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,182  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.raw_points = edict()
+[2023-04-18 13:37:18,182  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,182  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,183  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,183  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,183  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv1 = edict()
+[2023-04-18 13:37:18,183  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,183  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv1 = edict()
+[2023-04-18 13:37:18,183  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.DOWNSAMPLE_FACTOR: 1
+[2023-04-18 13:37:18,184  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.raw_points.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,184  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.DOWNSAMPLE_FACTOR: 1
+[2023-04-18 13:37:18,184  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,184  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv1 = edict()
+[2023-04-18 13:37:18,184  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,184  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,185  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.DOWNSAMPLE_FACTOR: 1
+[2023-04-18 13:37:18,185  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,185  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,185  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.MLPS: [[16, 16], [16, 16]]
+[2023-04-18 13:37:18,185  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,185  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv2 = edict()
+[2023-04-18 13:37:18,186  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.POOL_RADIUS: [0.4, 0.8]
+[2023-04-18 13:37:18,186  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv2 = edict()
+[2023-04-18 13:37:18,186  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.DOWNSAMPLE_FACTOR: 2
+[2023-04-18 13:37:18,186  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv1.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,186  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.DOWNSAMPLE_FACTOR: 2
+[2023-04-18 13:37:18,186  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.MLPS: [[32, 32], [32, 32]]
+[2023-04-18 13:37:18,187  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv2 = edict()
+[2023-04-18 13:37:18,187  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.MLPS: [[32, 32], [32, 32]]
+[2023-04-18 13:37:18,187  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.POOL_RADIUS: [0.8, 1.2]
+[2023-04-18 13:37:18,187  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.DOWNSAMPLE_FACTOR: 2
+[2023-04-18 13:37:18,187  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.POOL_RADIUS: [0.8, 1.2]
+[2023-04-18 13:37:18,187  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,188  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.MLPS: [[32, 32], [32, 32]]
+[2023-04-18 13:37:18,188  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,188  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv3 = edict()
+[2023-04-18 13:37:18,188  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.POOL_RADIUS: [0.8, 1.2]
+[2023-04-18 13:37:18,188  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv3 = edict()
+[2023-04-18 13:37:18,188  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.DOWNSAMPLE_FACTOR: 4
+[2023-04-18 13:37:18,188  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv2.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,189  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.DOWNSAMPLE_FACTOR: 4
+[2023-04-18 13:37:18,189  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,189  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv3 = edict()
+[2023-04-18 13:37:18,189  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.POOL_RADIUS: [1.2, 2.4]
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.DOWNSAMPLE_FACTOR: 4
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.POOL_RADIUS: [1.2, 2.4]
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,190  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,191  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv4 = edict()
+[2023-04-18 13:37:18,191  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.POOL_RADIUS: [1.2, 2.4]
+[2023-04-18 13:37:18,191  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv4 = edict()
+[2023-04-18 13:37:18,191  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.DOWNSAMPLE_FACTOR: 8
+[2023-04-18 13:37:18,191  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv3.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,191  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.DOWNSAMPLE_FACTOR: 8
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,192  config.py 10  INFO]  
+cfg.MODEL.PFE.SA_LAYER.x_conv4 = edict()
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.POOL_RADIUS: [2.4, 4.8]
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.DOWNSAMPLE_FACTOR: 8
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.POOL_RADIUS: [2.4, 4.8]
+[2023-04-18 13:37:18,192  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,193  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,193  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,193  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD = edict()
+[2023-04-18 13:37:18,193  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.POOL_RADIUS: [2.4, 4.8]
+[2023-04-18 13:37:18,193  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD = edict()
+[2023-04-18 13:37:18,193  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.NAME: PointHeadSimple
+[2023-04-18 13:37:18,193  config.py 13  INFO]  cfg.MODEL.PFE.SA_LAYER.x_conv4.NSAMPLE: [16, 32]
+[2023-04-18 13:37:18,194  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.NAME: PointHeadSimple
+[2023-04-18 13:37:18,194  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,194  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD = edict()
+[2023-04-18 13:37:18,194  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,194  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,194  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.NAME: PointHeadSimple
+[2023-04-18 13:37:18,195  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,195  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: True
+[2023-04-18 13:37:18,195  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,195  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: True
+[2023-04-18 13:37:18,195  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,195  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,196  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,196  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+[2023-04-18 13:37:18,196  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.USE_POINT_FEATURES_BEFORE_FUSION: True
+[2023-04-18 13:37:18,196  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+[2023-04-18 13:37:18,196  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,196  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,197  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,197  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: smooth-l1
+[2023-04-18 13:37:18,197  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.TARGET_CONFIG.GT_EXTRA_WIDTH: [0.2, 0.2, 0.2]
+[2023-04-18 13:37:18,197  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: smooth-l1
+[2023-04-18 13:37:18,197  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,198  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,198  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,198  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+[2023-04-18 13:37:18,198  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_REG: smooth-l1
+[2023-04-18 13:37:18,199  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+[2023-04-18 13:37:18,199  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD = edict()
+[2023-04-18 13:37:18,199  config.py 10  INFO]  
+cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,199  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD = edict()
+[2023-04-18 13:37:18,199  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NAME: PVRCNNHead
+[2023-04-18 13:37:18,200  config.py 13  INFO]  cfg.MODEL.POINT_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.point_cls_weight: 1.0
+[2023-04-18 13:37:18,200  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NAME: PVRCNNHead
+[2023-04-18 13:37:18,200  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,200  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD = edict()
+[2023-04-18 13:37:18,200  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,200  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.SHARED_FC: [256, 256]
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NAME: PVRCNNHead
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.SHARED_FC: [256, 256]
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLASS_AGNOSTIC: True
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,201  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+[2023-04-18 13:37:18,202  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.SHARED_FC: [256, 256]
+[2023-04-18 13:37:18,202  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+[2023-04-18 13:37:18,203  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.3
+[2023-04-18 13:37:18,203  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.CLS_FC: [256, 256]
+[2023-04-18 13:37:18,203  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.3
+[2023-04-18 13:37:18,203  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,203  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.REG_FC: [256, 256]
+[2023-04-18 13:37:18,204  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,204  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN = edict()
+[2023-04-18 13:37:18,204  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.DP_RATIO: 0.3
+[2023-04-18 13:37:18,204  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN = edict()
+[2023-04-18 13:37:18,204  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,204  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,204  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,205  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,205  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN = edict()
+[2023-04-18 13:37:18,205  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,205  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+[2023-04-18 13:37:18,205  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,206  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+[2023-04-18 13:37:18,206  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+[2023-04-18 13:37:18,206  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,206  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+[2023-04-18 13:37:18,206  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+[2023-04-18 13:37:18,207  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_PRE_MAXSIZE: 9000
+[2023-04-18 13:37:18,207  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+[2023-04-18 13:37:18,207  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST = edict()
+[2023-04-18 13:37:18,207  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_POST_MAXSIZE: 512
+[2023-04-18 13:37:18,207  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST = edict()
+[2023-04-18 13:37:18,207  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,207  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TRAIN.NMS_THRESH: 0.8
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,208  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST = edict()
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 1024
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,208  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 1024
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.7
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_PRE_MAXSIZE: 1024
+[2023-04-18 13:37:18,209  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.7
+[2023-04-18 13:37:18,210  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.ROI_GRID_POOL = edict()
+[2023-04-18 13:37:18,210  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,210  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.ROI_GRID_POOL = edict()
+[2023-04-18 13:37:18,210  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GRID_SIZE: 6
+[2023-04-18 13:37:18,210  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.NMS_CONFIG.TEST.NMS_THRESH: 0.7
+[2023-04-18 13:37:18,210  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GRID_SIZE: 6
+[2023-04-18 13:37:18,210  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,211  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.ROI_GRID_POOL = edict()
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_RADIUS: [0.8, 1.6]
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.GRID_SIZE: 6
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_RADIUS: [0.8, 1.6]
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,211  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.MLPS: [[64, 64], [64, 64]]
+[2023-04-18 13:37:18,212  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,212  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_METHOD: max_pool
+[2023-04-18 13:37:18,212  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_RADIUS: [0.8, 1.6]
+[2023-04-18 13:37:18,212  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_METHOD: max_pool
+[2023-04-18 13:37:18,212  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,212  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.NSAMPLE: [16, 16]
+[2023-04-18 13:37:18,213  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,213  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,213  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.ROI_GRID_POOL.POOL_METHOD: max_pool
+[2023-04-18 13:37:18,213  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,213  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+[2023-04-18 13:37:18,213  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.TARGET_CONFIG = edict()
+[2023-04-18 13:37:18,213  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.BOX_CODER: ResidualCoder
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.ROI_PER_IMAGE: 128
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+[2023-04-18 13:37:18,214  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: raw_roi_iou
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.FG_RATIO: 0.5
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: raw_roi_iou
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.75
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.SAMPLE_ROI_BY_EACH_CLASS: True
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.75
+[2023-04-18 13:37:18,215  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_SCORE_TYPE: raw_roi_iou
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_FG_THRESH: 0.75
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+[2023-04-18 13:37:18,216  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH: 0.25
+[2023-04-18 13:37:18,217  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+[2023-04-18 13:37:18,217  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+[2023-04-18 13:37:18,217  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.CLS_BG_THRESH_LO: 0.1
+[2023-04-18 13:37:18,217  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+[2023-04-18 13:37:18,217  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,217  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.HARD_BG_RATIO: 0.8
+[2023-04-18 13:37:18,217  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,218  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+[2023-04-18 13:37:18,218  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.TARGET_CONFIG.REG_FG_THRESH: 0.55
+[2023-04-18 13:37:18,218  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+[2023-04-18 13:37:18,218  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+[2023-04-18 13:37:18,218  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG = edict()
+[2023-04-18 13:37:18,218  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+[2023-04-18 13:37:18,219  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+[2023-04-18 13:37:18,219  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CLS_LOSS: BinaryCrossEntropy
+[2023-04-18 13:37:18,219  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+[2023-04-18 13:37:18,219  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,220  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.REG_LOSS: smooth-l1
+[2023-04-18 13:37:18,220  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,220  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+[2023-04-18 13:37:18,220  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.CORNER_LOSS_REGULARIZATION: True
+[2023-04-18 13:37:18,220  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+[2023-04-18 13:37:18,220  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+[2023-04-18 13:37:18,221  config.py 10  INFO]  
+cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS = edict()
+[2023-04-18 13:37:18,221  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+[2023-04-18 13:37:18,221  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+[2023-04-18 13:37:18,221  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_cls_weight: 1.0
+[2023-04-18 13:37:18,221  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+[2023-04-18 13:37:18,221  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,222  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_reg_weight: 1.0
+[2023-04-18 13:37:18,222  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,222  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING = edict()
+[2023-04-18 13:37:18,222  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.rcnn_corner_weight: 1.0
+[2023-04-18 13:37:18,223  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING = edict()
+[2023-04-18 13:37:18,223  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+[2023-04-18 13:37:18,223  config.py 13  INFO]  cfg.MODEL.ROI_HEAD.LOSS_CONFIG.LOSS_WEIGHTS.code_weights: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,223  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+[2023-04-18 13:37:18,223  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.2
+[2023-04-18 13:37:18,224  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING = edict()
+[2023-04-18 13:37:18,224  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.2
+[2023-04-18 13:37:18,224  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+[2023-04-18 13:37:18,224  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
+[2023-04-18 13:37:18,224  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+[2023-04-18 13:37:18,225  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+[2023-04-18 13:37:18,225  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.SCORE_THRESH: 0.2
+[2023-04-18 13:37:18,225  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+[2023-04-18 13:37:18,225  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,225  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.OUTPUT_RAW_SCORE: False
+[2023-04-18 13:37:18,226  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,226  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,226  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.EVAL_METRIC: kitti
+[2023-04-18 13:37:18,226  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,226  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,226  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,227  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,227  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,227  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,227  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,227  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+[2023-04-18 13:37:18,228  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,228  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+[2023-04-18 13:37:18,228  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+[2023-04-18 13:37:18,228  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,228  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+[2023-04-18 13:37:18,229  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_TYPE: hybrid_iou_cls
+[2023-04-18 13:37:18,229  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_PRE_MAXSIZE: 4096
+[2023-04-18 13:37:18,229  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_TYPE: hybrid_iou_cls
+[2023-04-18 13:37:18,229  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS = edict()
+[2023-04-18 13:37:18,229  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.NMS_POST_MAXSIZE: 500
+[2023-04-18 13:37:18,230  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS = edict()
+[2023-04-18 13:37:18,230  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.iou: 0.5
+[2023-04-18 13:37:18,230  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_TYPE: hybrid_iou_cls
+[2023-04-18 13:37:18,230  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.iou: 0.5
+[2023-04-18 13:37:18,230  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.cls: 0.5
+[2023-04-18 13:37:18,231  config.py 10  INFO]  
+cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS = edict()
+[2023-04-18 13:37:18,231  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.cls: 0.5
+[2023-04-18 13:37:18,231  config.py 10  INFO]  
+cfg.OPTIMIZATION = edict()
+[2023-04-18 13:37:18,231  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.iou: 0.5
+[2023-04-18 13:37:18,231  config.py 10  INFO]  
+cfg.OPTIMIZATION = edict()
+[2023-04-18 13:37:18,232  config.py 13  INFO]  cfg.OPTIMIZATION.NUM_EPOCHS: 30
+[2023-04-18 13:37:18,233  config.py 13  INFO]  cfg.MODEL.POST_PROCESSING.NMS_CONFIG.SCORE_WEIGHTS.cls: 0.5
+[2023-04-18 13:37:18,233  config.py 13  INFO]  cfg.OPTIMIZATION.NUM_EPOCHS: 30
+[2023-04-18 13:37:18,233  config.py 13  INFO]  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 4
+[2023-04-18 13:37:18,233  config.py 10  INFO]  
+cfg.OPTIMIZATION = edict()
+[2023-04-18 13:37:18,233  config.py 13  INFO]  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 4
+[2023-04-18 13:37:18,233  config.py 13  INFO]  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.NUM_EPOCHS: 30
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.LR: 0.0015
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.BATCH_SIZE_PER_GPU: 4
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.LR: 0.0015
+[2023-04-18 13:37:18,234  config.py 13  INFO]  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.001
+[2023-04-18 13:37:18,235  config.py 13  INFO]  cfg.OPTIMIZATION.OPTIMIZER: adam_onecycle
+[2023-04-18 13:37:18,235  config.py 13  INFO]  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.001
+[2023-04-18 13:37:18,235  config.py 13  INFO]  cfg.OPTIMIZATION.MOMENTUM: 0.9
+[2023-04-18 13:37:18,235  config.py 13  INFO]  cfg.OPTIMIZATION.LR: 0.0015
+[2023-04-18 13:37:18,235  config.py 13  INFO]  cfg.OPTIMIZATION.MOMENTUM: 0.9
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.WEIGHT_DECAY: 0.001
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.PCT_START: 0.4
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.MOMENTUM: 0.9
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.PCT_START: 0.4
+[2023-04-18 13:37:18,236  config.py 13  INFO]  cfg.OPTIMIZATION.DIV_FACTOR: 10
+[2023-04-18 13:37:18,237  config.py 13  INFO]  cfg.OPTIMIZATION.MOMS: [0.95, 0.85]
+[2023-04-18 13:37:18,237  config.py 13  INFO]  cfg.OPTIMIZATION.DIV_FACTOR: 10
+[2023-04-18 13:37:18,237  config.py 13  INFO]  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+[2023-04-18 13:37:18,237  config.py 13  INFO]  cfg.OPTIMIZATION.PCT_START: 0.4
+[2023-04-18 13:37:18,237  config.py 13  INFO]  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+[2023-04-18 13:37:18,238  config.py 13  INFO]  cfg.OPTIMIZATION.LR_DECAY: 0.1
+[2023-04-18 13:37:18,238  config.py 13  INFO]  cfg.OPTIMIZATION.DIV_FACTOR: 10
+[2023-04-18 13:37:18,238  config.py 13  INFO]  cfg.OPTIMIZATION.LR_DECAY: 0.1
+[2023-04-18 13:37:18,238  config.py 13  INFO]  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+[2023-04-18 13:37:18,238  config.py 13  INFO]  cfg.OPTIMIZATION.DECAY_STEP_LIST: [35, 45]
+[2023-04-18 13:37:18,239  config.py 13  INFO]  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+[2023-04-18 13:37:18,239  config.py 13  INFO]  cfg.OPTIMIZATION.EP_PER_CYCLE: 4
+[2023-04-18 13:37:18,239  config.py 13  INFO]  cfg.OPTIMIZATION.LR_DECAY: 0.1
+[2023-04-18 13:37:18,239  config.py 13  INFO]  cfg.OPTIMIZATION.EP_PER_CYCLE: 4
+[2023-04-18 13:37:18,239  config.py 13  INFO]  cfg.OPTIMIZATION.LR_WARMUP: False
+[2023-04-18 13:37:18,240  config.py 13  INFO]  cfg.OPTIMIZATION.LR_CLIP: 1e-07
+[2023-04-18 13:37:18,240  config.py 13  INFO]  cfg.OPTIMIZATION.LR_WARMUP: False
+[2023-04-18 13:37:18,240  config.py 13  INFO]  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+[2023-04-18 13:37:18,240  config.py 13  INFO]  cfg.OPTIMIZATION.EP_PER_CYCLE: 4
+[2023-04-18 13:37:18,240  config.py 13  INFO]  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+[2023-04-18 13:37:18,241  config.py 13  INFO]  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+[2023-04-18 13:37:18,241  config.py 13  INFO]  cfg.OPTIMIZATION.LR_WARMUP: False
+[2023-04-18 13:37:18,241  config.py 13  INFO]  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+[2023-04-18 13:37:18,241  config.py 10  INFO]  
+cfg.SELF_TRAIN = edict()
+[2023-04-18 13:37:18,241  config.py 13  INFO]  cfg.OPTIMIZATION.WARMUP_EPOCH: 1
+[2023-04-18 13:37:18,242  config.py 10  INFO]  
+cfg.SELF_TRAIN = edict()
+[2023-04-18 13:37:18,242  config.py 10  INFO]  
+cfg.SELF_TRAIN.SRC = edict()
+[2023-04-18 13:37:18,242  config.py 13  INFO]  cfg.OPTIMIZATION.GRAD_NORM_CLIP: 10
+[2023-04-18 13:37:18,242  config.py 10  INFO]  
+cfg.SELF_TRAIN.SRC = edict()
+[2023-04-18 13:37:18,242  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_DATA: True
+[2023-04-18 13:37:18,242  config.py 10  INFO]  
+cfg.SELF_TRAIN = edict()
+[2023-04-18 13:37:18,242  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_DATA: True
+[2023-04-18 13:37:18,243  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_GRAD: True
+[2023-04-18 13:37:18,243  config.py 10  INFO]  
+cfg.SELF_TRAIN.SRC = edict()
+[2023-04-18 13:37:18,243  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_GRAD: True
+[2023-04-18 13:37:18,243  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,243  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_DATA: True
+[2023-04-18 13:37:18,243  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,244  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,244  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.USE_GRAD: True
+[2023-04-18 13:37:18,244  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,244  config.py 10  INFO]  
+cfg.SELF_TRAIN.TAR = edict()
+[2023-04-18 13:37:18,244  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,244  config.py 10  INFO]  
+cfg.SELF_TRAIN.TAR = edict()
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.USE_DATA: True
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.SRC.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.USE_DATA: True
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,245  config.py 10  INFO]  
+cfg.SELF_TRAIN.TAR = edict()
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,245  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.USE_DATA: True
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.SCORE_THRESH: [0.6, 0.55, 0.55]
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.LOSS_WEIGHT: 1.0
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.SCORE_THRESH: [0.6, 0.55, 0.55]
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.NEG_THRESH: [0.25, 0.2, 0.2]
+[2023-04-18 13:37:18,246  config.py 13  INFO]  cfg.SELF_TRAIN.TAR.SEP_LOSS_WEIGHTS: [1.0, 1.0, 1.0]
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.NEG_THRESH: [0.25, 0.2, 0.2]
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL: [0]
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.SCORE_THRESH: [0.6, 0.55, 0.55]
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL: [0]
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL_INTERVAL: 4
+[2023-04-18 13:37:18,247  config.py 13  INFO]  cfg.SELF_TRAIN.NEG_THRESH: [0.25, 0.2, 0.2]
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL_INTERVAL: 4
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.INIT_PS: None
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL: [0]
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.INIT_PS: None
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.DSNORM: True
+[2023-04-18 13:37:18,248  config.py 13  INFO]  cfg.SELF_TRAIN.UPDATE_PSEUDO_LABEL_INTERVAL: 4
+[2023-04-18 13:37:18,249  config.py 13  INFO]  cfg.SELF_TRAIN.DSNORM: True
+[2023-04-18 13:37:18,249  config.py 10  INFO]  
+cfg.SELF_TRAIN.PROG_AUG = edict()
+[2023-04-18 13:37:18,249  config.py 13  INFO]  cfg.SELF_TRAIN.INIT_PS: None
+[2023-04-18 13:37:18,249  config.py 10  INFO]  
+cfg.SELF_TRAIN.PROG_AUG = edict()
+[2023-04-18 13:37:18,249  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.ENABLED: True
+[2023-04-18 13:37:18,249  config.py 13  INFO]  cfg.SELF_TRAIN.DSNORM: True
+[2023-04-18 13:37:18,250  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.ENABLED: True
+[2023-04-18 13:37:18,250  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.UPDATE_AUG: [0, 5, 10, 20, 25]
+[2023-04-18 13:37:18,250  config.py 10  INFO]  
+cfg.SELF_TRAIN.PROG_AUG = edict()
+[2023-04-18 13:37:18,250  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.UPDATE_AUG: [0, 5, 10, 20, 25]
+[2023-04-18 13:37:18,250  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.SCALE: 1.05
+[2023-04-18 13:37:18,250  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.ENABLED: True
+[2023-04-18 13:37:18,251  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.SCALE: 1.05
+[2023-04-18 13:37:18,251  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE = edict()
+[2023-04-18 13:37:18,251  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.UPDATE_AUG: [0, 5, 10, 20, 25]
+[2023-04-18 13:37:18,251  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE = edict()
+[2023-04-18 13:37:18,251  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.ENABLED: False
+[2023-04-18 13:37:18,251  config.py 13  INFO]  cfg.SELF_TRAIN.PROG_AUG.SCALE: 1.05
+[2023-04-18 13:37:18,251  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.ENABLED: False
+[2023-04-18 13:37:18,252  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NAME: consistency_ensemble
+[2023-04-18 13:37:18,252  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE = edict()
+[2023-04-18 13:37:18,252  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NAME: consistency_ensemble
+[2023-04-18 13:37:18,252  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.IOU_THRESH: 0.1
+[2023-04-18 13:37:18,252  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.ENABLED: False
+[2023-04-18 13:37:18,252  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.IOU_THRESH: 0.1
+[2023-04-18 13:37:18,253  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,253  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NAME: consistency_ensemble
+[2023-04-18 13:37:18,253  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,253  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,254  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.IOU_THRESH: 0.1
+[2023-04-18 13:37:18,254  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,254  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,254  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG = edict()
+[2023-04-18 13:37:18,254  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,254  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_PRE_MAXSIZE: 512
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_TYPE: nms_gpu
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_PRE_MAXSIZE: 512
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.MULTI_CLASSES_NMS: False
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,255  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,256  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_PRE_MAXSIZE: 512
+[2023-04-18 13:37:18,256  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,256  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING = edict()
+[2023-04-18 13:37:18,256  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_POST_MAXSIZE: 100
+[2023-04-18 13:37:18,256  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING = edict()
+[2023-04-18 13:37:18,257  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.ENABLED: False
+[2023-04-18 13:37:18,257  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.NMS_CONFIG.NMS_THRESH: 0.1
+[2023-04-18 13:37:18,257  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.ENABLED: False
+[2023-04-18 13:37:18,257  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.IGNORE_THRESH: 2
+[2023-04-18 13:37:18,257  config.py 10  INFO]  
+cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING = edict()
+[2023-04-18 13:37:18,257  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.IGNORE_THRESH: 2
+[2023-04-18 13:37:18,258  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.RM_THRESH: 3
+[2023-04-18 13:37:18,258  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.ENABLED: False
+[2023-04-18 13:37:18,258  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.RM_THRESH: 3
+[2023-04-18 13:37:18,258  config.py 13  INFO]  cfg.TAG: pvrcnn_st3d
+[2023-04-18 13:37:18,258  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.IGNORE_THRESH: 2
+[2023-04-18 13:37:18,259  config.py 13  INFO]  cfg.TAG: pvrcnn_st3d
+[2023-04-18 13:37:18,259  config.py 13  INFO]  cfg.EXP_GROUP_PATH: da-waymo-coda_models/pvrcnn_st3d
+[2023-04-18 13:37:18,259  config.py 13  INFO]  cfg.SELF_TRAIN.MEMORY_ENSEMBLE.MEMORY_VOTING.RM_THRESH: 3
+[2023-04-18 13:37:18,259  config.py 13  INFO]  cfg.EXP_GROUP_PATH: da-waymo-coda_models/pvrcnn_st3d
+[2023-04-18 13:37:18,260  config.py 13  INFO]  cfg.TAG: pvrcnn_st3d
+[2023-04-18 13:37:18,260  config.py 13  INFO]  cfg.EXP_GROUP_PATH: da-waymo-coda_models/pvrcnn_st3d
+cp: cannot create regular file '/scratch/09156/arthurz/research/ST3D/output/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d/pvrcnn_old_anchor/pvrcnn_st3d.yaml': File exists
+[2023-04-18 13:37:20,021  waymo_dataset.py 45  INFO]  Loading Waymo dataset
+[2023-04-18 13:37:20,021  waymo_dataset.py 45  INFO]  Loading Waymo dataset
+Traceback (most recent call last):
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/record_writer.py", line 47, in directory_check
+    factory = REGISTERED_FACTORIES[prefix]
+KeyError: '/scratch/09156/arthurz/research/ST3D/output/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d/pvrcnn_old_anchor/tensorboard'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "train.py", line 246, in <module>
+    main()
+  File "train.py", line 109, in main
+    tb_log = SummaryWriter(log_dir=str(output_dir / 'tensorboard')) if cfg.LOCAL_RANK == 0 else None
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/writer.py", line 300, in __init__
+    self._get_file_writer()
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/writer.py", line 352, in _get_file_writer
+    **self.kwargs)
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/writer.py", line 105, in __init__
+    logdir, max_queue, flush_secs, filename_suffix)
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/event_file_writer.py", line 104, in __init__
+    directory_check(self._logdir)
+  File "/opt/conda/lib/python3.7/site-packages/tensorboardX/record_writer.py", line 51, in directory_check
+    os.makedirs(path)
+  File "/opt/conda/lib/python3.7/os.py", line 223, in makedirs
+    mkdir(name, mode)
+FileExistsError: [Errno 17] File exists: '/scratch/09156/arthurz/research/ST3D/output/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d/pvrcnn_old_anchor/tensorboard'
+[2023-04-18 13:44:03,492  waymo_dataset.py 61  INFO]  Total skipped info 0
+[2023-04-18 13:44:03,501  waymo_dataset.py 61  INFO]  Total skipped info 0
+[2023-04-18 13:44:03,684  waymo_dataset.py 62  INFO]  Total samples for Waymo dataset: 158081
+[2023-04-18 13:44:03,702  waymo_dataset.py 62  INFO]  Total samples for Waymo dataset: 158081
+[2023-04-18 13:44:03,890  waymo_dataset.py 69  INFO]  Total sampled samples for Waymo dataset: 31617
+[2023-04-18 13:44:03,998  waymo_dataset.py 69  INFO]  Total sampled samples for Waymo dataset: 31617
+[2023-04-18 13:44:04,936  coda_dataset.py 40  INFO]  Loading CODa dataset
+[2023-04-18 13:44:04,942  coda_dataset.py 40  INFO]  Loading CODa dataset
+[2023-04-18 13:44:05,697  coda_dataset.py 54  INFO]  Total samples for CODa dataset: 2711
+[2023-04-18 13:44:05,698  coda_dataset.py 54  INFO]  Total samples for CODa dataset: 2711
+/opt/conda/lib/python3.7/site-packages/torch/functional.py:445: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at  /opt/conda/conda-bld/pytorch_1634272168290/work/aten/src/ATen/native/TensorShape.cpp:2157.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+Traceback (most recent call last):
+  File "train.py", line 246, in <module>
+    main()
+  File "train.py", line 145, in main
+    model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist, logger=logger)
+  File "/scratch/09156/arthurz/research/ST3D/tools/../pcdet/models/detectors/detector3d_template.py", line 359, in load_params_from_file
+    raise FileNotFoundError
+FileNotFoundError
+/opt/conda/lib/python3.7/site-packages/torch/functional.py:445: UserWarning: torch.meshgrid: in an upcoming release, it will be required to pass the indexing argument. (Triggered internally at  /opt/conda/conda-bld/pytorch_1634272168290/work/aten/src/ATen/native/TensorShape.cpp:2157.)
+  return _VF.meshgrid(tensors, **kwargs)  # type: ignore[attr-defined]
+Traceback (most recent call last):
+  File "train.py", line 246, in <module>
+    main()
+  File "train.py", line 145, in main
+    model.load_params_from_file(filename=args.pretrained_model, to_cpu=dist, logger=logger)
+  File "/scratch/09156/arthurz/research/ST3D/tools/../pcdet/models/detectors/detector3d_template.py", line 359, in load_params_from_file
+    raise FileNotFoundError
+FileNotFoundError
+Launcher: Job 2 completed in 583 seconds.
+Launcher: Task 2 done. Exiting.
+Launcher: Done. Job exited without errors

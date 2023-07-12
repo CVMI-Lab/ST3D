@@ -10,7 +10,7 @@ from ..dataset import DatasetTemplate
 
 
 class CODataset(DatasetTemplate):
-    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
+    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None):
         """
         Args:
             root_path:
@@ -20,8 +20,10 @@ class CODataset(DatasetTemplate):
             logger:
         """
         super().__init__(
-            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger
+            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger, 
+            ps_label_dir=ps_label_dir
         )
+
         self.split = self.dataset_cfg.DATA_SPLIT[self.mode]
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
 
@@ -72,7 +74,7 @@ class CODataset(DatasetTemplate):
         sampled_infos = []
 
         frac = 1.0 / len(self.class_names)
-        ratios = [frac / v for v in cls_dist.values()]
+        ratios = [frac / (v+1e-3) for v in cls_dist.values()] # added 1e-3 to fix no class instance
 
         for cur_cls_infos, ratio in zip(list(cls_infos.values()), ratios):
             sampled_infos += np.random.choice(
@@ -98,11 +100,12 @@ class CODataset(DatasetTemplate):
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
 
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
+
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
 
     def get_lidar(self, idx):
         lidar_file = self.root_split_path / 'velodyne' / ('%s.bin' % idx)
-        assert lidar_file.exists()
+        assert lidar_file.exists(), "Lidar files %s " % str(lidar_file)
         
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
@@ -539,7 +542,116 @@ if __name__ == '__main__':
         ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
         create_coda_infos(
             dataset_cfg=dataset_cfg,
-            class_names=['Car', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'coda',
-            save_path=ROOT_DIR / 'data' / 'coda',
+            # class_names=['Car', 'Pedestrian', 'Cyclist'],
+            # data_path=ROOT_DIR / 'data' / 'coda128_3class',
+            # save_path=ROOT_DIR / 'data' / 'coda128_3class'
+            class_names=[
+                'Car',
+                'Pedestrian',
+                'Cyclist',
+                'PickupTruck',  
+                'DeliveryTruck', 
+                'ServiceVehicle', 
+                'UtilityVehicle',
+                'Scooter',
+                'Motorcycle',
+                'FireHydrant',
+                'FireAlarm',
+                'ParkingKiosk',
+                'Mailbox',
+                'NewspaperDispenser',
+                'SanitizerDispenser',
+                'CondimentDispenser',
+                'ATM',
+                'VendingMachine',
+                'DoorSwitch',
+                'EmergencyAidKit',
+                'Computer',
+                'Television',
+                'Dumpster',
+                'TrashCan',
+                'VacuumCleaner',
+                'Cart',
+                'Chair',
+                'Couch',
+                'Bench',
+                'Table',
+                'Bollard',
+                'ConstructionBarrier',
+                'Fence',
+                'Railing',
+                'Cone',
+                'Stanchion',
+                'TrafficLight',
+                'TrafficSign',
+                'TrafficArm',
+                'Canopy',
+                'BikeRack',
+                'Pole',
+                'InformationalSign',
+                'WallSign',
+                'Door',
+                'FloorSign',
+                'RoomLabel',
+                'FreestandingPlant',
+                'Tree',
+                'Other'
+            ],
+            data_path=ROOT_DIR / 'data' / 'coda32_allclass',
+            save_path=ROOT_DIR / 'data' / 'coda32_allclass',
         )
+"""
+Full Class List
+[
+'Car',
+'Pedestrian',
+'Cyclist',
+'PickupTruck',  
+'DeliveryTruck', 
+'ServiceVehicle', 
+'UtilityVehicle',
+'Scooter',
+'Motorcycle',
+'FireHydrant',
+'FireAlarm',
+'ParkingKiosk',
+'Mailbox',
+'NewspaperDispenser',
+'SanitizerDispenser',
+'CondimentDispenser',
+'ATM',
+'VendingMachine',
+'DoorSwitch',
+'EmergencyAidKit',
+'Computer',
+'Television',
+'Dumpster',
+'TrashCan',
+'VacuumCleaner',
+'Cart',
+'Chair',
+'Couch',
+'Bench',
+'Table',
+'Bollard',
+'ConstructionBarrier',
+'Fence',
+'Railing',
+'Cone',
+'Stanchion',
+'TrafficLight',
+'TrafficSign',
+'TrafficArm',
+'Canopy',
+'BikeRack',
+'Pole',
+'InformationalSign',
+'WallSign',
+'Door',
+'FloorSign',
+'RoomLabel',
+'FreestandingPlant',
+'Tree',
+'Other'
+]
+"""

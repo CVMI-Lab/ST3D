@@ -9,6 +9,7 @@ from pcdet.models import load_data_to_gpu
 from pcdet.utils import common_utils
 from pcdet.models.model_utils.dsnorm import set_ds_target
 
+import wandb
 
 def statistics_info(cfg, ret_dict, metric, disp_dict):
     for cur_thresh in cfg.MODEL.POST_PROCESSING.RECALL_THRESH_LIST:
@@ -20,7 +21,8 @@ def statistics_info(cfg, ret_dict, metric, disp_dict):
         '(%d, %d) / %d' % (metric['recall_roi_%s' % str(min_thresh)], metric['recall_rcnn_%s' % str(min_thresh)], metric['gt_num'])
 
 
-def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, save_to_file=False, result_dir=None, args=None):
+def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, save_to_file=False, result_dir=None, args=None,
+    ft_cfg=None):
     result_dir.mkdir(parents=True, exist_ok=True)
 
     final_output_dir = result_dir / 'final_result' / 'data'
@@ -70,7 +72,7 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         if cfg.LOCAL_RANK == 0:
             progress_bar.set_postfix(disp_dict)
             progress_bar.update()
-
+    
     if cfg.LOCAL_RANK == 0:
         progress_bar.close()
 
@@ -101,7 +103,7 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
         logger.info('recall_rcnn_%s: %f' % (cur_thresh, cur_rcnn_recall))
         ret_dict['recall/roi_%s' % str(cur_thresh)] = cur_roi_recall
         ret_dict['recall/rcnn_%s' % str(cur_thresh)] = cur_rcnn_recall
-
+    
     total_pred_objects = 0
     for anno in det_annos:
         total_pred_objects += anno['name'].__len__()
@@ -111,11 +113,48 @@ def eval_one_epoch(cfg, model, dataloader, epoch_id, logger, dist_test=False, sa
     with open(result_dir / 'result.pkl', 'wb') as f:
         pickle.dump(det_annos, f)
 
+    # Arthur Temporarily load this for testing
+    # det_annos = pickle.load(open("/robodata/arthurz/Benchmarks/unsupda/ST3D/output/da-waymo-coda_models/da_centerpoint/da_centerpoint_voxelresLR0.003000OPTadam_onecycle/eval/eval_with_train/epoch_2/val/result.pkl", "rb"))
     result_str, result_dict = dataset.evaluation(
         det_annos, class_names,
         eval_metric=cfg.MODEL.POST_PROCESSING.EVAL_METRIC,
         output_path=final_output_dir
     )
+
+    if ft_cfg is not None:
+        """
+        Changed to this from 'class_names' because currently kitti eval.py nmaps everything
+        to these classes in class_to_name variable. To add additional classes, modify
+        line 648 in eval.py to include other classes besides these. Note this will simply
+        be the classes used to evaluate your model, it does not affect the classes that the 
+        model is trained to predict.
+        """
+        # classes = ['Car', 'Pedestrian', 'Cyclist'] 
+        classes = class_names
+        print("classes for wandb ", classes)
+        print("classes in result dict ", result_dict.keys())
+        # wandb_keys = ['m3d/map_R40', 'mbev/map_R40']
+        # for c in classes:
+        #     wandb_keys.append('%s_3d/easy_R40'     % c)
+        #     wandb_keys.append('%s_3d/moderate_R40' % c)
+        #     wandb_keys.append('%s_3d/hard_R40'     % c)
+        #     wandb_keys.append('%s_bev/easy_R40'    % c)
+        #     wandb_keys.append('%s_bev/moderate_R40'% c)
+        #     wandb_keys.append('%s_bev/hard_R40'    % c)
+        
+        # wandb_dict = {}
+        # for idx, key in enumerate(result_dict)
+        #     wandb_dict[key] = result_dict[wkey]
+
+        # for widx, wkey in enumerate(wandb_keys):
+        #     # if wkey dne, its bc we use vehicle, so add wdb key to car value in result dict
+        #     if wkey not in result_dict and "Vehicle" in wkey:
+        #         print("key ", wkey, " does not exist, using ", wkey.replace("Vehicle", "Car"))
+        #         result_dict[wkey] = result_dict[wkey.replace("Vehicle", "Car")]
+        #         print("new result dict ", result_dict)
+            # wandb_dict[wkey] = result_dict[wkey]
+        print("Logging results to wandb...")
+        wandb.log(result_dict)
 
     logger.info(result_str)
     ret_dict.update(result_dict)

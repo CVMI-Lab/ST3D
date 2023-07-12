@@ -150,9 +150,11 @@ class PVRCNNHead(RoIHeadTemplate):
             batch_dict, nms_config=self.model_cfg.NMS_CONFIG['TRAIN' if self.training else 'TEST']
         )
         if self.training:
-            targets_dict = self.assign_targets(batch_dict)
-            batch_dict['rois'] = targets_dict['rois']
-            batch_dict['roi_labels'] = targets_dict['roi_labels']
+            targets_dict = batch_dict.get('roi_targets_dict', None)
+            if targets_dict is None:
+                targets_dict = self.assign_targets(batch_dict)
+                batch_dict['rois'] = targets_dict['rois']
+                batch_dict['roi_labels'] = targets_dict['roi_labels']
 
         # RoI aware pooling
         pooled_features = self.roi_grid_pool(batch_dict)  # (BxN, 6x6x6, C)

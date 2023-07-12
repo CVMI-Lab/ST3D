@@ -4,7 +4,7 @@
 #SBATCH -p gpu-a100                        # Queue name
 #SBATCH -N 1                               # Total number of nodes requested (128 cores/node)
 #SBATCH -n 3                               # Total number of mpi tasks requested
-#SBATCH -t 24:00:00                        # Run time (hh:mm:ss)
+#SBATCH -t 00:20:00                        # Run time (hh:mm:ss)
 #SBATCH -A IRI23004                        # Allocation name
 
 export APPTAINERENV_CUDA_VISIBLE_DEVICES=0,1,2
@@ -28,19 +28,20 @@ export CUDA_VISIBLE_DEVICES=0
 # export EXTRA_TAG1=pvrcnn_pretrain_coda_small 
 
 # For nuScenes -> CODA Self Train
-export PORT=29502
-export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
-export EXTRA_TAG1=pvrcnn_oracle_coda_small_resamp 
-export PRETRAINED_MODEL1=../output/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_49.pth
-export BATCH_SIZE1=8
-export EPOCH1=50
+# export PORT=29502
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
+# export EXTRA_TAG1=pvrcnn_oracle_coda_small_resamp 
+# export PRETRAINED_MODEL1=../output/da-nuscenes-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_49.pth
+# export BATCH_SIZE1=8
+# export EPOCH1=50
 
 # For waymo->coda da
-# export PORT=29503
-# export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor.yaml
-# export EXTRA_TAG1=waymo_da_coda_small
-# export CKPT1=../output/da-waymo-coda_models/pvrcnn/pvrcnn_old_anchor/waymo_coda_pretrain/ckpt/checkpoint_epoch_6.pth
-# export BATCH_SIZE1=24
+export PORT=29502
+export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml
+export EXTRA_TAG1=pvrcnn_old_anchor 
+export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pv_rcnn/pvrcnn_old_anchor/pvrcnn_pretrain_coda_small/ckpt/checkpoint_epoch_24.pth
+export BATCH_SIZE1=8
+export EPOCH1=50
 
 # Uncomment to launch model training
 module load launcher_gpu

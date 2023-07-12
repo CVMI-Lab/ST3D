@@ -1,7 +1,8 @@
 DATASET: 'CODataset'
 DATA_PATH: '../data/coda'
 
-POINT_CLOUD_RANGE: [-25.6, -25.6, -2, 25.6, 25.6, 8]
+POINT_CLOUD_RANGE: [-35.6, -35.6, -2, 35.6, 35.6, 8]
+# [-25.6, -25.6, -2, 25.6, 25.6, 8]
 
 DATA_SPLIT: {
     'train': train,
@@ -65,5 +66,6 @@ DATA_PROCESSOR:
       MAX_POINTS_PER_VOXEL: 5
       MAX_NUMBER_OF_VOXELS: {
         'train': 16000,
-        'test': 40000
+        'test': 40000,
+        'val': 150000
       }

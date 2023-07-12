@@ -42,3 +42,7 @@ RUN python setup.py develop --user
 # Dataset specific installation
 RUN pip install nuscenes-devkit==1.0.5 
 RUN pip install waymo-open-dataset-tf-2-5-0 --user
+
+# Set environment variables for running wandb from singularity
+ENV SINGULARITYENV_WANDB_CACHE_DIR=/scratch/09156/arthurz/wandb
+ENV SINGULARITYENV_WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014

@@ -11,10 +11,11 @@ from ..dataset import DatasetTemplate
 
 
 class NuScenesDataset(DatasetTemplate):
-    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None):
+    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None):
         root_path = (root_path if root_path is not None else Path(dataset_cfg.DATA_PATH)) / dataset_cfg.VERSION
         super().__init__(
-            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger
+            dataset_cfg=dataset_cfg, class_names=class_names, training=training, root_path=root_path, logger=logger,
+            ps_label_dir=ps_label_dir
         )
         self.infos = []
         self.include_nuscenes_data(self.mode)
@@ -95,6 +96,8 @@ class NuScenesDataset(DatasetTemplate):
         info = self.infos[index]
         lidar_path = self.root_path / info['lidar_path']
         points = np.fromfile(str(lidar_path), dtype=np.float32, count=-1).reshape([-1, 5])[:, :4]
+        # ARTHUR Set nan points to 0
+        points[np.isnan(points)] = 0
         points = self.remove_ego_points(points, center_radius=1.5)
         sweep_points_list = [points]
         sweep_times_list = [np.zeros((points.shape[0], 1))]

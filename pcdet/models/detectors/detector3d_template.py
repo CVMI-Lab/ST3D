@@ -42,6 +42,7 @@ class Detector3DTemplate(nn.Module):
             'point_cloud_range': self.dataset.point_cloud_range,
             'voxel_size': self.dataset.voxel_size
         }
+
         for module_name in self.module_topology:
             module, model_info_dict = getattr(self, 'build_%s' % module_name)(
                 model_info_dict=model_info_dict
@@ -53,12 +54,21 @@ class Detector3DTemplate(nn.Module):
         if self.model_cfg.get('VFE', None) is None:
             return None, model_info_dict
 
-        vfe_module = vfe.__all__[self.model_cfg.VFE.NAME](
-            model_cfg=self.model_cfg.VFE,
-            num_point_features=model_info_dict['num_rawpoint_features'],
-            point_cloud_range=model_info_dict['point_cloud_range'],
-            voxel_size=model_info_dict['voxel_size']
-        )
+        if self.model_cfg.VFE.NAME=="DynPillarVFE":
+            vfe_module = vfe.__all__[self.model_cfg.VFE.NAME](
+                model_cfg=self.model_cfg.VFE,
+                num_point_features=model_info_dict['num_rawpoint_features'],
+                point_cloud_range=model_info_dict['point_cloud_range'],
+                voxel_size=model_info_dict['voxel_size'],
+                grid_size=model_info_dict['grid_size']
+            )
+        else:
+            vfe_module = vfe.__all__[self.model_cfg.VFE.NAME](
+                model_cfg=self.model_cfg.VFE,
+                num_point_features=model_info_dict['num_rawpoint_features'],
+                point_cloud_range=model_info_dict['point_cloud_range'],
+                voxel_size=model_info_dict['voxel_size']
+            )
         model_info_dict['num_point_features'] = vfe_module.get_output_feature_dim()
         model_info_dict['module_list'].append(vfe_module)
         return vfe_module, model_info_dict
@@ -81,7 +91,7 @@ class Detector3DTemplate(nn.Module):
     def build_map_to_bev_module(self, model_info_dict):
         if self.model_cfg.get('MAP_TO_BEV', None) is None:
             return None, model_info_dict
-
+        
         map_to_bev_module = map_to_bev.__all__[self.model_cfg.MAP_TO_BEV.NAME](
             model_cfg=self.model_cfg.MAP_TO_BEV,
             grid_size=model_info_dict['grid_size']
@@ -121,15 +131,27 @@ class Detector3DTemplate(nn.Module):
     def build_dense_head(self, model_info_dict):
         if self.model_cfg.get('DENSE_HEAD', None) is None:
             return None, model_info_dict
-        dense_head_module = dense_heads.__all__[self.model_cfg.DENSE_HEAD.NAME](
-            model_cfg=self.model_cfg.DENSE_HEAD,
-            input_channels=model_info_dict['num_bev_features'],
-            num_class=self.num_class if not self.model_cfg.DENSE_HEAD.CLASS_AGNOSTIC else 1,
-            class_names=self.class_names,
-            grid_size=model_info_dict['grid_size'],
-            point_cloud_range=model_info_dict['point_cloud_range'],
-            predict_boxes_when_training=self.model_cfg.get('ROI_HEAD', False)
-        )
+        if self.model_cfg.DENSE_HEAD.NAME=="CenterHead":
+            dense_head_module = dense_heads.__all__[self.model_cfg.DENSE_HEAD.NAME](
+                model_cfg=self.model_cfg.DENSE_HEAD,
+                input_channels=model_info_dict['num_bev_features'],
+                num_class=self.num_class if not self.model_cfg.DENSE_HEAD.CLASS_AGNOSTIC else 1,
+                class_names=self.class_names,
+                grid_size=model_info_dict['grid_size'],
+                point_cloud_range=model_info_dict['point_cloud_range'],
+                predict_boxes_when_training=self.model_cfg.get('ROI_HEAD', False),
+                voxel_size=model_info_dict.get('voxel_size', False)
+            )
+        else:
+            dense_head_module = dense_heads.__all__[self.model_cfg.DENSE_HEAD.NAME](
+                model_cfg=self.model_cfg.DENSE_HEAD,
+                input_channels=model_info_dict['num_bev_features'],
+                num_class=self.num_class if not self.model_cfg.DENSE_HEAD.CLASS_AGNOSTIC else 1,
+                class_names=self.class_names,
+                grid_size=model_info_dict['grid_size'],
+                point_cloud_range=model_info_dict['point_cloud_range'],
+                predict_boxes_when_training=self.model_cfg.get('ROI_HEAD', False)
+            )
         model_info_dict['module_list'].append(dense_head_module)
         return dense_head_module, model_info_dict
 
@@ -240,6 +262,10 @@ class Detector3DTemplate(nn.Module):
                 final_labels = torch.cat(pred_labels, dim=0)
                 final_boxes = torch.cat(pred_boxes, dim=0)
             else:
+                if isinstance(cls_preds, list):
+                    cls_preds = torch.stack(cls_preds)
+                    cls_preds = cls_preds.reshape(-1, 1)
+
                 cls_preds, label_preds = torch.max(cls_preds, dim=-1)
                 if batch_dict.get('has_class_labels', False):
                     label_key = 'roi_labels' if 'roi_labels' in batch_dict else 'batch_pred_labels'
@@ -319,7 +345,7 @@ class Detector3DTemplate(nn.Module):
             gt_iou = box_preds.new_zeros(box_preds.shape[0])
         return recall_dict
 
-    def _load_state_dict(self, model_state_disk, *, strict=True):
+    def _load_state_dict(self, model_state_disk, *, strict=True, load_head=False):
         state_dict = self.state_dict()  # local cache of state_dict
 
         spconv_keys = find_all_spconv_keys(self)
@@ -345,16 +371,26 @@ class Detector3DTemplate(nn.Module):
                 update_model_state[key] = val
                 # logger.info('Update weight %s: %s' % (key, str(val.shape)))
 
+       
         if cfg.get('SELF_TRAIN', None) and cfg.SELF_TRAIN.get('DSNORM', None):
             self.load_state_dict(spconv_matched_state)
         elif strict:
             self.load_state_dict(update_model_state)
         else:
             state_dict.update(update_model_state)
-            self.load_state_dict(state_dict)
+            # Randomly initialize model weights for head
+            if not load_head and cfg.get('FINETUNE', None) and cfg.get('FINETUNE')['STAGE']=='head':
+                state_keys = list(state_dict.keys())
+                remove_layers = ['point_head', 'roi_head', 'dense_head']
+                print("Randomly initializing weights for head layers...")
+                for model_key in state_keys:
+                    parent_key = model_key.split('.')[0]
+                    if parent_key in remove_layers:
+                        state_dict.pop(model_key, None)
+            self.load_state_dict(state_dict, strict=False)
         return state_dict, update_model_state
 
-    def load_params_from_file(self, filename, logger, to_cpu=False):
+    def load_params_from_file(self, filename, logger, to_cpu=False, load_head=False):
         if not os.path.isfile(filename):
             raise FileNotFoundError
 
@@ -367,7 +403,7 @@ class Detector3DTemplate(nn.Module):
         if version is not None:
             logger.info('==> Checkpoint trained from version: %s' % version)
 
-        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False)
+        state_dict, update_model_state = self._load_state_dict(model_state_disk, strict=False, load_head=load_head)
 
         for key in state_dict:
             if key not in update_model_state:
@@ -385,7 +421,7 @@ class Detector3DTemplate(nn.Module):
         epoch = checkpoint.get('epoch', -1)
         it = checkpoint.get('it', 0.0)
 
-        self._load_state_dict(checkpoint['model_state'], strict=True)
+        self._load_state_dict(checkpoint['model_state'], strict=False)
 
         if optimizer is not None:
             if 'optimizer_state' in checkpoint and checkpoint['optimizer_state'] is not None:
@@ -439,7 +475,9 @@ class Detector3DTemplate(nn.Module):
             if isinstance(cls_preds, list):
                 cls_preds = torch.cat(cls_preds).squeeze()
             else:
-                cls_preds = cls_preds.squeeze()
+                # Fix issue where only one cls_preds would result in shape error
+                if cls_preds.ndim > 1:
+                    cls_preds = cls_preds.squeeze(dim=-1)
 
             src_iou_preds = iou_preds
             src_box_preds = box_preds
@@ -495,13 +533,16 @@ class Detector3DTemplate(nn.Module):
                 thresh_list=post_process_cfg.RECALL_THRESH_LIST
             )
 
-            record_dict = {
-                'pred_boxes': final_boxes,
-                'pred_scores': final_scores,
-                'pred_labels': final_labels,
-                'pred_cls_scores': cls_preds[selected],
-                'pred_iou_scores': iou_preds[selected]
-            }
+            try:
+                record_dict = {
+                    'pred_boxes': final_boxes,
+                    'pred_scores': final_scores,
+                    'pred_labels': final_labels,
+                    'pred_cls_scores': cls_preds[selected],
+                    'pred_iou_scores': iou_preds[selected]
+                }
+            except Exception as e:
+                import pdb; pdb.set_trace()
 
             pred_dicts.append(record_dict)
 

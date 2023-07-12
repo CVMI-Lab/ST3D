@@ -61,6 +61,9 @@ class RoIHeadTemplate(nn.Module):
                 roi_labels: (B, num_rois)
 
         """
+        if batch_dict.get('rois', None) is not None:
+            return batch_dict
+
         batch_size = batch_dict['batch_size']
         batch_box_preds = batch_dict['batch_box_preds']
         batch_cls_preds = batch_dict['batch_cls_preds']
@@ -68,6 +71,8 @@ class RoIHeadTemplate(nn.Module):
         roi_scores = batch_box_preds.new_zeros((batch_size, nms_config.NMS_POST_MAXSIZE))
         roi_labels = batch_box_preds.new_zeros((batch_size, nms_config.NMS_POST_MAXSIZE), dtype=torch.long)
 
+        assert not torch.any(torch.isnan(batch_box_preds))
+        assert not torch.any(torch.isnan(batch_cls_preds))
         for index in range(batch_size):
             if batch_dict.get('batch_index', None) is not None:
                 assert batch_cls_preds.shape.__len__() == 2
@@ -86,6 +91,9 @@ class RoIHeadTemplate(nn.Module):
                 selected, selected_scores = class_agnostic_nms(
                     box_scores=cur_roi_scores, box_preds=box_preds, nms_config=nms_config
                 )
+            assert not torch.any(torch.isnan(box_preds))
+            assert not torch.any(torch.isnan(cur_roi_scores))
+            assert not torch.any(torch.isnan(cur_roi_labels))
 
             rois[index, :len(selected), :] = box_preds[selected]
             roi_scores[index, :len(selected)] = cur_roi_scores[selected]
@@ -101,6 +109,8 @@ class RoIHeadTemplate(nn.Module):
     def assign_targets(self, batch_dict):
         batch_size = batch_dict['batch_size']
         with torch.no_grad():
+            assert not torch.any(torch.isnan(batch_dict['rois']))
+            assert not torch.any(torch.isnan(batch_dict['gt_boxes']))
             targets_dict = self.proposal_target_layer.forward(batch_dict)
 
         rois = targets_dict['rois']  # (B, N, 7 + C)

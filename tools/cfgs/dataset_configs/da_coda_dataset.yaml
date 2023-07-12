@@ -1,5 +1,5 @@
 DATASET: 'CODataset'
-DATA_PATH: '../data/coda'
+DATA_PATH: '../data/coda128_3class'
 
 POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 

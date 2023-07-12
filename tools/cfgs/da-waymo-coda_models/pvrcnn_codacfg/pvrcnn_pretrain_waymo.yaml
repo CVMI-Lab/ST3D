@@ -1,18 +1,19 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Bicycle']
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
-    MAX_SWEEPS: 1
-    PRED_VELOCITY: False
-    BALANCED_RESAMPLING: False
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    PROCESSED_DATA_TAG: 'waymo_processed_data'
+    INFO_WITH_FAKELIDAR: False
+
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
 DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
-    SHIFT_COOR: [0.0, 0.0, 0.8]
+    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    RES: 128
 
 MODEL:
     NAME: PVRCNN
@@ -37,68 +38,54 @@ MODEL:
         NUM_UPSAMPLE_FILTERS: [256, 256]
 
     DENSE_HEAD:
-        NAME: AnchorHeadSingle
+        NAME: CenterHead
         CLASS_AGNOSTIC: False
 
-        USE_DIRECTION_CLASSIFIER: True
-        DIR_OFFSET: 0.78539
-        DIR_LIMIT_OFFSET: 0.0
-        NUM_DIR_BINS: 2
-
-        ANCHOR_GENERATOR_CONFIG: [
-            {
-                'class_name': 'car',
-                'anchor_sizes': [[4.2, 2.0, 1.6]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [0],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.55,
-                'unmatched_threshold': 0.4
-            },
-            {
-                'class_name': pedestrian,
-                'anchor_sizes': [[0.73, 0.67, 1.77]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-0.935],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.6,
-                'unmatched_threshold': 0.4
-            },
-            {
-                'class_name': bicycle,
-                'anchor_sizes': [[1.70, 0.60, 1.28]],
-                'anchor_rotations': [0, 1.57],
-                'anchor_bottom_heights': [-1.18],
-                'align_center': False,
-                'feature_map_stride': 8,
-                'matched_threshold': 0.5,
-                'unmatched_threshold': 0.35
-            }
+        CLASS_NAMES_EACH_HEAD: [
+            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
+            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
+        SHARED_CONV_CHANNEL: 64
+        USE_BIAS_BEFORE_NORM: True
+        NUM_HM_CONV: 2
+        SEPARATE_HEAD_CFG:
+            HEAD_ORDER: [ 'center', 'center_z', 'dim', 'rot' ]
+            HEAD_DICT: {
+                'center': { 'out_channels': 2, 'num_conv': 2 },
+                'center_z': { 'out_channels': 1, 'num_conv': 2 },
+                'dim': { 'out_channels': 3, 'num_conv': 2 },
+                'rot': { 'out_channels': 2, 'num_conv': 2 },
+            }
+
         TARGET_ASSIGNER_CONFIG:
-            NAME: AxisAlignedTargetAssigner
-            POS_FRACTION: -1.0
-            SAMPLE_SIZE: 512
-            NORM_BY_NUM_EXAMPLES: False
-            MATCH_HEIGHT: False
-            BOX_CODER: ResidualCoder
+            FEATURE_MAP_STRIDE: 8
+            NUM_MAX_OBJS: 500
+            GAUSSIAN_OVERLAP: 0.1
+            MIN_RADIUS: 2
 
         LOSS_CONFIG:
             LOSS_WEIGHTS: {
                 'cls_weight': 1.0,
                 'loc_weight': 2.0,
-                'dir_weight': 0.2,
-                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                'code_weights': [ 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 ]
             }
+
+        POST_PROCESSING:
+            SCORE_THRESH: 0.1
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            MAX_OBJ_PER_SAMPLE: 500
+            NMS_CONFIG:
+                NMS_TYPE: nms_gpu
+                NMS_THRESH: 0.7
+                NMS_PRE_MAXSIZE: 4096
+                NMS_POST_MAXSIZE: 500
 
     PFE:
         NAME: VoxelSetAbstraction
         POINT_SOURCE: raw_points
         NUM_KEYPOINTS: 4096
-        NUM_OUTPUT_FEATURES: 128
+        NUM_OUTPUT_FEATURES: 90
         SAMPLE_METHOD: FPS
 
         FEATURES_SOURCE: ['bev', 'x_conv3', 'x_conv4', 'raw_points']
@@ -163,6 +150,11 @@ MODEL:
                 NMS_PRE_MAXSIZE: 1024
                 NMS_POST_MAXSIZE: 100
                 NMS_THRESH: 0.7
+                SCORE_THRESH: 0.1
+
+#                NMS_PRE_MAXSIZE: 4096
+#                NMS_POST_MAXSIZE: 500
+#                NMS_THRESH: 0.85
 
         ROI_GRID_POOL:
             GRID_SIZE: 6
@@ -177,7 +169,7 @@ MODEL:
             FG_RATIO: 0.5
 
             SAMPLE_ROI_BY_EACH_CLASS: True
-            CLS_SCORE_TYPE: raw_roi_iou
+            CLS_SCORE_TYPE: roi_iou
 
             CLS_FG_THRESH: 0.75
             CLS_BG_THRESH: 0.25
@@ -196,7 +188,7 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-
+        
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
         SCORE_THRESH: 0.1
@@ -211,10 +203,14 @@ MODEL:
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
+FINETUNE:
+    STAGE: scratch
+    WANDB: True
+    WANDB_NAME: waymo-codacfg-pvrcnn
 
 OPTIMIZATION:
-    NUM_EPOCHS: 50
-    BATCH_SIZE_PER_GPU: 4
+    NUM_EPOCHS: 30
+    BATCH_SIZE_PER_GPU: 12 # 44gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

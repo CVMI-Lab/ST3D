@@ -4,7 +4,7 @@ import numba
 import numpy as np
 
 from .rotate_iou import rotate_iou_gpu_eval
-
+import copy #arthur
 
 @numba.jit
 def get_thresholds(scores: np.ndarray, num_gt, num_sample_pts=41):
@@ -28,7 +28,9 @@ def get_thresholds(scores: np.ndarray, num_gt, num_sample_pts=41):
 
 
 def clean_data(gt_anno, dt_anno, current_class, difficulty):
-    CLASS_NAMES = ['car', 'pedestrian', 'cyclist', 'van', 'person_sitting', 'truck']
+    # CLASS_NAMES = ['car', 'pedestrian', 'cyclist', 'van', 'person_sitting', 'truck']
+    #allclass
+    CLASS_NAMES = ['Car', 'Pedestrian', 'Cyclist', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'Scooter', 'Motorcycle', 'FireHydrant', 'FireAlarm', 'ParkingKiosk', 'Mailbox', 'NewspaperDispenser', 'SanitizerDispenser', 'CondimentDispenser', 'ATM', 'VendingMachine', 'DoorSwitch', 'EmergencyAidKit', 'Computer', 'Television', 'Dumpster', 'TrashCan', 'VacuumCleaner', 'Cart', 'Chair', 'Couch', 'Bench', 'Table', 'Bollard', 'ConstructionBarrier', 'Fence', 'Railing', 'Cone', 'Stanchion', 'TrafficLight', 'TrafficSign', 'TrafficArm', 'Canopy', 'BikeRack', 'Pole', 'InformationalSign', 'WallSign', 'Door', 'FloorSign', 'RoomLabel', 'FreestandingPlant', 'Tree', 'Other']
     MIN_HEIGHT = [40, 25, 25]
     MAX_OCCLUSION = [0, 1, 2]
     MAX_TRUNCATION = [0.15, 0.3, 0.5]
@@ -338,7 +340,7 @@ def fused_compute_statistics(overlaps,
         dc_num += dc_nums[i]
 
 
-def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=50):
+def calculate_iou_partly(gt_annos, dt_annos, metric, num_parts=1500 ): # 1500 parts works for 20%
     """fast iou algorithm. this function can be used independently to
     do result analysis. Must be used in CAMERA coordinate system.
     Args:
@@ -453,7 +455,7 @@ def eval_class(gt_annos,
                metric,
                min_overlaps,
                compute_aos=False,
-               num_parts=1000):
+               num_parts=1500): # 1500 works for 20%, 2000 is out of mem
     """Kitti eval. support 2d/bev/3d/aos eval. support 0.5:0.05:0.95 coco AP.
     Args:
         gt_annos: dict, must from get_label_annos() in kitti_common.py
@@ -482,11 +484,13 @@ def eval_class(gt_annos,
     recall = np.zeros(
         [num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
     aos = np.zeros([num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+
     for m, current_class in enumerate(current_classes):
         for l, difficulty in enumerate(difficultys):
             rets = _prepare_data(gt_annos, dt_annos, current_class, difficulty)
             (gt_datas_list, dt_datas_list, ignored_gts, ignored_dets,
              dontcares, total_dc_num, total_num_valid_gt) = rets
+            
             for k, min_overlap in enumerate(min_overlaps[:, metric, m]):
                 thresholdss = []
                 for i in range(len(gt_annos)):
@@ -535,21 +539,25 @@ def eval_class(gt_annos,
                         thresholds=thresholds,
                         compute_aos=compute_aos)
                     idx += num_part
+                
                 for i in range(len(thresholds)):
                     recall[m, l, k, i] = pr[i, 0] / (pr[i, 0] + pr[i, 2])
                     precision[m, l, k, i] = pr[i, 0] / (pr[i, 0] + pr[i, 1])
+                    
                     if compute_aos:
                         aos[m, l, k, i] = pr[i, 3] / (pr[i, 0] + pr[i, 1])
+
                 for i in range(len(thresholds)):
                     precision[m, l, k, i] = np.max(
                         precision[m, l, k, i:], axis=-1)
                     recall[m, l, k, i] = np.max(recall[m, l, k, i:], axis=-1)
                     if compute_aos:
                         aos[m, l, k, i] = np.max(aos[m, l, k, i:], axis=-1)
+
     ret_dict = {
         "recall": recall,
         "precision": precision,
-        "orientation": aos,
+        "orientation": aos
     }
     return ret_dict
 
@@ -583,6 +591,7 @@ def do_eval(gt_annos,
             min_overlaps,
             compute_aos=False,
             PR_detail_dict=None):
+
     # min_overlaps: [num_minoverlap, metric, num_class]
     difficultys = [0, 1, 2]
     ret = eval_class(gt_annos, dt_annos, current_classes, difficultys, 0,
@@ -614,8 +623,10 @@ def do_eval(gt_annos,
                      min_overlaps)
     mAP_3d = get_mAP(ret["precision"])
     mAP_3d_R40 = get_mAP_R40(ret["precision"])
+
     if PR_detail_dict is not None:
         PR_detail_dict['3d'] = ret['precision']
+
     return mAP_bbox, mAP_bev, mAP_3d, mAP_aos, mAP_bbox_R40, mAP_bev_R40, mAP_3d_R40, mAP_aos_R40
 
 
@@ -636,6 +647,76 @@ def do_coco_style_eval(gt_annos, dt_annos, current_classes, overlap_ranges,
         mAP_aos = mAP_aos.mean(-1)
     return mAP_bbox, mAP_bev, mAP_3d, mAP_aos
 
+def fuse_stat_dict_parts(sd_full, PR_detail_dict=None, num_metrics=int(3), compute_aos=True):
+    
+    num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS = sd_full["precision_top"][0].shape
+    # combined stat dict contains a dict of each stat under a metric
+    
+    # Compute precision, recall, aos jointly
+    precision = np.zeros(
+        [num_metrics, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    recall = np.zeros(
+        [num_metrics, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    aos = np.zeros([num_metrics, num_class, num_difficulty, num_minoverlap, N_SAMPLE_PTS])
+    
+    for metric in range(num_metrics):
+
+        for m in range(num_class):
+            for l in range(num_difficulty):
+                for k in range(num_minoverlap):
+                    num_thresholds = sd_full["thresholds"][metric, m, l, k]
+                    for i in range(num_thresholds):
+                        recall[metric,m, l, k, i] = sd_full["recall_top"][metric,m,l,k,i] / sd_full["recall_bot"][metric,m,l,k,i]
+                        precision[metric,m, l, k, i] = sd_full["precision_top"][metric,m,l,k,i] / sd_full["precision_bot"][metric,m,l,k,i]
+
+                        if compute_aos:
+                            aos[metric,m, l, k, i] = sd_full["aos_top"][metric,m,l,k,i] / sd_full["aos_bot"][metric,m,l,k,i]
+
+                    # for i in range(num_thresholds):
+                    #     precision[metric,m, l, k, i] = np.max(
+                    #         precision[metric,m, l, k, i:], axis=-1)
+                    #     recall[metric,m, l, k, i] = np.max(recall[metric,m, l, k, i:], axis=-1)
+                    #     if compute_aos:
+                    #         aos[metric,m, l, k, i] = np.max(aos[metric,m, l, k, i:], axis=-1)
+
+
+    ret = {
+        "recall": recall,
+        "precision": precision,
+        "orientation": aos,
+    }
+
+    # Finally compute metrics from precision recall orientation jointly
+    for metric in range(num_metrics):
+        if metric==0:
+            mAP_bbox = get_mAP(ret["precision"][metric])
+            mAP_bbox_R40 = get_mAP_R40(ret["precision"][metric])
+
+            if PR_detail_dict is not None:
+                PR_detail_dict['bbox'] = ret['precision'[metric]]
+
+            mAP_aos = mAP_aos_R40 = None
+            if compute_aos:
+                mAP_aos = get_mAP(ret["orientation"][metric])
+                mAP_aos_R40 = get_mAP_R40(ret["orientation"][metric])
+
+                if PR_detail_dict is not None:
+                    PR_detail_dict['aos'] = ret['orientation'][metric]
+        elif metric==1:
+            mAP_bev = get_mAP(ret["precision"][metric])
+            mAP_bev_R40 = get_mAP_R40(ret["precision"][metric])
+
+            if PR_detail_dict is not None:
+                PR_detail_dict['bev'] = ret['precision'][metric]
+        elif metric==2:
+            mAP_3d = get_mAP(ret["precision"][metric])
+            mAP_3d_R40 = get_mAP_R40(ret["precision"][metric])
+
+            if PR_detail_dict is not None:
+                PR_detail_dict['3d'] = ret['precision'][metric]
+
+    return mAP_bbox, mAP_bev, mAP_3d, mAP_aos, mAP_bbox_R40, mAP_bev_R40, mAP_3d_R40, mAP_aos_R40
+
 
 def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None):
     overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7,
@@ -644,15 +725,28 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
     overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.7,
                              0.5, 0.5], [0.5, 0.25, 0.25, 0.5, 0.25, 0.5],
                             [0.5, 0.25, 0.25, 0.5, 0.25, 0.5]])
+    # min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
+    # class_to_name = {
+    #     0: 'Car',
+    #     1: 'Pedestrian',
+    #     2: 'Cyclist',
+    #     3: 'Van',
+    #     4: 'Person_sitting',
+    #     5: 'Truck'
+    # }
+    # print("classes ", current_classes)
+    # Use more generous iou threshold for non big 3 classes
+    repeat7 = np.array([0.5, 0.5, 0.5]).reshape(3, 1)
+    repeat5 = np.array([0.5, 0.25, 0.25]).reshape(3, 1)
+    while len(current_classes) > overlap_0_7.shape[1]:
+        overlap_0_7 = np.hstack((overlap_0_7, repeat7))
+        overlap_0_5 = np.hstack((overlap_0_5, repeat5))
     min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
-    class_to_name = {
-        0: 'Car',
-        1: 'Pedestrian',
-        2: 'Cyclist',
-        3: 'Van',
-        4: 'Person_sitting',
-        5: 'Truck'
-    }
+    # Class to name for coda
+    class_to_name = {}
+    for cls_idx, cls_name in enumerate(current_classes):
+        class_to_name[cls_idx] = cls_name
+
     name_to_class = {v: n for n, v in class_to_name.items()}
     if not isinstance(current_classes, (list, tuple)):
         current_classes = [current_classes]
@@ -672,8 +766,10 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
             if anno['alpha'][0] != -10:
                 compute_aos = True
             break
+
     mAPbbox, mAPbev, mAP3d, mAPaos, mAPbbox_R40, mAPbev_R40, mAP3d_R40, mAPaos_R40 = do_eval(
         gt_annos, dt_annos, current_classes, min_overlaps, compute_aos, PR_detail_dict=PR_detail_dict)
+
 
     ret_dict = {}
     for j, curcls in enumerate(current_classes):
@@ -743,6 +839,22 @@ def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict
                 ret_dict['%s_image/easy_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 0, 0]
                 ret_dict['%s_image/moderate_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 1, 0]
                 ret_dict['%s_image/hard_R40' % class_to_name[curcls]] = mAPbbox_R40[j, 2, 0]
+
+    # ARTHUR average the map between all classes in return for model comparison
+    ret_dict['m3d/map_R40'] = 0
+    ret_dict['mbev/map_R40'] = 0
+    for curcls in current_classes:
+        # Follow kitti metric and just use moderate difficulty for benchmarks
+        ret_dict['m3d/map_R40'] += ((ret_dict['%s_3d/easy_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_3d/moderate_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_3d/hard_R40' % class_to_name[curcls]] ))/3
+        ret_dict['mbev/map_R40'] += ((ret_dict['%s_bev/easy_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_bev/moderate_R40' % class_to_name[curcls]] ) + 
+            (ret_dict['%s_bev/hard_R40' % class_to_name[curcls]] ))/3
+    print("current class ", current_classes)
+    print("ret dict is ", ret_dict)
+    ret_dict['m3d/map_R40'] /= len(current_classes)
+    ret_dict['mbev/map_R40'] /= len(current_classes)
 
     return result, ret_dict
 

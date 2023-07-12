@@ -1,0 +1,23 @@
+TACC:  Starting up job 794460 
+TACC:  Starting parallel tasks... 
+25418
+10083
+51774
+Creating dataloader
+Creating dataloader
+Creating dataloader
+Creating dataloader
+Creating dataloader
+Creating dataloader
+done
+done
+done
+done
+done
+done
+Creating dataloader
+Creating dataloader
+done
+done
+TACC:  MPI job exited with code: 1 
+TACC:  Shutdown complete. Exiting. 

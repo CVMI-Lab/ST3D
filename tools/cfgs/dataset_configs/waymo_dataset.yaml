@@ -2,7 +2,8 @@ DATASET: 'WaymoDataset'
 DATA_PATH: '../data/waymo'
 PROCESSED_DATA_TAG: 'waymo_processed_data'
 
-POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+# POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+POINT_CLOUD_RANGE: [-74.88, -74.88, -2, 74.88, 74.88, 4.0]
 
 DATA_SPLIT: {
     'train': train,
@@ -11,10 +12,10 @@ DATA_SPLIT: {
 
 SAMPLED_INTERVAL: {
     'train': 5,
-    'test': 5
+    'test': 1 # eval on 20% for memory usage
 }
 
-INFO_WITH_FAKELIDAR: False
+FILTER_EMPTY_BOXES_FOR_TRAIN: True
 
 DATA_AUGMENTOR:
     DISABLE_AUG_LIST: ['placeholder']
