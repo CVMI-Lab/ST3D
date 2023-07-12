@@ -163,3 +163,123 @@ sh scripts/dist_train.sh ${NUM_GPUS} --cfg_file cfgs/da-waymo-kitti_models/secon
     --batch_size ${BATCH_SIZE} --pretrained_model ${PRETRAINED_MODEL}
 ```
 Notice that you also need to focus the performance of the **best model**.
+
+# Reproducing Oracle Benchmarks
+
+## UT CODa - PP 
+`cfgs/coda_models/pointpillar_1x.yaml`
+
+## UT CODa - CP
+`cfgs/code_models/centerpoint.yaml`
+
+## UT CODa - PVRCNN
+`cfgs/coda_models/pvrcnn_oracle.yaml`
+
+## nuScenes - PP
+`cfgs/da-nuscenes-coda_models/cbgs_pp_multihead.yaml`
+
+## nuScenes - CP
+`cfgs/da-nuscenes-coda_models/da_cbgs_voxel0075_res3d_centerpoint.yaml`
+
+## nuScenes - PVRCNN
+tbd
+
+## Waymo - PP
+`cfgs/da-waymo-coda_models/da_pointpillar_1x.yaml`
+## Waymo - CP
+`cfgs/da-waymo-coda_models/da_centerpoint.yaml`
+## Waymo - PVRCNN
+`cfgs/da-waymo-coda_models/pvrcnn/da_pvrcnn_with_centerhead_rpn.yaml`
+
+# Reproducing Domain Adaptation Results
+
+## Waymo - Direct
+
+Train waymo using coda pvrcnn architecture
+
+`cfgs/da-waymo-coda_models/direct_coda_pvrcnn_oracle.yaml`
+
+Run with ./dist_test.sh to eval on coda
+
+`cfgs/da-waymo-coda_models/direct_coda_pvrcnn_oracle.yaml`
+
+## Waymo - ST
+
+Use Waymo direct as pretrained model
+
+`cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d.yaml`
+
+## Waymo - FT
+
+Use Waymo direct as pretrained model
+
+`cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d_finetune_head.yaml`
+`cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d_finetune_headfull.yaml`
+
+## Waymo - ST FT
+
+Use Waymo ST as pretrained model
+
+`cfgs/da-waymo-coda_models/pvrcnn_st3d/pvrcnn_st3d_finetune_headfull.yaml`
+
+## nuScenes - Direct
+TBD
+
+# Reproducing UT CODa to AV Datasets
+
+## UT CODa32 FT nuScenes 
+
+Dist Train (train on UT CODa eval on nuScenes) Choose best epoch to finetune later
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_coda.yaml`
+
+Dist Train (finetune head)
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_head.yaml`
+
+Dist Train (finetune full)
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_32oracle_finetune_headfull.yaml`
+
+## UT CODa128 FT nuScenes 
+
+Dist Train (Train on UT Coda eval on nuScenes) Choose best epoch to finetune later
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_coda.yaml`
+
+Dist Train (finetune head)
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_head.yaml`
+
+Dist Train (finetune full)
+
+`cfgs/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headfull.yaml`
+
+## UT CODa32 FT Waymo 
+
+Dist Train (Train on UT Coda eval on Waymo) Choose best epoch to finetune later
+
+`cfgs/da-coda-waymo_models/pvrcnn_32oracle_coda.yaml`
+
+Dist Train (finetune head)
+
+`cfgs/da-coda-waymo_models/pvrcnn_32oracle_finetune_head.yaml`
+
+Dist Train (finetune full)
+
+`cfgs/da-coda-waymo_models/pvrcnn_32oracle_finetune_heafull.yaml`
+
+## UT CODa128 FT Waymo 
+
+Dist Train (Train on UT Coda eval on Waymo) Choose best epoch to finetune later
+
+`cfgs/da-coda-waymo_models/pvrcnn_128oracle_coda.yaml`
+
+Dist Train (finetune head)
+
+`cfgs/da-coda-waymo_models/pvrcnn_128oracle_finetune_head.yaml`
+
+Dist Train (finetune full)
+
+`cfgs/da-coda-waymo_models/pvrcnn_128oracle_finetune_headfull.yaml`
+

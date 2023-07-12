@@ -9,16 +9,6 @@ Please refer to [INSTALL.md](docs/INSTALL.md) for the installation.
 
 Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more usage about this project.
 
-### Supported features and ToDo List
-
-- [x] Support inference and pre-trained model 
-
-- [x] Support training code on Waymo -> KITTI task
-
-- [x] Update to OpenPCDet v0.3.0 version.
-  
-- [x] Support more adaptation tasks.
-
 ## License
 
 Our code is released under the Apache 2.0 license.
@@ -29,7 +19,17 @@ Our code is heavily based on [OpenPCDet v0.3](https://github.com/open-mmlab/Open
 
 ## Citation
 
-If you find this project useful in your research, please consider cite:
+If you find our work useful in your research, please consider citing:
+```
+@inproceedings{zhang2023utcoda,
+    title={Towards Robust 3D Robot Perception in Urban Environments: The UT Campus Object Dataset},
+    author={Arthur Zhang and Chaitanya Eranki and Christina Zhang and Raymond Hong and Pranav Kalyani and Lochana Kalyanaraman and Arsh Gamare and Maria Esteva and Joydeep Biswas },
+    booktitle={},
+    year={2023}
+}
+```
+
+If you find the ST3D++ or OpenPCDet useful, please cite:
 ```
 @inproceedings{yang2021st3d,
     title={ST3D: Self-training for Unsupervised Domain Adaptation on 3D Object Detection},

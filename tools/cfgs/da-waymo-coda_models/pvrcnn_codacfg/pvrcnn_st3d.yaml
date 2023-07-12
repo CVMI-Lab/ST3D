@@ -104,8 +104,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
-            ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
+            ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
+            # ['Car', 'Pedestrian', 'Cyclist'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -271,9 +271,9 @@ FINETUNE:
     WANDB_NAME: waymost3d-codamd-codacfg
 
 OPTIMIZATION:
-    NUM_EPOCHS: 30
+    NUM_EPOCHS: 20
     # BATCH_SIZE_PER_GPU: 12 # 44gb
-    BATCH_SIZE_PER_GPU: 8 # 36GB
+    BATCH_SIZE_PER_GPU: 10 # 36GB
     # BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle
     LR: 0.0015 # match st3d++ for nus to kitti

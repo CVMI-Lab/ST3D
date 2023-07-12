@@ -397,6 +397,20 @@ export PRETRAINED_MODEL1=../output/da-coda-nuscenes_models/centerhead/pvrcnn_all
 # export EXTRA_TAG1=waymocodacfg
 # export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_pretrain_waymo/bestcodaLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_21.pth
 
+# Self Training Finetune
+
+# # nus ->coda finetune st3d
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_st3d_finetune_coda.yaml
+# export EXTRA_TAG1=nuscodacfgbestst3d
+# export PRETRAINED_MODEL1=cfgs/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_st3d_finetune_coda.yaml --pretrained_model ../output/da-nuscenes-coda_models/pvrcnn_codacfg/pvrcnn_st3d/nuscodacfgfullweightsLR0.001500OPTadam_onecycle/ckpt/checkpoint_epoch_1.pth
+
+# # waymo ->coda finetune st3d
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_st3d_finetune_coda.yaml
+# export EXTRA_TAG1=waymocodacfgbestst3d
+# export PRETRAINED_MODEL1=../output/da-waymo-coda_models/pvrcnn_codacfg/pvrcnn_st3d/waymocodacfgfullweightsLR0.001500OPTadam_onecycle/ckpt/checkpoint_epoch_1.pth
+
 # Launch regular models from scratch
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
 # ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE2} --extra_tag ${EXTRA_TAG2} >> launcher_train_models_task1
