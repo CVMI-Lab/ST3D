@@ -26,13 +26,13 @@ DATA_CONFIG:
             'test': 60000
           }
 
-# DATA_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
-#     RES: nuScenes
-#     TARGET: True
-#     BALANCED_RESAMPLING: True
-#     CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
-#     SHIFT_COOR: [0.0, 0.0, 1.8]
+DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
+    RES: nuScenes
+    TARGET: True
+    BALANCED_RESAMPLING: True
+    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+    SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
     NAME: PVRCNN
@@ -225,13 +225,13 @@ MODEL:
 
 FINETUNE:
     STAGE: scratch
-    WANDB: False
+    WANDB: True
     WANDB_NAME: da-coda128-nus-pvrcnn-pretrain
     ARCH: PVRCNN
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 2 # 36GB
-    # BATCH_SIZE_PER_GPU: 6 # 22gb
+    # BATCH_SIZE_PER_GPU: 2 # 36GB
+    BATCH_SIZE_PER_GPU: 30 # eval on nus 22gb
     NUM_EPOCHS: 50
 
     OPTIMIZER: adam_onecycle
