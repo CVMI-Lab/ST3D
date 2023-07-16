@@ -111,7 +111,7 @@ class CODataset(DatasetTemplate):
 
     def get_image_shape(self, idx):
         img_file = self.root_split_path / 'image_0' / ('%s.jpg' % idx)
-        assert img_file.exists()
+        assert img_file.exists(), "Image file %s does not exist" % img_file
         return np.array(io.imread(img_file).shape[:2], dtype=np.int32)
 
     def get_label(self, idx):
@@ -543,8 +543,8 @@ if __name__ == '__main__':
         create_coda_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Car', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'coda32_3class_full',
-            save_path=ROOT_DIR / 'data' / 'coda32_3class_full'
+            data_path=ROOT_DIR / 'data' / 'coda128_3class_full',
+            save_path=ROOT_DIR / 'data' / 'coda128_3class_full'
             # class_names=[
             #     'Car',
             #     'Pedestrian',
