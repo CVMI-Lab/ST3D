@@ -1,37 +1,8 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] # only used during train, not test
+CLASS_NAMES: ['car', 'pedestrian', 'bicycle'] # only used during train, not test
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class_full.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
     BALANCED_RESAMPLING: True
-    FOV_POINTS_ONLY: False
-
-    # Match nuScenes dataloader config
-    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
-
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': False
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.2]
-          MAX_POINTS_PER_VOXEL: 10
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 60000,
-            'test': 60000
-          }
-
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml'
-    RES: nuScenes
-    TARGET: True
-    BALANCED_RESAMPLING: False
-    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
@@ -224,15 +195,16 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: headfull
     WANDB: True
-    WANDB_NAME: da-coda32full-nus-pvrcnn-pretrain
+    WANDB_NAME: da-coda128full-nus-pvrcnn-finetune-headfull
     ARCH: PVRCNN
 
 OPTIMIZATION:
     # BATCH_SIZE_PER_GPU: 14 # 44GB training
-    # BATCH_SIZE_PER_GPU: 6 # is 15gb training 7 is 22gb
-    BATCH_SIZE_PER_GPU: 8 # for eval nus
+    BATCH_SIZE_PER_GPU: 6 # is 15gb training 7 is 22gb
+    # BATCH_SIZE_PER_GPU: 6 # 20GB train nus
+    # BATCH_SIZE_PER_GPU: 8 # for eval nus
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle

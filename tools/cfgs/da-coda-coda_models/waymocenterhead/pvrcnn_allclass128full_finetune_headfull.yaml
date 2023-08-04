@@ -1,38 +1,68 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] # only used during train, not test
+CLASS_NAMES: [
+    'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
+    'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+    'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+    'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+    'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+    'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+    'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
+]
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class_full.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_full.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-
-    # Match nuScenes dataloader config
-    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
-
-    DATA_PROCESSOR:
-        - NAME: mask_points_and_boxes_outside_range
-          REMOVE_OUTSIDE_BOXES: True
-
-        - NAME: shuffle_points
-          SHUFFLE_ENABLED: {
-            'train': True,
-            'test': False
-          }
-
-        - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.2]
-          MAX_POINTS_PER_VOXEL: 10
-          MAX_NUMBER_OF_VOXELS: {
-            'train': 60000,
-            'test': 60000
-          }
+    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    RES: 128
 
 DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml'
-    RES: nuScenes
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda64_oracle_dataset_full.yaml
     TARGET: True
-    BALANCED_RESAMPLING: False
-    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
-    SHIFT_COOR: [0.0, 0.0, 1.8]
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: [
+        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
+        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
+    ]
+    SHIFT_COOR: [0.0, 0.0, 0.8]
+    RES: 64
+
+
+DATA1_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_full.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: [
+        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
+        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
+    ]
+    SHIFT_COOR: [0.0, 0.0, 0.8]
+    RES: 32
+
+DATA2_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_full.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: [
+        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
+        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
+    ]
+    SHIFT_COOR: [0.0, 0.0, 0.8]
+    RES: 16
 
 MODEL:
     NAME: PVRCNN
@@ -61,8 +91,16 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car', 'pedestrian', 'bicycle'] # uncomment this for testing
-            # ['Car', 'Pedestrian', 'Cyclist'] # uncomment this for training
+            # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
+            [
+                'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
+                'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+                'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+                'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+                'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+                'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+                'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
+            ]
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -92,7 +130,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -175,7 +213,6 @@ MODEL:
 #                NMS_POST_MAXSIZE: 500
 #                NMS_THRESH: 0.85
 
-
         ROI_GRID_POOL:
             GRID_SIZE: 6
             MLPS: [[64, 64], [64, 64]]
@@ -208,7 +245,7 @@ MODEL:
                 'rcnn_corner_weight': 1.0,
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             }
-
+        
     POST_PROCESSING:
         RECALL_THRESH_LIST: [0.3, 0.5, 0.7]
         SCORE_THRESH: 0.1
@@ -219,22 +256,18 @@ MODEL:
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
             NMS_TYPE: nms_gpu
-            NMS_THRESH: 0.7
+            NMS_THRESH: 0.1
             NMS_PRE_MAXSIZE: 4096
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: scratch
+    STAGE: headfull
     WANDB: True
-    WANDB_NAME: da-coda32full-nus-pvrcnn-pretrain
-    ARCH: PVRCNN
+    WANDB_NAME: coda128-full-allclass-finetune-headfull
 
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 14 # 44GB training
-    # BATCH_SIZE_PER_GPU: 6 # is 15gb training 7 is 22gb
-    BATCH_SIZE_PER_GPU: 8 # for eval nus
     NUM_EPOCHS: 30
-
+    BATCH_SIZE_PER_GPU: 12 # 30gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
