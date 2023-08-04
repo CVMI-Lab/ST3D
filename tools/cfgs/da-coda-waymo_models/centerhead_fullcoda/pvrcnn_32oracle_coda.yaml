@@ -1,12 +1,9 @@
-CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] # only used during train, not test
+CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist'] 
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class_full.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
-
-    # Match nuScenes dataloader config
-    POINT_CLOUD_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
 
     DATA_PROCESSOR:
         - NAME: mask_points_and_boxes_outside_range
@@ -15,23 +12,23 @@ DATA_CONFIG:
         - NAME: shuffle_points
           SHUFFLE_ENABLED: {
             'train': True,
-            'test': False
+            'test': True
           }
 
         - NAME: transform_points_to_voxels
-          VOXEL_SIZE: [0.1, 0.1, 0.2]
-          MAX_POINTS_PER_VOXEL: 10
+          VOXEL_SIZE: [0.1, 0.1, 0.15]
+          MAX_POINTS_PER_VOXEL: 5
           MAX_NUMBER_OF_VOXELS: {
-            'train': 60000,
-            'test': 60000
+            'train': 80000,
+            'test': 90000
           }
 
 DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml'
-    RES: nuScenes
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    RES: waymo
     TARGET: True
     BALANCED_RESAMPLING: False
-    CLASS_NAMES: ['car', 'pedestrian', 'bicycle']
+    CLASS_NAMES: [ 'Vehicle', 'Pedestrian', 'Cyclist' ]
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
 MODEL:
@@ -61,8 +58,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['car', 'pedestrian', 'bicycle'] # uncomment this for testing
-            # ['Car', 'Pedestrian', 'Cyclist'] # uncomment this for training
+            # ['Car', 'Pedestrian', 'Cyclist']
+            [ 'Vehicle', 'Pedestrian', 'Cyclist' ] # Change back if eval on waymo
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -92,7 +89,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-51.2, -51.2, -5.0, 51.2, 51.2, 3.0]
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -226,13 +223,12 @@ MODEL:
 FINETUNE:
     STAGE: scratch
     WANDB: True
-    WANDB_NAME: da-coda32full-nus-pvrcnn-pretrain
+    WANDB_NAME: da-coda32full-waymo-pvrcnn-pretrain
     ARCH: PVRCNN
 
 OPTIMIZATION:
-    # BATCH_SIZE_PER_GPU: 14 # 44GB training
-    # BATCH_SIZE_PER_GPU: 6 # is 15gb training 7 is 22gb
-    BATCH_SIZE_PER_GPU: 8 # for eval nus
+    # BATCH_SIZE_PER_GPU: 4 # Eval on 45 gb for coda
+    BATCH_SIZE_PER_GPU: 12 # Eval 44GB
     NUM_EPOCHS: 30
 
     OPTIMIZER: adam_onecycle
