@@ -30,7 +30,12 @@ def get_thresholds(scores: np.ndarray, num_gt, num_sample_pts=41):
 def clean_data(gt_anno, dt_anno, current_class, difficulty):
     # CLASS_NAMES = ['car', 'pedestrian', 'cyclist', 'van', 'person_sitting', 'truck']
     #allclass
-    CLASS_NAMES = ['Car', 'Pedestrian', 'Cyclist', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'Scooter', 'Motorcycle', 'FireHydrant', 'FireAlarm', 'ParkingKiosk', 'Mailbox', 'NewspaperDispenser', 'SanitizerDispenser', 'CondimentDispenser', 'ATM', 'VendingMachine', 'DoorSwitch', 'EmergencyAidKit', 'Computer', 'Television', 'Dumpster', 'TrashCan', 'VacuumCleaner', 'Cart', 'Chair', 'Couch', 'Bench', 'Table', 'Bollard', 'ConstructionBarrier', 'Fence', 'Railing', 'Cone', 'Stanchion', 'TrafficLight', 'TrafficSign', 'TrafficArm', 'Canopy', 'BikeRack', 'Pole', 'InformationalSign', 'WallSign', 'Door', 'FloorSign', 'RoomLabel', 'FreestandingPlant', 'Tree', 'Other']
+    CLASS_NAMES = [ 'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight', 'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+    'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+    'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+    'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+    'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+    'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain']
     MIN_HEIGHT = [40, 25, 25]
     MAX_OCCLUSION = [0, 1, 2]
     MAX_TRUNCATION = [0.15, 0.3, 0.5]
