@@ -24,6 +24,7 @@ from pcdet.datasets import DatasetTemplate
 from pcdet.models import build_network, load_data_to_gpu
 from pcdet.utils import common_utils
 from pcdet.datasets import CODataset
+from pcdet.datasets import JRDBDataset
 
 
 class DemoDataset(DatasetTemplate):
@@ -63,8 +64,6 @@ class DemoDataset(DatasetTemplate):
             points = np.load(self.sample_file_list[index])
         else:
             raise NotImplementedError
-        
-
         
         gt_labels = np.loadtxt(self.gtbbox_list[index], delimiter=' ', usecols=(0), dtype=str)
         gt_boxes = np.loadtxt(self.gtbbox_list[index], delimiter=' ', usecols=(8,9,10,11,12,13,14))
@@ -107,9 +106,18 @@ def main():
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
-    view_coda = True
+    use_dataset = "jrdb"
+    do_preds = False
     
-    if not view_coda:
+    if use_dataset=="coda":
+        demo_dataset = CODataset(
+            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=True, root_path=Path(args.data_path), logger=logger
+        )
+    elif use_dataset=="jrdb":
+        demo_dataset = JRDBDataset(
+            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger
+        )
+    else:
         demo_dataset = DemoDataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False,
             root_path=Path(args.data_path), ext=args.ext, logger=logger
@@ -118,10 +126,6 @@ def main():
         model.load_params_from_file(filename=args.ckpt, logger=logger, to_cpu=True)
         model.cuda()
         model.eval()
-    else:
-        demo_dataset = CODataset(
-            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=True, root_path=Path(args.data_path), logger=logger
-        )
 
     logger.info(f'Total number of samples: \t{len(demo_dataset)}')
 
@@ -141,10 +145,8 @@ def main():
             data_dict = demo_dataset.collate_batch([data_dict])
             load_data_to_gpu(data_dict)
 
-            if view_coda:
-                V.draw_scenes(
-                points=data_dict['points'][:, 1:], gt_boxes=data_dict['gt_boxes']
-                )
+            if not do_preds:
+                V.draw_scenes(points=data_dict['points'][:, 1:], gt_boxes=data_dict['gt_boxes'])
             else:
                 pred_dicts, _ = model.forward(data_dict)
 
