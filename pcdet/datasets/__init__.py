@@ -9,7 +9,7 @@ from .waymo.waymo_dataset import WaymoDataset
 from .nuscenes.nuscenes_dataset import NuScenesDataset
 from .lyft.lyft_dataset import LyftDataset
 from .coda.coda_dataset import CODataset
-
+from .jrdb.jrdb_dataset import JRDBDataset
 
 __all__ = {
     'DatasetTemplate': DatasetTemplate,
@@ -17,7 +17,8 @@ __all__ = {
     'WaymoDataset': WaymoDataset,
     'NuScenesDataset': NuScenesDataset,
     'LyftDataset': LyftDataset,
-    'CODataset': CODataset
+    'CODataset': CODataset,
+    'JRDBDataset': JRDBDataset
 }
 
 

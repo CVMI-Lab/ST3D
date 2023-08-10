@@ -1,68 +1,19 @@
-CLASS_NAMES: [
-    'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
-    'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-    'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-    'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-    'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-    'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-    'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
-]
+CLASS_NAMES: ['Pedestrian']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_full.yaml
-    BALANCED_RESAMPLING: True
-    FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 32
+    _BASE_CONFIG_: cfgs/dataset_configs/da_waymo_dataset.yaml
+    PROCESSED_DATA_TAG: 'waymo_processed_data'
+    INFO_WITH_FAKELIDAR: False
 
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_full.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: [
-        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
-        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
-    ]
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 128
+    SHIFT_COOR: [0.0, 0.0, 1.8]
 
-
-DATA1_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda64_oracle_dataset_full.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: [
-        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
-        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
-    ]
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 64
-
-DATA2_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_coda16_oracle_dataset_full.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: [
-        'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
-        'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-        'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-        'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-        'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-        'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-        'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
-    ]
-    SHIFT_COOR: [0.0, 0.0, 0.8]
-    RES: 16
+# DATA_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda_oracle_dataset_3class.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['Car', 'Pedestrian', 'Cyclist']
+#     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+#     RES: 128
 
 MODEL:
     NAME: PVRCNN
@@ -92,15 +43,7 @@ MODEL:
 
         CLASS_NAMES_EACH_HEAD: [
             # ['Vehicle', 'Pedestrian', 'Cyclist'] # change to this to train on waymo
-            [
-                'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight',
-                'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-                'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-                'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-                'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-                'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-                'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain'
-            ]
+            ['Pedestrian'] # Change to this to eval on coda
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -261,14 +204,14 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: headfull
+    STAGE: scratch
     WANDB: True
-    WANDB_NAME: coda32-full-allclass-finetune-headfull
+    WANDB_NAME: waymo-pedonly-16
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    # BATCH_SIZE_PER_GPU: 12 # 30gb train
-    BATCH_SIZE_PER_GPU: 1 # 40gb eval
+    # BATCH_SIZE_PER_GPU: 12 # 44gb
+    BATCH_SIZE_PER_GPU: 6 #
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
