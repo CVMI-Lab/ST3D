@@ -85,22 +85,6 @@ class JRDBDataset(DatasetTemplate):
         assert calib_file.exists()
         return calibration_kitti.Calibration(calib_file, use_coda=True)
 
-    def get_road_plane(self, idx):
-        plane_file = self.root_split_path / 'planes' / ('%s.txt' % idx)
-        if not plane_file.exists():
-            return None
-
-        with open(plane_file, 'r') as f:
-            lines = f.readlines()
-        lines = [float(i) for i in lines[3].split()]
-        plane = np.asarray(lines)
-        val_flag_1 = np.logical_and(pts_img[:, 0] >= 0 - margin, pts_img[:, 0] < img_shape[1] + margin)
-        val_flag_2 = np.logical_and(pts_img[:, 1] >= 0 - margin, pts_img[:, 1] < img_shape[0] + margin)
-        val_flag_merge = np.logical_and(val_flag_1, val_flag_2)
-        pts_valid_flag = np.logical_and(val_flag_merge, pts_rect_depth >= 0)
-
-        return pts_valid_flag
-
     @staticmethod
     def get_fov_flag(pts_rect, img_shape, calib, margin=0):
         """
@@ -172,24 +156,27 @@ class JRDBDataset(DatasetTemplate):
 
                 info['annos'] = annotations
 
-                if count_inside_pts:
-                    points = self.get_lidar(sample_idx)
-                    calib = self.get_calib(sample_idx)
-                    pts_rect = calib.lidar_to_rect(points[:, 0:3])
+                # if count_inside_pts:
+                #     points = self.get_lidar(sample_idx)
+                #     calib = self.get_calib(sample_idx)
+                #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
 
-                    fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
-                    pts_fov = points[fov_flag]
-                    corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
-                    num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
+                #     fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
+                #     pts_fov = points[fov_flag]
+                #     corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
+                #     num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
 
-                    for k in range(num_objects):
-                        flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
-                        num_points_in_gt[k] = flag.sum()
-                    annotations['num_points_in_gt'] = num_points_in_gt
+                #     for k in range(num_objects):
+                #         flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
+                #         num_points_in_gt[k] = flag.sum()
+                #     annotations['num_points_in_gt'] = num_points_in_gt
 
             return info
 
+
         sample_id_list = sample_id_list if sample_id_list is not None else self.sample_id_list
+        
+        sample_id_list = sample_id_list[:10]
         with futures.ThreadPoolExecutor(num_workers) as executor:
             infos = executor.map(process_single_scene, sample_id_list)
         return list(infos)
@@ -367,10 +354,10 @@ class JRDBDataset(DatasetTemplate):
         get_item_list = self.dataset_cfg.get('GET_ITEM_LIST', ['points'])
 
         img_shape = info['image']['image_shape']
-        if self.dataset_cfg.FOV_POINTS_ONLY:
-            pts_rect = calib.lidar_to_rect(points[:, 0:3])
-            fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
-            points = points[fov_flag]
+        # if self.dataset_cfg.FOV_POINTS_ONLY: # TODO fix calibrations to use this
+        #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
+        #     fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
+        #     points = points[fov_flag]
 
         if self.dataset_cfg.get('SHIFT_COOR', None): # roughly the same lidar sensor height as coda
             points[:, 0:3] += np.array(self.dataset_cfg.SHIFT_COOR, dtype=np.float32)
@@ -393,6 +380,9 @@ class JRDBDataset(DatasetTemplate):
             if self.dataset_cfg.get('SHIFT_COOR', None):
                 gt_boxes_lidar[:, 0:3] += self.dataset_cfg.SHIFT_COOR
 
+            # Shift all bbox labels down by h/2 align z with bottom face
+            gt_boxes_lidar[:, 2] -= gt_boxes_lidar[:, 5] / 2
+
             input_dict.update({
                 'gt_names': gt_names,
                 'gt_boxes': gt_boxes_lidar
@@ -414,16 +404,16 @@ class JRDBDataset(DatasetTemplate):
             # gt_boxes_mask = np.array([n in self.class_names for n in input_dict['gt_names']], dtype=np.bool_)
             # debug_dict = {'gt_boxes': copy.deepcopy(gt_boxes_lidar[gt_boxes_mask])}
 
-            road_plane = self.get_road_plane(sample_idx)
-            if road_plane is not None:
-                input_dict['road_plane'] = road_plane
+            # road_plane = self.get_road_plane(sample_idx)
+            # if road_plane is not None:
+            #     input_dict['road_plane'] = road_plane
 
         if "points" in get_item_list:
             points = self.get_lidar(sample_idx)
-            if self.dataset_cfg.FOV_POINTS_ONLY:
-                pts_rect = calib.lidar_to_rect(points[:, 0:3])
-                fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
-                points = points[fov_flag]
+            # if self.dataset_cfg.FOV_POINTS_ONLY: # TODO: fix JRDB calibrations to use this
+            #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
+            #     fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
+            #     points = points[fov_flag]
             input_dict['points'] = points
 
         if "images" in get_item_list:
@@ -444,7 +434,7 @@ class JRDBDataset(DatasetTemplate):
         return data_dict
 
 
-def create_jrdb_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
+def create_jrdb_infos(dataset_cfg, class_names, data_path, save_path, workers=1):
     dataset = JRDBDataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
     train_split, val_split = 'train', 'val'
 
@@ -497,12 +487,38 @@ def save_calib(calib_in_path, calib_out_dir, frame_list):
     camera_calibs = []
     calib_context = ''
     sensor_list = [0, 1]
+    
+    WIMG, HIMG = lidar_calibrations['image']['width'], lidar_calibrations['image']['height']
     for sensor_id in sensor_list:
+        # # Find median fhatx and fhaty from all cameras. 
+        # total_hhat = 0
+        # fhatx_list = []
+        # fhaty_list = []
+        # vhat_list = []
+        # for cam_id, cam_dict in cam_calibrations['cameras'].items():
+        #     total_hhat += cam_dict['height']
+        #     K = np.fromstring(cam_calibrations['cameras'][f'sensor_{sensor_id}']['K'], dtype=float, sep=' ').reshape(3, 3)
+        #     fhatx_list.append(K[0,0])
+        #     fhaty_list.append(K[1,1])
+        #     vhat_list.append(K[1,2])
+        
+        # hhat    = total_hhat / len(cam_calibrations['cameras'].keys())
+        # fhatx   = np.median(fhatx_list)
+        # fhaty   = np.median(fhaty_list)
+        # uhat    = WIMG * np.arctan()
+        # vhat    = np.median(vhat_list)
+
+        # K_cyl   = np.array([[fhatx, 0, vhat], [0, fhaty, hhat], [0, 0, 1]])
+
+        # Compute v from fhaty and vhaty
+
         # Save transform lidar to cameras
         Tr_lidarupper_to_cam0 = np.zeros((3, 4))
-        lidar_rotvec = np.array(lidar_calibrations['calibrated']['lidar_upper_to_rgb']['rotation'], dtype=float)
-        Tr_lidarupper_to_cam0[:3, :3] = R.from_rotvec(lidar_rotvec).as_matrix()
-        Tr_lidarupper_to_cam0[:3, 3] = lidar_calibrations['calibrated']['lidar_upper_to_rgb']['translation']
+        # lidar_rotvec = np.array(lidar_calibrations['calibrated']['lidar_upper_to_rgb']['rotation'], dtype=float)
+        # Tr_lidarupper_to_cam0[:3, :3] = R.from_rotvec(lidar_rotvec).as_matrix()
+        # Tr_lidarupper_to_cam0[:3, 3] = lidar_calibrations['calibrated']['lidar_upper_to_rgb']['translation']
+        # Manual coordinate transform from JRDB LiDAR to KITTI Camera
+        Tr_lidarupper_to_cam0[:3, :3] = np.array([[0, -1, 0], [0, 0, -1], [1, 0, 0]])
 
         # Convert 3D rot vec to matrix
         R_cam0 = np.fromstring(cam_calibrations['cameras'][f'sensor_{sensor_id}']['R'], dtype=float, sep=' ').reshape(3,3)
@@ -527,7 +543,7 @@ def save_calib(calib_in_path, calib_out_dir, frame_list):
             ' '.join(camera_calibs[cam_id]) + '\n'
     calib_context += 'R0_rect' + ': ' + ' '.join(R0_rect) + '\n'
     for cam_id in cam_ids:
-        calib_context += 'Tr_velo_to_cam: ' + \
+        calib_context += f'Tr_velo_to_cam_{cam_id}: ' + \
             ' '.join(Tr_lidarupper_to_cams[cam_id]) + '\n'
 
     for frame_idx in frame_list:
@@ -596,7 +612,7 @@ if __name__ == '__main__':
         from easydict import EasyDict
         dataset_cfg = EasyDict(yaml.safe_load(open(sys.argv[2])))
         ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
-        # convert_jrdb_to_kitti(ROOT_DIR)
+        convert_jrdb_to_kitti(ROOT_DIR)
         create_jrdb_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Pedestrian'],
