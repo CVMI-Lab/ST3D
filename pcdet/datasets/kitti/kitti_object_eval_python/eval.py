@@ -726,6 +726,7 @@ def fuse_stat_dict_parts(sd_full, PR_detail_dict=None, num_metrics=int(3), compu
 
 
 def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None):
+    # FOR JRDB
     overlap_0_7 = np.array([[0.3, 0.5, 0.5, 0.7, 0.5, 0.7], 
                             [0.3, 0.5, 0.5, 0.7, 0.5, 0.7],
                             [0.3, 0.5, 0.5, 0.7, 0.5, 0.7]])
