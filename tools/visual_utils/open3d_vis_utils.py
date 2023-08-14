@@ -102,11 +102,10 @@ def draw_scenes(points, gt_boxes=None, ref_boxes=None, ref_labels=None, ref_scor
     else:
         pts.colors = open3d.utility.Vector3dVector(point_colors)
 
-    if gt_boxes.ndim == 3:
-        gt_boxes = gt_boxes.squeeze(0)
-
     if gt_boxes is not None:
-        vis = draw_box(vis, gt_boxes, (0, 0, 1))
+        if gt_boxes.ndim == 3:
+            gt_boxes = gt_boxes.squeeze(0)
+        vis = draw_box(vis, gt_boxes, (1, 0, 0))
 
     if ref_boxes is not None:
         vis = draw_box(vis, ref_boxes, (0, 1, 0), ref_labels, ref_scores)
@@ -114,7 +113,6 @@ def draw_scenes(points, gt_boxes=None, ref_boxes=None, ref_labels=None, ref_scor
     vis.run()
     # vis.capture_screen_image("vis_imgs/temp_%04d.jpg" % idx)
     vis.destroy_window()
-    # import pdb; pdb.set_trace()
 
 
 def translate_boxes_to_open3d_instance(gt_boxes, line_set=None):
@@ -147,7 +145,6 @@ def translate_boxes_to_open3d_instance(gt_boxes, line_set=None):
 
 def draw_box(vis, gt_boxes, color=(0, 1, 0), ref_labels=None, score=None, isfirstrun=True):
     for i in range(gt_boxes.shape[0]):
-        
         line_set, box3d = translate_boxes_to_open3d_instance(gt_boxes[i])
         if ref_labels is None:
             line_set.paint_uniform_color(color)

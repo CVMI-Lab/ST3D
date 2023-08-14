@@ -32,7 +32,7 @@ class JRDBDataset(DatasetTemplate):
 
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
-
+        
         self.jrdb_infos = []
         self.include_jrdb_data(self.mode)
 
@@ -123,7 +123,6 @@ class JRDBDataset(DatasetTemplate):
             R0_4x4[:3, :3] = calib.R0
             V2C_4x4 = np.concatenate([calib.V2C, np.array([[0., 0., 0., 1.]])], axis=0)
             calib_info = {'P2': P2, 'R0_rect': R0_4x4, 'Tr_velo_to_cam': V2C_4x4}
-
             info['calib'] = calib_info
 
             if has_label:
@@ -142,43 +141,45 @@ class JRDBDataset(DatasetTemplate):
 
                 num_objects = len([obj.cls_type for obj in obj_list if obj.cls_type != 'DontCare'])
                 num_gt = len(annotations['name'])
-                index = list(range(num_objects)) + [-1] * (num_gt - num_objects)
+                index = np.argwhere( np.isin([obj.cls_type for obj in obj_list], ['DontCare'], invert=True) ).reshape(-1,)
                 annotations['index'] = np.array(index, dtype=np.int32)
 
-                loc = annotations['location'][:num_objects]
-                dims = annotations['dimensions'][:num_objects]
-                rots = annotations['rotation_y'][:num_objects]
+                loc = annotations['location'][index]
+                dims = annotations['dimensions'][index]
+                rots = annotations['rotation_y'][index]
                 loc_lidar = calib.rect_to_lidar(loc)
                 l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
-                loc_lidar[:, 2] += h[:, 0] / 2
-                gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
-                annotations['gt_boxes_lidar'] = gt_boxes_lidar
+                loc_lidar[:, 2] += h[:, 0] / 2 # shift coord center up by half box
 
+                # ARTHUR CHECKED
+                gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
+                annotations['gt_boxes_lidar'] = gt_boxes_lidar # successful copy
                 info['annos'] = annotations
 
-                # if count_inside_pts:
-                #     points = self.get_lidar(sample_idx)
-                #     calib = self.get_calib(sample_idx)
-                #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
+                if count_inside_pts:
+                    points = self.get_lidar(sample_idx)
+                    calib = self.get_calib(sample_idx)
+                    pts_rect = calib.lidar_to_rect(points[:, 0:3])
 
-                #     fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
-                #     pts_fov = points[fov_flag]
-                #     corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
-                #     num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
-
-                #     for k in range(num_objects):
-                #         flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
-                #         num_points_in_gt[k] = flag.sum()
-                #     annotations['num_points_in_gt'] = num_points_in_gt
+                    # fov_flag = self.get_fov_flag(pts_rect, info['image']['image_shape'], calib)
+                    # pts_fov = points[fov_flag]
+                    corners_lidar = box_utils.boxes_to_corners_3d(gt_boxes_lidar)
+                    num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
+                    for k in range(num_objects):
+                        # flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
+                        flag = box_utils.in_hull(pts_rect, corners_lidar[k])
+                        num_points_in_gt[k] = flag.sum()
+                    annotations['num_points_in_gt'] = num_points_in_gt
 
             return info
 
-
         sample_id_list = sample_id_list if sample_id_list is not None else self.sample_id_list
-        
-        sample_id_list = sample_id_list[:10]
-        with futures.ThreadPoolExecutor(num_workers) as executor:
-            infos = executor.map(process_single_scene, sample_id_list)
+        if sample_id_list is not None:
+            sample_id_list = sample_id_list[:20]
+            with futures.ThreadPoolExecutor(num_workers) as executor:
+                infos = executor.map(process_single_scene, sample_id_list)
+        else:
+            infos = []
         return list(infos)
 
     def create_groundtruth_database(self, info_path=None, used_classes=None, split='train'):
@@ -280,7 +281,7 @@ class JRDBDataset(DatasetTemplate):
                 pred_boxes = pred_boxes[fov_flag]
                 pred_labels = pred_labels[fov_flag]
                 pred_scores = pred_scores[fov_flag]
-
+            
             pred_boxes_camera = box_utils.boxes3d_lidar_to_kitti_camera(pred_boxes, calib)
             pred_boxes_img = box_utils.boxes3d_kitti_camera_to_imageboxes(
                 pred_boxes_camera, calib, image_shape=image_shape
@@ -293,7 +294,7 @@ class JRDBDataset(DatasetTemplate):
             pred_dict['location'] = pred_boxes_camera[:, 0:3]
             pred_dict['rotation_y'] = pred_boxes_camera[:, 6]
             pred_dict['score'] = pred_scores
-            pred_dict['boxes_lidar'] = pred_boxes
+            pred_dict['boxes_lidar'] = pred_boxes # ARTHUR CHECKED
 
             return pred_dict
 
@@ -304,7 +305,7 @@ class JRDBDataset(DatasetTemplate):
             single_pred_dict = generate_single_sample_dict(index, box_dict)
             single_pred_dict['frame_id'] = frame_id
             annos.append(single_pred_dict)
-
+            
             if output_path is not None:
                 cur_det_file = output_path / ('%s.txt' % frame_id)
                 with open(cur_det_file, 'w') as f:
@@ -319,7 +320,7 @@ class JRDBDataset(DatasetTemplate):
                                  dims[idx][1], dims[idx][2], dims[idx][0], loc[idx][0],
                                  loc[idx][1], loc[idx][2], single_pred_dict['rotation_y'][idx],
                                  single_pred_dict['score'][idx]), file=f)
-
+    
         return annos
 
     def evaluation(self, det_annos, class_names, **kwargs):
@@ -327,12 +328,93 @@ class JRDBDataset(DatasetTemplate):
             return None, {}
 
         from ..kitti.kitti_object_eval_python import eval as kitti_eval
-
         eval_det_annos = copy.deepcopy(det_annos)
-        eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.jrdb_infos]
-        ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
+        eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.jrdb_infos] # KITTI cam loc
+        
+        gt_file = kwargs['output_path'] / 'gt_annos.pkl'
+        with open(gt_file, 'wb') as f:
+            pickle.dump(eval_gt_annos, f)
+            print("Dumping gt file: ", gt_file)
+        dt_file = kwargs['output_path'] / 'dt_annos.pkl'
+        with open(dt_file, 'wb') as f:
+            pickle.dump(eval_det_annos, f)
+            print("Dumping dt file: ", dt_file)
+
+        eval_metric = kwargs['eval_metric']
+        if eval_metric=="kitti": #KITTI eval metric doesn't work atm
+            # Evaluate with KITTI's metric
+            ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
+        elif eval_metric=="jrdb":
+            ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
+            self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
 
         return ap_result_str, ap_dict
+
+    def dump_annos_to_jrdb(self, output_dir, gt_annos, dt_annos):
+        """
+        Convert to annos file to KITTI txt file format
+        type truncated occluded num_points alpha bbox(-1, -1, -1, -1) dimensions location rotation_y conf
+        """
+
+        if self.split=='val' or self.split=='train':
+            filelist_path = self.root_path / 'training/filelist.txt'
+        else:
+            filelist_path = self.root_path / 'testing/filelist.txt'
+
+        # Make all seq directories for label files
+        seq_list = np.loadtxt(filelist_path, dtype=str, usecols=0)
+        seq_set = list(set(seq_list.flatten()))
+        
+        pred_dir = output_dir / 'jrdb_preds'
+        gt_dir = output_dir/ 'jrdb_gt'
+
+        for seq in seq_set:
+            seq_dir = gt_dir / seq
+            if not os.path.exists(seq_dir):
+                print(f'Creating jrdb seq dir {seq_dir}')
+                os.makedirs(seq_dir)
+            seq_dir = pred_dir / seq
+            if not os.path.exists(seq_dir):
+                print(f'Creating jrdb seq dir {seq_dir}')
+                os.makedirs(seq_dir)
+
+        def save_annos_dict(annos_dict, label_path, is_gt=False):
+            num_objects = len(annos_dict['name'])
+
+            # Build np array for gt
+            otype = annos_dict['name'].astype(str).reshape(-1, 1)
+            truncated = annos_dict['truncated'].astype(str).reshape(-1, 1)
+            if is_gt:
+                occluded = annos_dict['occluded'].astype(str).reshape(-1, 1)
+                num_points = annos_dict['num_points_in_gt'].astype(str).reshape(-1, 1) # TODO copy over from annotation file
+                conf    = np.array([1] * num_objects).astype(str).reshape(-1, 1)
+            else:
+                occluded = np.array([0] * num_objects).astype(str).reshape(-1, 1)       # DC
+                num_points = np.array([100] * num_objects).astype(str).reshape(-1, 1)   # DC
+                conf    = annos_dict['score'].astype(str).reshape(-1, 1)                 # C
+                
+            alpha = annos_dict['alpha'].astype(str).reshape(-1, 1)
+            bbox = annos_dict['bbox'].astype(str)
+            dimensions = annos_dict['dimensions'].astype(str)
+            location = annos_dict['location'].astype(str)
+            rotation_y = annos_dict['rotation_y'].astype(str).reshape(-1, 1)
+
+            label_np = np.hstack((otype, truncated, occluded, num_points, alpha, bbox, dimensions, location, rotation_y, conf))
+            
+            np.savetxt(label_path, label_np, fmt="%s", delimiter=' ', newline='\n')
+        
+        # Dump each index to the correct seq directory
+        for idx in range(len(gt_annos)):
+            info = copy.deepcopy(self.jrdb_infos[idx])
+            sample_idx = info['point_cloud']['lidar_idx']
+            label_file = f'{sample_idx}.txt'
+
+            seq_dir = seq_list[idx]
+            gt_path = gt_dir / seq_dir / label_file
+            pred_path = pred_dir / seq_dir / label_file
+
+            save_annos_dict(gt_annos[idx], gt_path, is_gt=True)
+            save_annos_dict(dt_annos[idx], pred_path, is_gt=False)
 
     def __len__(self):
         if self._merge_all_iters_to_one_epoch:
@@ -354,21 +436,22 @@ class JRDBDataset(DatasetTemplate):
         get_item_list = self.dataset_cfg.get('GET_ITEM_LIST', ['points'])
 
         img_shape = info['image']['image_shape']
+
         # if self.dataset_cfg.FOV_POINTS_ONLY: # TODO fix calibrations to use this
         #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
         #     fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
         #     points = points[fov_flag]
-
+   
         if self.dataset_cfg.get('SHIFT_COOR', None): # roughly the same lidar sensor height as coda
             points[:, 0:3] += np.array(self.dataset_cfg.SHIFT_COOR, dtype=np.float32)
-
+        
         input_dict = {
             'points': points,
             'frame_id': sample_idx,
             'calib': calib,
             'image_shape': img_shape
         }
-
+        
         if 'annos' in info:
             annos = info['annos']
             annos = common_utils.drop_info_with_name(annos, name='DontCare')
@@ -379,9 +462,6 @@ class JRDBDataset(DatasetTemplate):
 
             if self.dataset_cfg.get('SHIFT_COOR', None):
                 gt_boxes_lidar[:, 0:3] += self.dataset_cfg.SHIFT_COOR
-
-            # Shift all bbox labels down by h/2 align z with bottom face
-            gt_boxes_lidar[:, 2] -= gt_boxes_lidar[:, 5] / 2
 
             input_dict.update({
                 'gt_names': gt_names,
@@ -407,23 +487,6 @@ class JRDBDataset(DatasetTemplate):
             # road_plane = self.get_road_plane(sample_idx)
             # if road_plane is not None:
             #     input_dict['road_plane'] = road_plane
-
-        if "points" in get_item_list:
-            points = self.get_lidar(sample_idx)
-            # if self.dataset_cfg.FOV_POINTS_ONLY: # TODO: fix JRDB calibrations to use this
-            #     pts_rect = calib.lidar_to_rect(points[:, 0:3])
-            #     fov_flag = self.get_fov_flag(pts_rect, img_shape, calib)
-            #     points = points[fov_flag]
-            input_dict['points'] = points
-
-        if "images" in get_item_list:
-            input_dict['images'] = self.get_image(sample_idx)
-
-        if "depth_maps" in get_item_list:
-            input_dict['depth_maps'] = self.get_depth_map(sample_idx)
-
-        if "calib_matricies" in get_item_list:
-            input_dict["trans_lidar_to_cam"], input_dict["trans_cam_to_img"] = kitti_utils.calib_to_matricies(calib)
 
         # load saved pseudo label for unlabel data
         if self.dataset_cfg.get('USE_PSEUDO_LABEL', None) and self.training:
@@ -490,35 +553,26 @@ def save_calib(calib_in_path, calib_out_dir, frame_list):
     
     WIMG, HIMG = lidar_calibrations['image']['width'], lidar_calibrations['image']['height']
     for sensor_id in sensor_list:
-        # # Find median fhatx and fhaty from all cameras. 
-        # total_hhat = 0
-        # fhatx_list = []
-        # fhaty_list = []
-        # vhat_list = []
-        # for cam_id, cam_dict in cam_calibrations['cameras'].items():
-        #     total_hhat += cam_dict['height']
-        #     K = np.fromstring(cam_calibrations['cameras'][f'sensor_{sensor_id}']['K'], dtype=float, sep=' ').reshape(3, 3)
-        #     fhatx_list.append(K[0,0])
-        #     fhaty_list.append(K[1,1])
-        #     vhat_list.append(K[1,2])
-        
-        # hhat    = total_hhat / len(cam_calibrations['cameras'].keys())
-        # fhatx   = np.median(fhatx_list)
-        # fhaty   = np.median(fhaty_list)
-        # uhat    = WIMG * np.arctan()
-        # vhat    = np.median(vhat_list)
-
-        # K_cyl   = np.array([[fhatx, 0, vhat], [0, fhaty, hhat], [0, 0, 1]])
-
-        # Compute v from fhaty and vhaty
-
         # Save transform lidar to cameras
-        Tr_lidarupper_to_cam0 = np.zeros((3, 4))
+        Tr_lidarupper_to_cyl = np.zeros((3, 4))
         # lidar_rotvec = np.array(lidar_calibrations['calibrated']['lidar_upper_to_rgb']['rotation'], dtype=float)
-        # Tr_lidarupper_to_cam0[:3, :3] = R.from_rotvec(lidar_rotvec).as_matrix()
-        # Tr_lidarupper_to_cam0[:3, 3] = lidar_calibrations['calibrated']['lidar_upper_to_rgb']['translation']
+        # Tr_lidarupper_to_cyl[:3, :3] = R.from_rotvec(lidar_rotvec).as_matrix()
+
+        # Tr_lidarupper_to_cyl[:3, 3] = np.array(lidar_calibrations['calibrated']['lidar_upper_to_rgb']['translation'])
+        # theta = lidar_calibrations['calibrated']['lidar_upper_to_rgb']['rotation'][-1]
+        # rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
+        # Tr_lidarupper_to_cyl_mat1 = np.eye(4)
+        # Tr_lidarupper_to_cyl_mat1[:2, :2]   = rotation_matrix
+        # Tr_lidarupper_to_cyl_mat1[:3, 3]    = -np.array(lidar_calibrations['calibrated']['lidar_upper_to_rgb']['translation'])
+
         # Manual coordinate transform from JRDB LiDAR to KITTI Camera
-        Tr_lidarupper_to_cam0[:3, :3] = np.array([[0, -1, 0], [0, 0, -1], [1, 0, 0]])
+        # Tr_lidarupper_to_cyl[:3, :3] = np.array([[0, -1, 0], [0, 0, -1], [1, 0, 0]])
+
+        Tr_lidarupper_to_cyl_4X4 = np.eye(4)
+        Tr_lidarupper_to_cyl_4X4[:3, :3] = np.array([[0, -1, 0], [0, 0, -1], [1, 0, 0]])
+
+        # Tr_lidarupper_to_cyl[:3, :] = (Tr_lidarupper_to_cyl_4X4 @ Tr_lidarupper_to_cyl_mat1)[:3, :]
+        Tr_lidarupper_to_cyl[:3, :3] = Tr_lidarupper_to_cyl_4X4[:3, :3]
 
         # Convert 3D rot vec to matrix
         R_cam0 = np.fromstring(cam_calibrations['cameras'][f'sensor_{sensor_id}']['R'], dtype=float, sep=' ').reshape(3,3)
@@ -532,9 +586,11 @@ def save_calib(calib_in_path, calib_out_dir, frame_list):
         camera_calib = [f'{i:e}' for i in P_cam0.flatten()]
         camera_calibs.append(camera_calib)
 
-        Tr_lidarupper_to_cams.append([f'{i:e}' for i in Tr_lidarupper_to_cam0.flatten()])
+        Tr_lidarupper_to_cams.append([f'{i:e}' for i in Tr_lidarupper_to_cyl.flatten()])
     
     # Save rectification matrix for coplanar just identity (since projection matrix rectifies already)
+
+    # TempR0 = np.array([[0, -1, 0], [0, 0, -1], [1, 0, 0]])
     R0_rect = [f'{i:e}' for i in np.eye(3).flatten()]
 
     cam_ids = [0, 1]
@@ -588,7 +644,6 @@ def convert_jrdb_to_kitti(root_path):
 
     # Convert calib files to correct format
     in_splits = ["training", "testing"]
-    out_splits = ["train", "val", "test"]
     for split in in_splits:
         calib_in_path   = root_path / f'data/jrdb/{split}/calib_jrdb'
         calib_out_path  = root_path / f'data/jrdb/{split}/calib'

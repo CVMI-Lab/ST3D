@@ -2,10 +2,19 @@ CLASS_NAMES: ['Pedestrian']
 
 DATA_CONFIG:
     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class_full.yaml
+    # _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
     RES: 32
+
+# DATA_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_coda32_oracle_dataset_3class_full.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['Pedestrian']
+#     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+#     RES: coda32
 
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
@@ -13,7 +22,7 @@ DATA_CONFIG_TAR:
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: coda32
+    RES: jrdb
 
 MODEL:
     NAME: PVRCNN
@@ -193,7 +202,7 @@ MODEL:
         SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
-        EVAL_METRIC: kitti
+        EVAL_METRIC: jrdb
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
