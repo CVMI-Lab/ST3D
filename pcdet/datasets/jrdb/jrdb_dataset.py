@@ -151,7 +151,6 @@ class JRDBDataset(DatasetTemplate):
                 l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
                 loc_lidar[:, 2] += h[:, 0] / 2 # shift coord center up by half box
 
-                # ARTHUR CHECKED
                 gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
                 annotations['gt_boxes_lidar'] = gt_boxes_lidar # successful copy
                 info['annos'] = annotations
@@ -167,7 +166,8 @@ class JRDBDataset(DatasetTemplate):
                     num_points_in_gt = -np.ones(num_gt, dtype=np.int32)
                     for k in range(num_objects):
                         # flag = box_utils.in_hull(pts_fov[:, 0:3], corners_lidar[k])
-                        flag = box_utils.in_hull(pts_rect, corners_lidar[k])
+                        # flag = box_utils.in_hull(pts_rect, corners_lidar[k])
+                        flag = box_utils.in_hull(points[:, 0:3], corners_lidar[k])
                         num_points_in_gt[k] = flag.sum()
                     annotations['num_points_in_gt'] = num_points_in_gt
 
@@ -330,15 +330,6 @@ class JRDBDataset(DatasetTemplate):
         from ..kitti.kitti_object_eval_python import eval as kitti_eval
         eval_det_annos = copy.deepcopy(det_annos)
         eval_gt_annos = [copy.deepcopy(info['annos']) for info in self.jrdb_infos] # KITTI cam loc
-        
-        gt_file = kwargs['output_path'] / 'gt_annos.pkl'
-        with open(gt_file, 'wb') as f:
-            pickle.dump(eval_gt_annos, f)
-            print("Dumping gt file: ", gt_file)
-        dt_file = kwargs['output_path'] / 'dt_annos.pkl'
-        with open(dt_file, 'wb') as f:
-            pickle.dump(eval_det_annos, f)
-            print("Dumping dt file: ", dt_file)
 
         eval_metric = kwargs['eval_metric']
         if eval_metric=="kitti": #KITTI eval metric doesn't work atm
@@ -346,6 +337,7 @@ class JRDBDataset(DatasetTemplate):
             ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
         elif eval_metric=="jrdb":
             ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
+            # Uncomment if you want to evaluate with JRDB's metric (precision recall curve)
             self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
 
         return ap_result_str, ap_dict
@@ -383,18 +375,19 @@ class JRDBDataset(DatasetTemplate):
 
             # Build np array for gt
             otype = annos_dict['name'].astype(str).reshape(-1, 1)
-            truncated = annos_dict['truncated'].astype(str).reshape(-1, 1)
+            truncated = annos_dict['truncated'].astype(int).astype(str).reshape(-1, 1)
             if is_gt:
-                occluded = annos_dict['occluded'].astype(str).reshape(-1, 1)
-                num_points = annos_dict['num_points_in_gt'].astype(str).reshape(-1, 1) # TODO copy over from annotation file
-                conf    = np.array([1] * num_objects).astype(str).reshape(-1, 1)
+                occluded = annos_dict['occluded'].astype(int).astype(str).reshape(-1, 1)
+                # num_points = annos_dict['num_points_in_gt'].astype(str).reshape(-1, 1) # np.array([100]*num_objects).astype(int).astype(str).reshape(-1, 1)
+                num_points = np.array([100]*num_objects).astype(int).astype(str).reshape(-1, 1) # All boxes are prefiltered for points
+                conf    = np.array([1] * num_objects).astype(float).astype(str).reshape(-1, 1)
             else:
-                occluded = np.array([0] * num_objects).astype(str).reshape(-1, 1)       # DC
-                num_points = np.array([100] * num_objects).astype(str).reshape(-1, 1)   # DC
-                conf    = annos_dict['score'].astype(str).reshape(-1, 1)                 # C
+                occluded = np.array([0] * num_objects).astype(int).astype(str).reshape(-1, 1)       # DC
+                num_points = np.array([100] * num_objects).astype(int).astype(str).reshape(-1, 1)   # DC
+                conf    = annos_dict['score'].astype(float).astype(str).reshape(-1, 1)                 # C
                 
             alpha = annos_dict['alpha'].astype(str).reshape(-1, 1)
-            bbox = annos_dict['bbox'].astype(str)
+            bbox = annos_dict['bbox'].astype(int).astype(str)
             dimensions = annos_dict['dimensions'].astype(str)
             location = annos_dict['location'].astype(str)
             rotation_y = annos_dict['rotation_y'].astype(str).reshape(-1, 1)
@@ -403,6 +396,15 @@ class JRDBDataset(DatasetTemplate):
             
             np.savetxt(label_path, label_np, fmt="%s", delimiter=' ', newline='\n')
         
+        gt_file = output_dir / 'gt_annos.pkl'
+        with open(gt_file, 'wb') as f:
+            pickle.dump(gt_annos, f)
+            print("Dumping gt file: ", gt_file)
+        dt_file = output_dir / 'dt_annos.pkl'
+        with open(dt_file, 'wb') as f:
+            pickle.dump(dt_annos, f)
+            print("Dumping dt file: ", dt_file)
+
         # Dump each index to the correct seq directory
         for idx in range(len(gt_annos)):
             info = copy.deepcopy(self.jrdb_infos[idx])
