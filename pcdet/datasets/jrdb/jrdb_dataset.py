@@ -175,7 +175,7 @@ class JRDBDataset(DatasetTemplate):
 
         sample_id_list = sample_id_list if sample_id_list is not None else self.sample_id_list
         if sample_id_list is not None:
-            sample_id_list = sample_id_list[:20]
+            # sample_id_list = sample_id_list[:20] # Uncomment for testing
             with futures.ThreadPoolExecutor(num_workers) as executor:
                 infos = executor.map(process_single_scene, sample_id_list)
         else:
@@ -338,7 +338,7 @@ class JRDBDataset(DatasetTemplate):
         elif eval_metric=="jrdb":
             ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
             # Uncomment if you want to evaluate with JRDB's metric (precision recall curve)
-            self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
+            # self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
 
         return ap_result_str, ap_dict
 
@@ -499,7 +499,7 @@ class JRDBDataset(DatasetTemplate):
         return data_dict
 
 
-def create_jrdb_infos(dataset_cfg, class_names, data_path, save_path, workers=1):
+def create_jrdb_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
     dataset = JRDBDataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
     train_split, val_split = 'train', 'val'
 
