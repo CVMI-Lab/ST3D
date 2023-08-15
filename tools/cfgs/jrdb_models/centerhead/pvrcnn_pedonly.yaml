@@ -185,7 +185,7 @@ MODEL:
         SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
-        EVAL_METRIC: jrdb
+        EVAL_METRIC: kitti
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
@@ -201,7 +201,7 @@ FINETUNE:
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 4 # 20gb
+    BATCH_SIZE_PER_GPU: 8 # 20gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

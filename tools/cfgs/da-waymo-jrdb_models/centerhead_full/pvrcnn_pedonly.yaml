@@ -211,7 +211,8 @@ FINETUNE:
 OPTIMIZATION:
     NUM_EPOCHS: 30
     # BATCH_SIZE_PER_GPU: 12 # 44gb
-    BATCH_SIZE_PER_GPU: 6 #
+    BATCH_SIZE_PER_GPU: 6 # train on waymo
+    BATCH_SIZE_PER_GPU: 4 # eval on jrdb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
