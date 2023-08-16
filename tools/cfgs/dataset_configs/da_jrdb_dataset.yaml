@@ -1,7 +1,8 @@
 DATASET: 'JRDBDataset'
 DATA_PATH: '../data/jrdb'
 
-POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+POINT_CLOUD_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4]
+# [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
 DATA_SPLIT: {
     'train': train,
