@@ -1,8 +1,7 @@
 DATASET: 'JRDBDataset'
 DATA_PATH: '../data/jrdb'
 
-POINT_CLOUD_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4]
-# [-75.2, -75.2, -2, 75.2, 75.2, 4]
+POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
 DATA_SPLIT: {
     'train': train,
@@ -52,8 +51,7 @@ DATA_PROCESSOR:
       }
 
     - NAME: transform_points_to_voxels
-      # VOXEL_SIZE: [0.1, 0.1, 0.15]
-      VOXEL_SIZE: [0.03324468085, 0.03324468085, 0.15]
+      VOXEL_SIZE: [0.1, 0.1, 0.15]
       MAX_POINTS_PER_VOXEL: 5
       MAX_NUMBER_OF_VOXELS: {
         'train': 80000,
@@ -64,5 +62,5 @@ TEST:
     BOX_FILTER: {
         'USE_IMAGE_AREA_FILTER': False,
         'FOV_FILTER': False,
-        'LIMIT_RANGE': [-25.0, -25.0, -2, 25.0, 25.0, 4]
+        'LIMIT_RANGE': [-75.2, -75.2, -2, 75.2, 75.2, 4]
     }

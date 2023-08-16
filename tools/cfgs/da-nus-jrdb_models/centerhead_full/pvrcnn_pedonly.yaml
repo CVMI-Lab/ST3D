@@ -1,19 +1,45 @@
-CLASS_NAMES: ['Pedestrian']
+CLASS_NAMES: ['pedestrian']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_nuscenes_dataset.yaml
     BALANCED_RESAMPLING: True
-    FOV_POINTS_ONLY: False
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 32
-    
+    SHIFT_COOR: [0.0, 0.0, 1.8]
+
+    POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
+
+    DATA_PROCESSOR:
+        - NAME: mask_points_and_boxes_outside_range
+          REMOVE_OUTSIDE_BOXES: True
+
+        - NAME: shuffle_points
+          SHUFFLE_ENABLED: {
+            'train': True,
+            'test': True
+          }
+
+        - NAME: transform_points_to_voxels
+          VOXEL_SIZE: [0.1, 0.1, 0.15]
+          MAX_POINTS_PER_VOXEL: 5
+          MAX_NUMBER_OF_VOXELS: {
+            'train': 80000,
+            'test': 90000
+          }
+
 DATA_CONFIG_TAR:
+    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
+    TARGET: True
+    FOV_POINTS_ONLY: False
+    CLASS_NAMES: ['Pedestrian']
+    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+    RES: (jrdbfullrange)
+
+DATA1_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdbtest
+    RES: (jrdb25m)
 
 MODEL:
     NAME: PVRCNN
@@ -42,7 +68,7 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['Pedestrian'] # Change to this to eval on coda
+            ['pedestrian'] # change to this to train on nuscenes
         ]
 
         SHARED_CONV_CHANNEL: 64
@@ -72,7 +98,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4] #[ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -203,13 +229,15 @@ MODEL:
             NMS_POST_MAXSIZE: 500
 
 FINETUNE:
-    STAGE: headfull
+    STAGE: scratch
     WANDB: True
-    WANDB_NAME: jrdb-full-pedonly-32
+    WANDB_NAME: nus-pedonly-16
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 20gb
+    BATCH_SIZE_PER_GPU: 10 # 40gb
+    # BATCH_SIZE_PER_GPU: 8 # 36GB
+    # BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
