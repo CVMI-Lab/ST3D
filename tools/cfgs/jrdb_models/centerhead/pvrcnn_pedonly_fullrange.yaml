@@ -1,14 +1,14 @@
 CLASS_NAMES: ['Pedestrian']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
     RES: 32
     
 DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
@@ -72,7 +72,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4] #[ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -205,7 +205,7 @@ MODEL:
 FINETUNE:
     STAGE: headfull
     WANDB: True
-    WANDB_NAME: jrdb-full-pedonly-32
+    WANDB_NAME: jrdb-full-pedonly-32fullrange
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
