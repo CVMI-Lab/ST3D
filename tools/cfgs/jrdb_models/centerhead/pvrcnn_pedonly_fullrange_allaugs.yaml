@@ -1,19 +1,38 @@
 CLASS_NAMES: ['Pedestrian']
 
 DATA_CONFIG:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdb25mrange
+    RES: jrdballaugs
+
+    DATA_AUGMENTOR:
+        DISABLE_AUG_LIST: ['placeholder']
+        AUG_CONFIG_LIST:
+            - NAME: random_object_scaling
+              SCALE_UNIFORM_NOISE: [0.9, 1.1]
+
+            - NAME: random_object_rotation
+              ROT_PROB: 1.0
+              ROT_UNIFORM_NOISE: [-0.78539816, 0.78539816]
+
+            - NAME: random_world_flip
+              ALONG_AXIS_LIST: ['x', 'y']
+
+            - NAME: random_world_rotation
+              WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+            - NAME: random_world_scaling
+              WORLD_SCALE_RANGE: [0.95, 1.05]
     
 # DATA_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
 #     TARGET: True
 #     FOV_POINTS_ONLY: False
 #     CLASS_NAMES: ['Pedestrian']
 #     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-#     RES: jrdb25mrange
+#     RES: (jrdballaugs)
 
 MODEL:
     NAME: PVRCNN
@@ -72,7 +91,7 @@ MODEL:
 
         POST_PROCESSING:
             SCORE_THRESH: 0.1
-            POST_CENTER_LIMIT_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4] #[ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -205,12 +224,13 @@ MODEL:
 FINETUNE:
     STAGE: headfull
     WANDB: True
-    WANDB_NAME: jrdb-full-pedonly-32
+    WANDB_NAME: jrdb-full-pedonly-32fullrange
     LR_SEARCH: True
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 20gb
+    # BATCH_SIZE_PER_GPU: 12 # 40gb
+    BATCH_SIZE_PER_GPU: 8 # 30gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
