@@ -5,15 +5,15 @@ DATA_CONFIG:
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: 32
+    RES: jrdbdefaultaugs
     
-DATA_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['Pedestrian']
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdbtest
+# DATA_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['Pedestrian']
+#     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+#     RES: jrdbtest
 
 MODEL:
     NAME: PVRCNN
@@ -206,10 +206,12 @@ FINETUNE:
     STAGE: headfull
     WANDB: True
     WANDB_NAME: jrdb-full-pedonly-32fullrange
+    LR_SEARCH: True
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 12 # 20gb
+    # BATCH_SIZE_PER_GPU: 12 # 40gb
+    BATCH_SIZE_PER_GPU: 8 # 30gb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001

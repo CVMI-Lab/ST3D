@@ -354,7 +354,7 @@ def main():
             opt_search = ["adam_onecycle"]
         elif headfull_stage:
             # lr_search = [1e-2, 1e-3, 1e-4]
-            lr_search = [1e-2, 1e-3, 1e-4] 
+            lr_search = [cfg.OPTIMIZATION.LR, 5e-2, 1e-3, 5e-4]
             opt_search = ["adam_onecycle"]
         init_launch = True
 
@@ -371,10 +371,25 @@ def main():
             if not dolr_search and not unstable_lr:
                 print("Completed training with lr ", lr, " cleaning up...")
                 break
-
     else:
+        print("Doing normal training with learning adaptation...")
         init_launch = True
-        train_loop()
+        opt = "adam_onecycle" # Found through empirical testing
+        lr_search = [cfg.OPTIMIZATION.LR, 5e-2, 1e-3, 5e-4] # Start with user lr
+        
+        for lr_idx, lr in enumerate(lr_search):
+            unstable_lr = False
+            try:
+                train_loop(init_launch, lr, opt)
+                init_launch = False
+            except NotImplementedError or AssertionError as e:
+                unstable_lr = True
+                next_lr = lr_search[lr_idx+1] if lr_idx < len(lr_search) else -1
+                print(f'Learning rate ", lr, " unstable for training, reducing LR to {next_lr}...')
+
+            if not dolr_search and not unstable_lr:
+                print("Completed training with lr ", lr, " cleaning up...")
+                break
 
 if __name__ == '__main__':
     main()
