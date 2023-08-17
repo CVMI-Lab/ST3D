@@ -31,7 +31,7 @@ DATA_CONFIG_TAR:
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: (jrdbfullrange)
+    RES: jrdbfullrange
 
 DATA1_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
@@ -39,7 +39,7 @@ DATA1_CONFIG_TAR:
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: (jrdb25m)
+    RES: jrdb25m
 
 MODEL:
     NAME: PVRCNN
@@ -235,9 +235,9 @@ FINETUNE:
 
 OPTIMIZATION:
     NUM_EPOCHS: 30
-    BATCH_SIZE_PER_GPU: 10 # 40gb
+    # BATCH_SIZE_PER_GPU: 10 # 40gb
     # BATCH_SIZE_PER_GPU: 8 # 36GB
-    # BATCH_SIZE_PER_GPU: 6 # 22 GB
+    BATCH_SIZE_PER_GPU: 6 # 22 GB
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
