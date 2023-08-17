@@ -21,51 +21,51 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 
 # Launch Dataset to JRDB pretraining models
 
-# CODa32 ped only
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly.yaml
-export EXTRA_TAG1=coda32codacfg
+# # CODa32 ped only
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly.yaml
+# export EXTRA_TAG1=coda32codacfg
 
-# Waymo ped only
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-waymo-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
-export EXTRA_TAG1=waymocodacfg
+# # Waymo ped only
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-waymo-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
+# export EXTRA_TAG1=waymocodacfg
 
-# NUS ped only
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-nus-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
-export EXTRA_TAG1=nuscodacfg
+# # NUS ped only
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nus-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
+# export EXTRA_TAG1=nuscodacfg
 
-# JRDB scratch ped only no points filter
-export PORT=29500
-export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly.yaml
-export EXTRA_TAG1=jrdbcodacfgnofilter
+# # JRDB scratch ped only no points filter
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly.yaml
+# export EXTRA_TAG1=jrdbcodacfgnofilter
 
-# JRDB scratch ped only 25m range (DOES LR SEARCH BY DEFAULT)
-export PORT=29500
-export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly.yaml
-export EXTRA_TAG1=jrdbcodacfg25mrange
+# # JRDB scratch ped only 25m range (DOES LR SEARCH BY DEFAULT)
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly.yaml
+# export EXTRA_TAG1=jrdbcodacfg25mrange
 
-# JRDB scratch ped only full range (DOES LR SEARCH BY DEFAULT)
-export PORT=29500
-export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly_fullrange.yaml
-export EXTRA_TAG1=jrdbcodacfgfullrange
+# # JRDB scratch ped only full range (DOES LR SEARCH BY DEFAULT)
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly_fullrange.yaml
+# export EXTRA_TAG1=jrdbcodacfgfullrange
 
 # JRDB scratch ped only full range all augs (DOES LR SEARCH BY DEFAULT)
 export PORT=29500
 export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly_fullrange_allaugs.yaml
 export EXTRA_TAG1=jrdbcodacfgfullrange
 
-# JRDB scratch ped only 25m range all augs (DOES LR SEARCH BY DEFAULT)
-export PORT=29500
-export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly_allaugs.yaml
-export EXTRA_TAG1=jrdbcodacfg25mrange
+# # JRDB scratch ped only 25m range all augs (DOES LR SEARCH BY DEFAULT)
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/jrdb_models/centerhead/pvrcnn_pedonly_allaugs.yaml
+# export EXTRA_TAG1=jrdbcodacfg25mrange
 
-# JRDB finetune from CODa32
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly_finetune_headfull.yaml
-export EXTRA_TAG1=jrdbcoda32pretrained
-export PRETRAINED_MODEL1=../output/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly/coda32codacfgLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_2.pth
+# # JRDB finetune from CODa32
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly_finetune_headfull.yaml
+# export EXTRA_TAG1=jrdbcoda32pretrained
+# export PRETRAINED_MODEL1=../output/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly/coda32codacfgLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_2.pth
 
 # Launch regular models from scratch
 ibrun -n 1 -o 0 task_affinity singularity exec --nv ../st3d_latest.sif bash scripts/dist_train.sh 3 --cfg_file ${CONFIG_FILE1} --extra_tag ${EXTRA_TAG1} >> launcher_train_models_task0
