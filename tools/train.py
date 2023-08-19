@@ -376,6 +376,7 @@ def main():
         init_launch = True
         opt = "adam_onecycle" # Found through empirical testing
         lr_search = [cfg.OPTIMIZATION.LR, 5e-2, 1e-3, 5e-4] # Start with user lr
+        dolr_search = cfg.get('FINETUNE', None).get('LR_SEARCH', False)
         
         for lr_idx, lr in enumerate(lr_search):
             unstable_lr = False

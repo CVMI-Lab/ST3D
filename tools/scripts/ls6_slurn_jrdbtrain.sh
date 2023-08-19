@@ -31,10 +31,10 @@ export WANDB_API_KEY=dfd81f8955f7587d12b13da5256e56f80a89c014
 # export CONFIG_FILE1=cfgs/da-waymo-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
 # export EXTRA_TAG1=waymocodacfg
 
-# NUS ped only
-export PORT=29500
-export CONFIG_FILE1=cfgs/da-nus-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
-export EXTRA_TAG1=nuscodacfg
+# # NUS ped only
+# export PORT=29500
+# export CONFIG_FILE1=cfgs/da-nus-jrdb_models/centerhead_full/pvrcnn_pedonly.yaml
+# export EXTRA_TAG1=nuscodacfg
 
 # # JRDB scratch ped only no points filter
 # export PORT=29500
