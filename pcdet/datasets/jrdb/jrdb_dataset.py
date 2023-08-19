@@ -616,19 +616,40 @@ def convert_jrdb_to_kitti(root_path):
     train_input_set = root_path / 'data/jrdb/training/filelist.txt'
     test_input_set = root_path / 'data/jrdb/testing/filelist.txt'
 
+    def convert_imageset_to_idx(imageset):
+        # First 2 digits are the location, last 4 are the frame
+        imageset_idx_list = imageset[:, 1]
+        imageset_loc_list = imageset[:, 0]
+
+        num_images = len(imageset_idx_list)
+        imageset_full_idx = np.arange(0, num_images)
+        imageset_full_idx = np.array(["%06d"%idx for idx in imageset_full_idx])
+
+        return imageset_full_idx
+
     trainval_fullset = np.loadtxt(train_input_set, dtype=str, delimiter=" ") # Nx1
+    trainval_fullset_idx = convert_imageset_to_idx(trainval_fullset)
+    
+    # locations_list = trainval_fullset[:, 0]
+    # locations_set = []
+    # for location in locations_list:
+    #     if location not in locations_set:
+    #         locations_set.append(location)
+    # locations_dict = {loc: idx for idx, loc in enumerate(locations_set)}
+
     # Split train to train and validation based on JRDB recommendation
     val_loc_list = [
         "clark-center-2019-02-28_1", "gates-ai-lab-2019-02-08_0", "huang-2-2019-01-25_0", "meyer-green-2019-03-16_0",
         "nvidia-aud-2019-04-18_0", "tressider-2019-03-16_1", "tressider-2019-04-26_2"
     ]
     val_mask    = np.isin(trainval_fullset[:, 0], val_loc_list)
-    val_out_set = trainval_fullset[val_mask, 1] # Nx1
+    val_out_set = trainval_fullset_idx[val_mask] # Nx1
 
     train_mask      = np.isin(trainval_fullset[:, 0], val_loc_list, invert=True)
-    train_out_set   = trainval_fullset[train_mask, 1] # Nx1
+    train_out_set   = trainval_fullset_idx[train_mask] # Nx1
 
-    test_out_set    = np.loadtxt(test_input_set, dtype=str, delimiter=" ", usecols=1) # Nx1
+    test_fullset    = np.loadtxt(test_input_set, dtype=str, delimiter=" ") # Nx2
+    test_out_set = convert_imageset_to_idx(test_fullset)
 
     # Dump to imageset files
     imageset_dir = join(root_path, "data/jrdb/ImageSets")
