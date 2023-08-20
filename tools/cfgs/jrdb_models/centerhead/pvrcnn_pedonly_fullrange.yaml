@@ -5,15 +5,15 @@ DATA_CONFIG:
     BALANCED_RESAMPLING: True
     FOV_POINTS_ONLY: False
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdbdefaultaugs
+    RES: jrdbfullrange
     
 # DATA_CONFIG_TAR:
-#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
 #     TARGET: True
 #     FOV_POINTS_ONLY: False
 #     CLASS_NAMES: ['Pedestrian']
 #     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-#     RES: jrdbtest
+#     RES: jrdb25m
 
 MODEL:
     NAME: PVRCNN
