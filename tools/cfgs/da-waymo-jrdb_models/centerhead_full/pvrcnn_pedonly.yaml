@@ -7,13 +7,21 @@ DATA_CONFIG:
 
     SHIFT_COOR: [0.0, 0.0, 1.8]
 
+# DATA_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset_fullrange.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['Pedestrian']
+#     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+#     RES: fullrangejrdb
+
 DATA_CONFIG_TAR:
     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
     TARGET: True
     FOV_POINTS_ONLY: False
     CLASS_NAMES: ['Pedestrian']
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdb
+    RES: 25mjrdb
 
 MODEL:
     NAME: PVRCNN
@@ -74,6 +82,7 @@ MODEL:
         POST_PROCESSING:
             SCORE_THRESH: 0.1
             POST_CENTER_LIMIT_RANGE: [-25.0, -25.0, -2, 25.0, 25.0, 4] #[ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
+            # POST_CENTER_LIMIT_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]
             MAX_OBJ_PER_SAMPLE: 500
             NMS_CONFIG:
                 NMS_TYPE: nms_gpu
@@ -211,8 +220,8 @@ FINETUNE:
 OPTIMIZATION:
     NUM_EPOCHS: 30
     # BATCH_SIZE_PER_GPU: 12 # 44gb
-    BATCH_SIZE_PER_GPU: 6 # train on waymo
-    # BATCH_SIZE_PER_GPU: 4 # eval on jrdb
+    # BATCH_SIZE_PER_GPU: 6 # train on waymo
+    BATCH_SIZE_PER_GPU: 8 # eval on jrdb
     OPTIMIZER: adam_onecycle
     LR: 0.01
     WEIGHT_DECAY: 0.001
