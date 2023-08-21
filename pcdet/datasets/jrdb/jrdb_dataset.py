@@ -338,7 +338,7 @@ class JRDBDataset(DatasetTemplate):
         elif eval_metric=="jrdb":
             ap_result_str, ap_dict = kitti_eval.get_official_eval_result(eval_gt_annos, eval_det_annos, class_names)
             # Uncomment if you want to evaluate with JRDB's metric (precision recall curve)
-            # self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
+            self.dump_annos_to_jrdb(kwargs['output_path'], eval_gt_annos, eval_det_annos)
 
         return ap_result_str, ap_dict
 
