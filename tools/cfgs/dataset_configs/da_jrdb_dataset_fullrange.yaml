@@ -16,6 +16,21 @@ INFO_PATH: {
 DATA_AUGMENTOR:
     DISABLE_AUG_LIST: ['random_object_scaling', 'random_object_rotation']
     AUG_CONFIG_LIST:
+        - NAME: gt_sampling
+          USE_ROAD_PLANE: False
+          DB_INFO_PATH:
+              - jrdb_dbinfos_train.pkl
+          PREPARE: {
+             filter_by_min_points: ['Pedestrian:10'],
+             filter_by_difficulty: [-1],
+          }
+
+          SAMPLE_GROUPS: ['Pedestrian:10']
+          NUM_POINT_FEATURES: 4
+          DATABASE_WITH_FAKELIDAR: False
+          REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+          LIMIT_WHOLE_SCENE: True
+
         - NAME: random_object_scaling
           SCALE_UNIFORM_NOISE: [0.9, 1.1]
 
@@ -52,6 +67,7 @@ DATA_PROCESSOR:
 
     - NAME: transform_points_to_voxels
       VOXEL_SIZE: [0.1, 0.1, 0.15]
+      # VOXEL_SIZE: [0.05, 0.05, 0.1]
       MAX_POINTS_PER_VOXEL: 5
       MAX_NUMBER_OF_VOXELS: {
         'train': 80000,
