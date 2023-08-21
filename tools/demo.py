@@ -26,6 +26,7 @@ from pcdet.utils import common_utils
 from pcdet.datasets import CODataset
 from pcdet.datasets import JRDBDataset
 
+from pcdet.datasets.coda import coda_utils
 
 class DemoDataset(DatasetTemplate):
     def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ext='.bin'):
@@ -84,7 +85,6 @@ class DemoDataset(DatasetTemplate):
         data_dict = self.prepare_data(data_dict=input_dict)
         return data_dict
 
-
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/second.yaml',
@@ -100,30 +100,33 @@ def parse_config():
 
     return args, cfg
 
-
 def main():
     args, cfg = parse_config()
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
     use_dataset = "jrdb"
-    do_preds = True
+    gen_video = True
+    do_preds = True # Set to true to do inference, otherwise just views ground truth
     vis_preds = True
 
     if use_dataset=="coda":
         demo_dataset = CODataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=True, root_path=Path(args.data_path), logger=logger
         )
+        color_map=coda_utils.BBOX_ID_TO_COLOR
     elif use_dataset=="jrdb":
         demo_dataset = JRDBDataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger
         )
+        color_map = [(0, 1.0, 0)]
     else:
         demo_dataset = DemoDataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False,
             root_path=Path(args.data_path), ext=args.ext, logger=logger
         )
     
+    model=None
     if do_preds:
         model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=demo_dataset)
         model.load_params_from_file(filename=args.ckpt, logger=logger, to_cpu=True)
@@ -142,189 +145,136 @@ def main():
     # vis.get_render_option().point_size = 2.0
     # vis.get_render_option().background_color = np.zeros(3)
 
-    with torch.no_grad():
-        for idx, data_dict in enumerate(demo_dataset):
-            logger.info(f'Visualized sample index: \t{idx + 1}')
-            data_dict = demo_dataset.collate_batch([data_dict])
-            load_data_to_gpu(data_dict)
+    if gen_video:
+        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi")
+    else:
+        with torch.no_grad():
+            for idx, data_dict in enumerate(demo_dataset):
+                logger.info(f'Visualized sample index: \t{idx + 1}')
+                data_dict = demo_dataset.collate_batch([data_dict])
+                load_data_to_gpu(data_dict)
 
-            if not do_preds:
-                V.draw_scenes(points=data_dict['points'][:, 1:], gt_boxes=data_dict['gt_boxes'])
-            else:
-                pred_dicts, _ = model.forward(data_dict)
-
-                #### BEGIN for visualizing evaluation boxes
-                # Load saved predictions from pkl file
-                # import pickle
-                # preds_path = '/home/arthur/AMRL/Benchmarks/unsupda/ST3D/output/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly/coda32codacfgLR0.010000OPTadam_onecycle/eval/epoch_30/val/final_result/data'
-                # preds_file = preds_path + '/dt_annos.pkl'
-                # gt_file = preds_path + '/gt_annos.pkl'
-
-                # with open(preds_file, 'rb') as f:
-                #     pred_dict = pickle.load(f)
-
-                # with open(gt_file, 'rb') as f:
-                #     gt_dict = pickle.load(f)
-
-                # preds_labels = [1] * len(pred_dict[0]['name'])
-                # gt_labels = [1] * len(gt_dict[0]['name'])
-
-                # # Generate new gt boxes from loc, lwh
-                # calib = demo_dataset.get_calib("000000")
-                # loc = gt_dict[0]['location']
-                # dims = gt_dict[0]['dimensions']
-                # rots = gt_dict[0]['rotation_y']
-                # loc_lidar = calib.rect_to_lidar(loc)
-
-                # l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
-
-                # loc_lidar[:, 2] += h[:, 0] / 2
-                # gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
-
-                # # Generate new pred boxes from loc, lwh
-                # loc = pred_dict[0]['location']
-                # dims = pred_dict[0]['dimensions']
-                # rots = pred_dict[0]['rotation_y']
-                # loc_lidar = calib.rect_to_lidar(loc)
-
-                # l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
-
-                # loc_lidar[:, 2] += h[:, 0] / 2
-                # pred_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
-                
-                # V.draw_scenes(
-                #     points=data_dict['points'][:, 1:], ref_boxes=pred_boxes_lidar,
-                #     ref_scores=pred_dict[0]['score'], ref_labels=preds_labels,
-                #     gt_boxes=gt_boxes_lidar
-                # )
-                # V.draw_scenes(
-                #     points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                #     ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
-                #     gt_boxes=gt_dict[0]['gt_boxes_lidar']
-                # )
-
-                #### END for visualizing evaluation boxes
-
-                # These work!
-                V.draw_scenes(
-                    points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                    ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
-                    gt_boxes=data_dict['gt_boxes']
-                )
-
-                if vis_preds:
-                    V.draw_scenes(
-                        points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                        ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
-                        gt_boxes=data_dict['gt_boxes']
-                    )
+                if not do_preds:
+                    V.draw_scenes(points=data_dict['points'][:, 1:], gt_boxes=data_dict['gt_boxes'])
                 else:
-                    # x y z l w h yaw
-                    pc_filepath = demo_dataset.sample_file_list[idx]
-                    frame = pc_filepath.split('/')[-1].split('.')[0]
-                    traj_idx = int(frame[:2])
-                    frame_idx = int(frame[2:])
-                    # Save into json files to preds directory for img visualization
-                    pred_boxes = pred_dicts[0]['pred_boxes'].cpu().numpy()
-                    pred_labels = pred_dicts[0]['pred_labels'].cpu().numpy()
-                    json_dict = {
-                        "3dbbox": [],
-                        "filetype": "json",
-                        "frame": str(frame_idx)
-                    }
-                    obj_dict_template = {
-                        "classId": "",
-                        "instanceId": "",
-                        "cX": 0.0,
-                        "cY": 0.0,
-                        "cZ": 0.0,
-                        "h": 0.0,
-                        "l": 0.0,
-                        "w": 0.0,
-                        "labelAttributes": {
-                            "isOccluded": "None"
-                        },
-                        "r": 0.0,
-                        "p": 0.0,
-                        "y": 0.0
-                    }
+                    pred_dicts, _ = model.forward(data_dict)
 
-                    for box_idx, box in enumerate(pred_boxes):
-                        label_idx = pred_labels[box_idx]
-                        label_name = class_names[label_idx-1]
-                        obj_dict = copy.deepcopy(obj_dict_template)
-                        obj_dict["cX"] = float(box[0])
-                        obj_dict["cY"] = float(box[1])
-                        obj_dict["cZ"] = float(box[2])
-                        obj_dict["l"] = float(box[3])
-                        obj_dict["w"] = float(box[4])
-                        obj_dict["h"] = float(box[5])
-                        obj_dict["y"] = float(box[6])
-                        obj_dict["classId"] = label_name
-                        obj_dict["instanceId"] = "%s:%i" % (label_name, box_idx)
-                        json_dict["3dbbox"].append(obj_dict)
+                    #### BEGIN for visualizing evaluation boxes
+                    # Load saved predictions from pkl file
+                    # import pickle
+                    # preds_path = '/home/arthur/AMRL/Benchmarks/unsupda/ST3D/output/da-coda-jrdb_models/centerhead_full/pvrcnn_32_pedonly/coda32codacfgLR0.010000OPTadam_onecycle/eval/epoch_30/val/final_result/data'
+                    # preds_file = preds_path + '/dt_annos.pkl'
+                    # gt_file = preds_path + '/gt_annos.pkl'
 
-                    traj = 7
-                    json_filename = "3d_bbox_os1_%i_%i.json" % (traj_idx, frame_idx)
-                    traj_dir = os.path.join("preds", str(traj_idx))
-                    if not os.path.exists(traj_dir):
-                        os.mkdir(traj_dir)
-                    json_path = os.path.join(traj_dir, json_filename)
-                    json_file = open(json_path, "w+")
-                    json_file.write(json.dumps(json_dict, indent=2))
-                    json_file.close()
+                    # with open(preds_file, 'rb') as f:
+                    #     pred_dict = pickle.load(f)
 
-                # V.draw_scenes(
-                #     points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                #     ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'], idx=idx
-                # )
-                # points=data_dict['points'][:, 1:]
-                # ref_boxes=pred_dicts[0]['pred_boxes']
-                # ref_scores=pred_dicts[0]['pred_scores']
-                # ref_labels=pred_dicts[0]['pred_labels']
-                # draw_origin=True
-                # point_colors=None
-                # gt_boxes=None
+                    # with open(gt_file, 'rb') as f:
+                    #     gt_dict = pickle.load(f)
 
-                # if isinstance(points, torch.Tensor):
-                #     points = points.cpu().numpy()
-                # if isinstance(gt_boxes, torch.Tensor):
-                #     gt_boxes = gt_boxes.cpu().numpy()
-                # if isinstance(ref_boxes, torch.Tensor):
-                #     ref_boxes = ref_boxes.cpu().numpy()
+                    # preds_labels = [1] * len(pred_dict[0]['name'])
+                    # gt_labels = [1] * len(gt_dict[0]['name'])
 
-                # # draw origin
-                # if draw_origin and isfirstrun:
-                #     axis_pcd = open3d.geometry.TriangleMesh.create_coordinate_frame(size=1.0, origin=[0, 0, 0])
-                #     vis.add_geometry(axis_pcd)
-                # # elif draw_origin:
-                # #     vis.update_geometry(axis_pcd)
+                    # # Generate new gt boxes from loc, lwh
+                    # calib = demo_dataset.get_calib("000000")
+                    # loc = gt_dict[0]['location']
+                    # dims = gt_dict[0]['dimensions']
+                    # rots = gt_dict[0]['rotation_y']
+                    # loc_lidar = calib.rect_to_lidar(loc)
 
-                # # pts = open3d.geometry.PointCloud()
-                # pts.points = open3d.utility.Vector3dVector(points[:, :3])
+                    # l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
 
-                # if isfirstrun:
-                #     vis.add_geometry(pts)
-                # else:
-                #     vis.update_geometry(pts)
-                # if point_colors is None:
-                #     pts.colors = open3d.utility.Vector3dVector(np.ones((points.shape[0], 3)))
-                # else:
-                #     pts.colors = open3d.utility.Vector3dVector(point_colors)
+                    # loc_lidar[:, 2] += h[:, 0] / 2
+                    # gt_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
 
-                # if gt_boxes is not None:
-                #     vis = draw_box(vis, gt_boxes, (0, 0, 1), isfirstrun=isfirstrun)
+                    # # Generate new pred boxes from loc, lwh
+                    # loc = pred_dict[0]['location']
+                    # dims = pred_dict[0]['dimensions']
+                    # rots = pred_dict[0]['rotation_y']
+                    # loc_lidar = calib.rect_to_lidar(loc)
 
-                # if ref_boxes is not None:
-                #     vis = draw_box(vis, ref_boxes, (0, 1, 0), ref_labels, ref_scores, isfirstrun=isfirstrun)
-                # vis.poll_events()
-                # vis.update_renderer()
-                # vis.capture_screen_image("vis_imgs/temp_%04d.jpg" % idx)
-                # isfirstrun=False
-                # time.sleep(1)
+                    # l, h, w = dims[:, 0:1], dims[:, 1:2], dims[:, 2:3]
 
-                # if not OPEN3D_FLAG:
-                #     mlab.show(stop=True)
+                    # loc_lidar[:, 2] += h[:, 0] / 2
+                    # pred_boxes_lidar = np.concatenate([loc_lidar, l, w, h, -(np.pi / 2 + rots[..., np.newaxis])], axis=1)
+                    
+                    # V.draw_scenes(
+                    #     points=data_dict['points'][:, 1:], ref_boxes=pred_boxes_lidar,
+                    #     ref_scores=pred_dict[0]['score'], ref_labels=preds_labels,
+                    #     gt_boxes=gt_boxes_lidar
+                    # )
+                    # V.draw_scenes(
+                    #     points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
+                    #     ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
+                    #     gt_boxes=gt_dict[0]['gt_boxes_lidar']
+                    # )
+
+                    #### END for visualizing evaluation boxes
+
+                    if vis_preds:
+                        V.draw_scenes(
+                            points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
+                            ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
+                            gt_boxes=data_dict['gt_boxes']
+                        )
+                    else:
+                        # x y z l w h yaw
+                        pc_filepath = demo_dataset.sample_file_list[idx]
+                        frame = pc_filepath.split('/')[-1].split('.')[0]
+                        traj_idx = int(frame[:2])
+                        frame_idx = int(frame[2:])
+                        # Save into json files to preds directory for img visualization
+                        pred_boxes = pred_dicts[0]['pred_boxes'].cpu().numpy()
+                        pred_labels = pred_dicts[0]['pred_labels'].cpu().numpy()
+                        json_dict = {
+                            "3dbbox": [],
+                            "filetype": "json",
+                            "frame": str(frame_idx)
+                        }
+                        obj_dict_template = {
+                            "classId": "",
+                            "instanceId": "",
+                            "cX": 0.0,
+                            "cY": 0.0,
+                            "cZ": 0.0,
+                            "h": 0.0,
+                            "l": 0.0,
+                            "w": 0.0,
+                            "labelAttributes": {
+                                "isOccluded": "None"
+                            },
+                            "r": 0.0,
+                            "p": 0.0,
+                            "y": 0.0
+                        }
+
+                        for box_idx, box in enumerate(pred_boxes):
+                            label_idx = pred_labels[box_idx]
+                            label_name = class_names[label_idx-1]
+                            obj_dict = copy.deepcopy(obj_dict_template)
+                            obj_dict["cX"] = float(box[0])
+                            obj_dict["cY"] = float(box[1])
+                            obj_dict["cZ"] = float(box[2])
+                            obj_dict["l"] = float(box[3])
+                            obj_dict["w"] = float(box[4])
+                            obj_dict["h"] = float(box[5])
+                            obj_dict["y"] = float(box[6])
+                            obj_dict["classId"] = label_name
+                            obj_dict["instanceId"] = "%s:%i" % (label_name, box_idx)
+                            json_dict["3dbbox"].append(obj_dict)
+
+                        traj = 7
+                        json_filename = "3d_bbox_os1_%i_%i.json" % (traj_idx, frame_idx)
+                        traj_dir = os.path.join("preds", str(traj_idx))
+                        if not os.path.exists(traj_dir):
+                            os.mkdir(traj_dir)
+                        json_path = os.path.join(traj_dir, json_filename)
+                        json_file = open(json_path, "w+")
+                        json_file.write(json.dumps(json_dict, indent=2))
+                        json_file.close()
+
+                    # if not OPEN3D_FLAG:
+                    #     mlab.show(stop=True)
 
     logger.info('Demo done.')
 
