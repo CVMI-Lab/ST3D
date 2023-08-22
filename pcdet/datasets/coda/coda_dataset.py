@@ -519,7 +519,7 @@ def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4)
     print('CODa info trainval file is saved to %s' % trainval_filename)
 
     dataset.set_split('test')
-    coda_infos_test = dataset.get_infos(num_workers=workers, has_label=False, count_inside_pts=False)
+    coda_infos_test = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
     with open(test_filename, 'wb') as f:
         pickle.dump(coda_infos_test, f)
     print('CODa info test file is saved to %s' % test_filename)
