@@ -28,22 +28,8 @@ class CODataset(DatasetTemplate):
         self.split = self.dataset_cfg.DATA_SPLIT[self.mode]
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
 
-        if len(demo_splits)==0:
-            split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
-            self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
-        else:
-            self.sample_id_list = []
-            for split in demo_splits:
-                split_dir = self.root_path / 'ImageSets' / (split + '.txt')
-                sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
-
-                if sample_id_list is not None:
-                    print(f'Adding split {split} to sample split list...')
-                    self.sample_id_list.extend(sample_id_list)
-                else:
-                    print(f'Split {split} is empty for demo!')
-            # Sort list by idx as well, indices for same video are contiguous
-            self.sample_id_list = sorted(self.sample_id_list, key=lambda x: int(x))
+        # Set sample idx split from imagesets, sorts if using demo
+        self.set_sample_id_list(self.split)
 
         self.coda_infos = []
         self.include_coda_data(self.mode)
@@ -83,7 +69,6 @@ class CODataset(DatasetTemplate):
                         coda_infos.extend(infos)
 
         self.coda_infos.extend(coda_infos)
-        import pdb; pdb.set_trace()
         if self.logger is not None:
             self.logger.info('Total samples for CODa dataset: %d' % (len(self.coda_infos)))
     
@@ -125,16 +110,31 @@ class CODataset(DatasetTemplate):
 
         return sampled_infos
 
+    def set_sample_id_list(self, split):
+        if len(self.demo_splits)==0:
+            split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
+            self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+        else:
+            self.sample_id_list = []
+            for split in self.demo_splits:
+                split_dir = self.root_path / 'ImageSets' / (split + '.txt')
+                sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+
+                if sample_id_list is not None:
+                    print(f'Adding split {split} to sample split list...')
+                    self.sample_id_list.extend(sample_id_list)
+                else:
+                    print(f'Split {split} is empty for demo!')
+            # Sort list by idx as well, indices for same video are contiguous
+            self.sample_id_list = sorted(self.sample_id_list, key=lambda x: int(x))
+
     def set_split(self, split):
         super().__init__(
             dataset_cfg=self.dataset_cfg, class_names=self.class_names, training=self.training, root_path=self.root_path, logger=self.logger
         )
         self.split = split
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
-
-        split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
-
-        self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+        self.set_sample_id_list(split)
 
     def get_lidar(self, idx):
         lidar_file = self.root_split_path / 'velodyne' / ('%s.bin' % idx)
@@ -526,7 +526,7 @@ class CODataset(DatasetTemplate):
 
 
 def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
-    dataset = CODataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
+    dataset = CODataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False, demo_splits=["train", "test", "val"])
     train_split, val_split = 'train', 'val'
 
     train_filename = save_path / ('coda_infos_%s.pkl' % train_split)
@@ -535,7 +535,7 @@ def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4)
     test_filename = save_path / 'coda_infos_test.pkl'
 
     print('---------------Start to generate data infos----3-----------')
-
+    
     dataset.set_split(train_split)
     coda_infos_train = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
     with open(train_filename, 'wb') as f:
@@ -636,8 +636,8 @@ if __name__ == '__main__':
                 'Skateboard',
                 'WaterFountain'
             ],
-            data_path=ROOT_DIR / 'data' / 'coda16_allclass_full',
-            save_path=ROOT_DIR / 'data' / 'coda16_allclass_full',
+            data_path=ROOT_DIR / 'data' / 'coda128_allclass_full_inorder',
+            save_path=ROOT_DIR / 'data' / 'coda128_allclass_full_inorder',
         )
 """
 Full Class List
