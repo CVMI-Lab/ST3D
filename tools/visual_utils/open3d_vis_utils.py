@@ -20,7 +20,7 @@ box_colormap = [
     [1, 1, 0],
 ]
 
-MAX_LINE_SEGMENTS = 1000
+MAX_LINE_SEGMENTS = 2000
 
 def get_coor_colors(obj_labels):
     """
@@ -61,7 +61,7 @@ def normalized(a, axis=-1, order=2):
 
 """BEGIN LINE MESH OBJECT"""
 class LineMesh(object):
-    def __init__(self, points, lines=None, colors=[0, 1, 0], radius=0.15, cylinder_segments=[], update_idx=0):
+    def __init__(self, points, lines=None, colors=[0, 1, 0], radius=0.25, cylinder_segments=[], update_idx=0):
         """Creates a line represented as sequence of cylinder triangular meshes
 
         Arguments:
@@ -172,7 +172,11 @@ def build_bbox(bboxes, o3d_geos, color_map, bbox_radius=0.05):
     for i in range(bboxes.shape[0]):
         line_set, box3d = translate_boxes_to_o3d_instance(bboxes[i])
         bbox_corners_np = np.asarray(box3d.get_box_points())
-        bbox_color = color_map[bbox_labels[i]-1] # offset one idx
+        
+        bbox_label_idx = bbox_labels[i]-1
+        assert bbox_label_idx>=0 and bbox_label_idx<len(color_map), \
+            f'Bad color map idx available {len(color_map)}, indexed {bbox_label_idx}'
+        bbox_color = color_map[bbox_label_idx] # offset one idx
 
         lines = [   [0, 1], [0, 2], [2, 7], [1, 7], 
                     [3, 5], [3, 6], [5, 4], [6, 4],
@@ -204,7 +208,8 @@ def visualize_3d(
                 zoom=935.3074360871938,
                 window_width=1920, window_height=1080,
                 draw_origin=True,
-                save_vid_filename=""
+                save_vid_filename="",
+                show_gt=True
                 ):
     from pcdet.models import build_network, load_data_to_gpu
     def reset_line_mesh_list(line_mesh_list):
@@ -259,6 +264,7 @@ def visualize_3d(
     bbox_mesh_object = o3d.geometry.TriangleMesh.create_cylinder(0.01, 0.01) # bbox_radius, line length
     gt_bbox_geos = [copy.deepcopy(bbox_mesh_object) for _ in range(MAX_LINE_SEGMENTS)]
     dt_bbox_geos = [copy.deepcopy(bbox_mesh_object) for _ in range(MAX_LINE_SEGMENTS)]
+    gt_bbox_color_map = [[1, 0, 0]] * len(color_map) # Red for all classes
     with torch.no_grad():
         for idx, data_dict in enumerate(dataloader):
             logger.info(f'Visualizing sample index: \t{idx + 1}')
@@ -274,7 +280,8 @@ def visualize_3d(
                 pred_boxes = torch.hstack((pred_dicts[0]['pred_boxes'], pred_dicts[0]['pred_labels'].reshape(-1, 1)))
                 dt_bbox_geos = build_bbox(pred_boxes, dt_bbox_geos, color_map)
 
-            gt_bbox_geos = build_bbox(data_dict['gt_boxes'], gt_bbox_geos, [[1, 0, 0]]) # Reserve RED for gt boxes
+            if show_gt and 'gt_boxes' in data_dict.keys():
+                gt_bbox_geos = build_bbox(data_dict['gt_boxes'], gt_bbox_geos, gt_bbox_color_map) # Reserve RED for gt boxes
 
             pcd_geo = build_pcd(data_dict['points'][:, 1:], pcd_geo)
 

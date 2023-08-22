@@ -105,14 +105,16 @@ def main():
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
-    use_dataset = "jrdb"
+    use_dataset = "coda"
     gen_video = True
     do_preds = True # Set to true to do inference, otherwise just views ground truth
     vis_preds = True
+    show_gt = False
 
     if use_dataset=="coda":
+        demo_splits = ["train", "test", "val"] # TODO: use test split later to avoid frame drops
         demo_dataset = CODataset(
-            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=True, root_path=Path(args.data_path), logger=logger
+            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger, demo_splits=demo_splits
         )
         color_map=coda_utils.BBOX_ID_TO_COLOR
     elif use_dataset=="jrdb":
@@ -145,8 +147,8 @@ def main():
     # vis.get_render_option().point_size = 2.0
     # vis.get_render_option().background_color = np.zeros(3)
 
-    if gen_video:
-        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi")
+    if gen_video and vis_preds:
+        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi", show_gt=show_gt)
     else:
         with torch.no_grad():
             for idx, data_dict in enumerate(demo_dataset):
