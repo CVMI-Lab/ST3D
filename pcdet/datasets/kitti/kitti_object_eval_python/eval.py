@@ -30,13 +30,15 @@ def get_thresholds(scores: np.ndarray, num_gt, num_sample_pts=41):
 def clean_data(gt_anno, dt_anno, current_class, difficulty):
     # CLASS_NAMES = ['car', 'pedestrian', 'cyclist', 'van', 'person_sitting', 'truck']
     #allclass
-    CLASS_NAMES = ['Pedestrian'] # FOR JRDB Only
-    # [ 'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight', 'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
-    # 'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
-    # 'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
-    # 'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
-    # 'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
-    # 'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain']
+    # CLASS_NAMES = ['Pedestrian'] # FOR JRDB Only
+
+    # For non JRDB
+    CLASS_NAMES = [ 'Car', 'Pedestrian', 'Cyclist', 'Motorcycle', 'Scooter', 'Tree', 'TrafficSign', 'Canopy', 'TrafficLight', 'BikeRack', 'Bollard', 'ConstructionBarrier', 'ParkingKiosk', 'Mailbox', 'FireHydrant','FreestandingPlant', 'Pole', 'InformationalSign', 'Door', 'Fence', 'Railing', 'Cone', 'Chair', 'Bench',
+    'Table', 'TrashCan', 'NewspaperDispenser', 'RoomLabel', 'Stanchion', 'SanitizerDispenser',
+    'CondimentDispenser', 'VendingMachine', 'EmergencyAidKit', 'FireExtinguisher', 'Computer', 'Television',
+    'Other', 'PickupTruck', 'DeliveryTruck', 'ServiceVehicle', 'UtilityVehicle', 'FireAlarm', 'ATM', 'Cart',
+    'Couch', 'TrafficArm', 'WallSign', 'FloorSign', 'DoorSwitch', 'EmergencyPhone', 'Dumpster',
+    'VacuumCleaner', 'Segway', 'Bus', 'Skateboard', 'WaterFountain']
     MIN_HEIGHT = [40, 25, 25]
     MAX_OCCLUSION = [0, 1, 2]
     MAX_TRUNCATION = [0.15, 0.3, 0.5]
@@ -727,19 +729,19 @@ def fuse_stat_dict_parts(sd_full, PR_detail_dict=None, num_metrics=int(3), compu
 
 def get_official_eval_result(gt_annos, dt_annos, current_classes, PR_detail_dict=None):
     # FOR JRDB
-    overlap_0_7 = np.array([[0.3, 0.3, 0.3, 0.3, 0.3, 0.3], 
-                            [0.3, 0.3, 0.3, 0.3, 0.3, 0.3],
-                            [0.3, 0.3, 0.3, 0.3, 0.3, 0.3]])
-    overlap_0_5 = np.array([[0.3, 0.3, 0.3, 0.3, 0.3, 0.3], 
-                            [0.3, 0.3, 0.3, 0.3, 0.3, 0.3],
-                            [0.3, 0.3, 0.3, 0.3, 0.3, 0.3]])
-    # overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7,
-    #                          0.5, 0.7], [0.7, 0.5, 0.5, 0.7, 0.5, 0.7],
-    #                         [0.7, 0.5, 0.5, 0.7, 0.5, 0.7]])
-    # overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.7,
-    #                          0.5, 0.5], [0.5, 0.25, 0.25, 0.5, 0.25, 0.5],
-    #                         [0.5, 0.25, 0.25, 0.5, 0.25, 0.5]])
+    # overlap_0_7 = np.array([[0.3, 0.5, 0.5, 0.7, 0.5, 0.7], 
+    #                         [0.3, 0.5, 0.5, 0.7, 0.5, 0.7],
+    #                         [0.3, 0.5, 0.5, 0.7, 0.5, 0.7]])
+    # overlap_0_5 = np.array([[0.3, 0.5, 0.5, 0.7, 0.5, 0.5], 
+    #                         [0.3, 0.25, 0.25, 0.5, 0.25, 0.5],
+    #                         [0.3, 0.25, 0.25, 0.5, 0.25, 0.5]])
     # min_overlaps = np.stack([overlap_0_7, overlap_0_5], axis=0)  # [2, 3, 5]
+    overlap_0_7 = np.array([[0.7, 0.5, 0.5, 0.7,
+                             0.5, 0.7], [0.7, 0.5, 0.5, 0.7, 0.5, 0.7],
+                            [0.7, 0.5, 0.5, 0.7, 0.5, 0.7]])
+    overlap_0_5 = np.array([[0.7, 0.5, 0.5, 0.7,
+                             0.5, 0.5], [0.5, 0.25, 0.25, 0.5, 0.25, 0.5],
+                            [0.5, 0.25, 0.25, 0.5, 0.25, 0.5]])
     # class_to_name = {
     #     0: 'Car',
     #     1: 'Pedestrian',
