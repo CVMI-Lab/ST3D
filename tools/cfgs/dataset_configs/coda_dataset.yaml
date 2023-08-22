@@ -12,6 +12,7 @@ DATA_SPLIT: {
 INFO_PATH: {
     'train': [coda_infos_train.pkl],
     'test': [coda_infos_val.pkl],
+    'testreal': [coda_infos_test.pkl]
 }
 
 FOV_POINTS_ONLY: True
