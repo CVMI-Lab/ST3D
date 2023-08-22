@@ -33,13 +33,13 @@ DATA_CONFIG_TAR:
     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
     RES: jrdbfullrange
 
-DATA1_CONFIG_TAR:
-    _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
-    TARGET: True
-    FOV_POINTS_ONLY: False
-    CLASS_NAMES: ['pedestrian']
-    SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
-    RES: jrdb25m
+# DATA1_CONFIG_TAR:
+#     _BASE_CONFIG_: cfgs/dataset_configs/da_jrdb_dataset.yaml
+#     TARGET: True
+#     FOV_POINTS_ONLY: False
+#     CLASS_NAMES: ['pedestrian']
+#     SHIFT_COOR: [0.0, 0.0, 0.8] # Should roughly be height of lidar from ground
+#     RES: jrdb25m
 
 MODEL:
     NAME: PVRCNN
@@ -219,7 +219,7 @@ MODEL:
         SCORE_THRESH: 0.1
         OUTPUT_RAW_SCORE: False
 
-        EVAL_METRIC: kitti
+        EVAL_METRIC: jrdb
 
         NMS_CONFIG:
             MULTI_CLASSES_NMS: False
