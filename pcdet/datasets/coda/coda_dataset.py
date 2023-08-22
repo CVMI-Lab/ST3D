@@ -10,7 +10,7 @@ from ..dataset import DatasetTemplate
 
 
 class CODataset(DatasetTemplate):
-    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None):
+    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None, demo_splits=[]):
         """
         Args:
             root_path:
@@ -24,32 +24,66 @@ class CODataset(DatasetTemplate):
             ps_label_dir=ps_label_dir
         )
 
+        self.demo_splits = demo_splits # Use all frames in trainval
         self.split = self.dataset_cfg.DATA_SPLIT[self.mode]
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
-        split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
-        self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+
+        if len(demo_splits)==0:
+            split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
+            self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+        else:
+            self.sample_id_list = []
+            for split in demo_splits:
+                split_dir = self.root_path / 'ImageSets' / (split + '.txt')
+                sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+
+                if sample_id_list is not None:
+                    print(f'Adding split {split} to sample split list...')
+                    self.sample_id_list.extend(sample_id_list)
+                else:
+                    print(f'Split {split} is empty for demo!')
+            # Sort list by idx as well, indices for same video are contiguous
+            self.sample_id_list = sorted(self.sample_id_list, key=lambda x: int(x))
 
         self.coda_infos = []
         self.include_coda_data(self.mode)
-        
+
         if self.training and self.dataset_cfg.get('BALANCED_RESAMPLING', False):
             self.coda_infos = self.balanced_infos_resampling(self.coda_infos)
 
     def include_coda_data(self, mode):
+        """
+        Assumes imageset is generated before running create_coda_dataset. Important for maintaing that
+        order of self.coda_infos matches assigned imageset idx
+        """
         if self.logger is not None:
             self.logger.info('Loading CODa dataset')
         coda_infos = []
 
-        for info_path in self.dataset_cfg.INFO_PATH[mode]:
-            info_path = self.root_path / info_path
-            if not info_path.exists():
-                continue
-            with open(info_path, 'rb') as f:
-                infos = pickle.load(f)
-                coda_infos.extend(infos)
+        if len(self.demo_splits)==0:
+            for info_path in self.dataset_cfg.INFO_PATH[mode]:
+                info_path = self.root_path / info_path
+                if not info_path.exists():
+                    continue
+                with open(info_path, 'rb') as f:
+                    infos = pickle.load(f)
+                    coda_infos.extend(infos)
+        else:
+            for split in self.demo_splits:
+                mode = self.dataset_cfg.DATA_SPLIT[split]
+    
+                for info_path in self.dataset_cfg.INFO_PATH[mode]:
+                    info_path = self.root_path / info_path
+                    if not info_path.exists():
+                        print(f'Info path {info_path} does not exist, skipping')
+                        continue
+                    with open(info_path, 'rb') as f:
+                        infos = pickle.load(f)
+                        print(f'Adding infos {len(infos)} for split {split} and mode {mode}...')
+                        coda_infos.extend(infos)
 
         self.coda_infos.extend(coda_infos)
-
+        import pdb; pdb.set_trace()
         if self.logger is not None:
             self.logger.info('Total samples for CODa dataset: %d' % (len(self.coda_infos)))
     
@@ -422,7 +456,7 @@ class CODataset(DatasetTemplate):
         # index = 4
         if self._merge_all_iters_to_one_epoch:
             index = index % len(self.coda_infos)
-
+        
         info = copy.deepcopy(self.coda_infos[index])
         # print("before if name annos ", info['annos']['name'].shape)
         # print("before if bbox annos ", info['annos']['bbox'].shape)
@@ -519,7 +553,7 @@ def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4)
     print('CODa info trainval file is saved to %s' % trainval_filename)
 
     dataset.set_split('test')
-    coda_infos_test = dataset.get_infos(num_workers=workers, has_label=False, count_inside_pts=False)
+    coda_infos_test = dataset.get_infos(num_workers=workers, has_label=True, count_inside_pts=True)
     with open(test_filename, 'wb') as f:
         pickle.dump(coda_infos_test, f)
     print('CODa info test file is saved to %s' % test_filename)

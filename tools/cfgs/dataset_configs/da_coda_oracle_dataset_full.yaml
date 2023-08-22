@@ -5,12 +5,14 @@ POINT_CLOUD_RANGE: [-75.2, -75.2, -2, 75.2, 75.2, 4]
 
 DATA_SPLIT: {
     'train': train,
-    'test': val
+    'test': val,
+    'val': test # hack bc test split in coda is used as validation
 }
 
 INFO_PATH: {
     'train': [coda_infos_train.pkl],
     'test': [coda_infos_val.pkl],
+    'val': [coda_infos_test.pkl]
 }
 
 DATA_AUGMENTOR:
