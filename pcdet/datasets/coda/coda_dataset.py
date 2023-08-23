@@ -39,7 +39,7 @@ class CODataset(DatasetTemplate):
 
         # Build idx to imageset idx map
         if self.use_sorted_imageset:
-            self.build_idx_to_imageset_map():
+            self.build_idx_to_imageset_map()
 
     def include_coda_data(self, mode):
         """
@@ -107,9 +107,10 @@ class CODataset(DatasetTemplate):
         #1 Iterate through all indices for all imagesets
         splits = ["train", "test", "val"]
 
-        all_coda_infos = []
-        num_samples = 0
         # Create conglomerate of all infos list
+        self.lidar_idx_subdir_map     = {}
+        all_coda_infos              = []
+        infos_lidar_idx_list        = []
         for split in splits:
             mode = self.dataset_cfg.DATA_SPLIT[split]
             for info_path in self.dataset_cfg.INFO_PATH[mode]:
@@ -119,14 +120,15 @@ class CODataset(DatasetTemplate):
                     print(f'Adding infos {len(infos)} for split {split} and mode {mode}...')
                     all_coda_infos.extend(infos)
 
-        infos_lidar_idx_list = []
-        for info_idx, info in all_coda_infos:
-            infos_lidar_idx_list.append(info['point_cloud']['lidar_idx']) 
+                    for info_idx, info in enumerate(infos):
+                        infos_lidar_idx_list.append(info['point_cloud']['lidar_idx'])
+                        self.lidar_idx_subdir_map[info['point_cloud']['lidar_idx']] = \
+                            'training' if mode != 'test' else 'testing'
 
-        infos_lidar_idx_np = np.array(infos_lidar_idx_list)
-
+        infos_lidar_idx_np = np.array([int(lidar_idx) for lidar_idx in infos_lidar_idx_list])
+        import pdb; pdb.set_trace()
         # Use the following in getitem
-        self.sorted_lidar_idx_map = np.argsort(infos_lidar_idx_np)
+        self.sorted_lidar_idx_map   = np.argsort(infos_lidar_idx_np)
         self.coda_infos = all_coda_infos
 
     def set_sample_id_list(self, split):
@@ -142,28 +144,48 @@ class CODataset(DatasetTemplate):
         self.set_sample_id_list(split)
 
     def get_lidar(self, idx):
-        lidar_file = self.root_split_path / 'velodyne' / ('%s.bin' % idx)
+        root_split_path = self.root_split_path
+        if self.use_sorted_imageset:
+            root_split_path = self.root_path / self.lidar_idx_subdir_map[idx]
+
+        lidar_file = root_split_path / 'velodyne' / ('%s.bin' % idx)
         assert lidar_file.exists(), "Lidar files %s " % str(lidar_file)
         
         return np.fromfile(str(lidar_file), dtype=np.float32).reshape(-1, 4)
 
     def get_image_shape(self, idx):
-        img_file = self.root_split_path / 'image_0' / ('%s.jpg' % idx)
+        root_split_path = self.root_split_path
+        if self.use_sorted_imageset:
+            root_split_path = self.root_path / self.lidar_idx_subdir_map[idx]
+
+        img_file = root_split_path / 'image_0' / ('%s.jpg' % idx)
         assert img_file.exists(), "Image file %s does not exist" % img_file
         return np.array(io.imread(img_file).shape[:2], dtype=np.int32)
 
     def get_label(self, idx):
-        label_file = self.root_split_path / 'label_0' / ('%s.txt' % idx)
+        root_split_path = self.root_split_path
+        if self.use_sorted_imageset:
+            root_split_path = self.root_path / self.lidar_idx_subdir_map[idx]
+
+        label_file = root_split_path / 'label_0' / ('%s.txt' % idx)
         assert label_file.exists(), "Label file %s does not exist" % label_file
         return object3d_kitti.get_objects_from_label(label_file)
 
     def get_calib(self, idx):
-        calib_file = self.root_split_path / 'calib' / ('%s.txt' % idx)
+        root_split_path = self.root_split_path
+        if self.use_sorted_imageset:
+            root_split_path = self.root_path / self.lidar_idx_subdir_map[idx]
+        
+        calib_file = root_split_path / 'calib' / ('%s.txt' % idx)
         assert calib_file.exists()
         return calibration_kitti.Calibration(calib_file, use_coda=True)
 
     def get_road_plane(self, idx):
-        plane_file = self.root_split_path / 'planes' / ('%s.txt' % idx)
+        root_split_path = self.root_split_path
+        if self.use_sorted_imageset:
+            root_split_path = self.root_path / self.lidar_idx_subdir_map[idx]
+
+        plane_file = root_split_path / 'planes' / ('%s.txt' % idx)
         if not plane_file.exists():
             return None
 
