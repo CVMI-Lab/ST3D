@@ -112,9 +112,10 @@ class CODataset(DatasetTemplate):
         all_coda_infos              = []
         infos_lidar_idx_list        = []
         for split in splits:
-            mode = self.dataset_cfg.DATA_SPLIT[split]
-            for info_path in self.dataset_cfg.INFO_PATH[mode]:
+            for info_path in self.dataset_cfg.INFO_PATH[split]:
                 info_path = self.root_path / info_path
+
+                mode = self.dataset_cfg.DATA_SPLIT[split]
                 with open(info_path, 'rb') as f:
                     infos = pickle.load(f)
                     print(f'Adding infos {len(infos)} for split {split} and mode {mode}...')
@@ -123,10 +124,10 @@ class CODataset(DatasetTemplate):
                     for info_idx, info in enumerate(infos):
                         infos_lidar_idx_list.append(info['point_cloud']['lidar_idx'])
                         self.lidar_idx_subdir_map[info['point_cloud']['lidar_idx']] = \
-                            'training' if mode != 'test' else 'testing'
+                            'training' if mode != 'test' else 'testing' # 
 
         infos_lidar_idx_np = np.array([int(lidar_idx) for lidar_idx in infos_lidar_idx_list])
-        import pdb; pdb.set_trace()
+
         # Use the following in getitem
         self.sorted_lidar_idx_map   = np.argsort(infos_lidar_idx_np)
         self.coda_infos = all_coda_infos
