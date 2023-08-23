@@ -114,7 +114,7 @@ def main():
     if use_dataset=="coda":
         demo_splits = ["train", "test", "val"] # TODO: use test split later to avoid frame drops
         demo_dataset = CODataset(
-            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger, demo_splits=demo_splits
+            dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger, use_sorted_imageset=True
         )
         color_map=coda_utils.BBOX_ID_TO_COLOR
     elif use_dataset=="jrdb":
