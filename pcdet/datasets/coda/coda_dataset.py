@@ -10,7 +10,7 @@ from ..dataset import DatasetTemplate
 
 
 class CODataset(DatasetTemplate):
-    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None, demo_splits=[]):
+    def __init__(self, dataset_cfg, class_names, training=True, root_path=None, logger=None, ps_label_dir=None, use_sorted_imageset=False):
         """
         Args:
             root_path:
@@ -24,7 +24,7 @@ class CODataset(DatasetTemplate):
             ps_label_dir=ps_label_dir
         )
 
-        self.demo_splits = demo_splits # Use all frames in trainval
+        self.use_sorted_imageset=use_sorted_imageset
         self.split = self.dataset_cfg.DATA_SPLIT[self.mode]
         self.root_split_path = self.root_path / ('training' if self.split != 'test' else 'testing')
 
@@ -37,6 +37,10 @@ class CODataset(DatasetTemplate):
         if self.training and self.dataset_cfg.get('BALANCED_RESAMPLING', False):
             self.coda_infos = self.balanced_infos_resampling(self.coda_infos)
 
+        # Build idx to imageset idx map
+        if self.use_sorted_imageset:
+            self.build_idx_to_imageset_map():
+
     def include_coda_data(self, mode):
         """
         Assumes imageset is generated before running create_coda_dataset. Important for maintaing that
@@ -46,27 +50,13 @@ class CODataset(DatasetTemplate):
             self.logger.info('Loading CODa dataset')
         coda_infos = []
 
-        if len(self.demo_splits)==0:
-            for info_path in self.dataset_cfg.INFO_PATH[mode]:
-                info_path = self.root_path / info_path
-                if not info_path.exists():
-                    continue
-                with open(info_path, 'rb') as f:
-                    infos = pickle.load(f)
-                    coda_infos.extend(infos)
-        else:
-            for split in self.demo_splits:
-                mode = self.dataset_cfg.DATA_SPLIT[split]
-    
-                for info_path in self.dataset_cfg.INFO_PATH[mode]:
-                    info_path = self.root_path / info_path
-                    if not info_path.exists():
-                        print(f'Info path {info_path} does not exist, skipping')
-                        continue
-                    with open(info_path, 'rb') as f:
-                        infos = pickle.load(f)
-                        print(f'Adding infos {len(infos)} for split {split} and mode {mode}...')
-                        coda_infos.extend(infos)
+        for info_path in self.dataset_cfg.INFO_PATH[mode]:
+            info_path = self.root_path / info_path
+            if not info_path.exists():
+                continue
+            with open(info_path, 'rb') as f:
+                infos = pickle.load(f)
+                coda_infos.extend(infos)
 
         self.coda_infos.extend(coda_infos)
         if self.logger is not None:
@@ -110,23 +100,38 @@ class CODataset(DatasetTemplate):
 
         return sampled_infos
 
-    def set_sample_id_list(self, split):
-        if len(self.demo_splits)==0:
-            split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
-            self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
-        else:
-            self.sample_id_list = []
-            for split in self.demo_splits:
-                split_dir = self.root_path / 'ImageSets' / (split + '.txt')
-                sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
+    def build_idx_to_imageset_map(self):
+        """
+        Generates array to idx from idx to imageset sample idx in order
+        """
+        #1 Iterate through all indices for all imagesets
+        splits = ["train", "test", "val"]
 
-                if sample_id_list is not None:
-                    print(f'Adding split {split} to sample split list...')
-                    self.sample_id_list.extend(sample_id_list)
-                else:
-                    print(f'Split {split} is empty for demo!')
-            # Sort list by idx as well, indices for same video are contiguous
-            self.sample_id_list = sorted(self.sample_id_list, key=lambda x: int(x))
+        all_coda_infos = []
+        num_samples = 0
+        # Create conglomerate of all infos list
+        for split in splits:
+            mode = self.dataset_cfg.DATA_SPLIT[split]
+            for info_path in self.dataset_cfg.INFO_PATH[mode]:
+                info_path = self.root_path / info_path
+                with open(info_path, 'rb') as f:
+                    infos = pickle.load(f)
+                    print(f'Adding infos {len(infos)} for split {split} and mode {mode}...')
+                    all_coda_infos.extend(infos)
+
+        infos_lidar_idx_list = []
+        for info_idx, info in all_coda_infos:
+            infos_lidar_idx_list.append(info['point_cloud']['lidar_idx']) 
+
+        infos_lidar_idx_np = np.array(infos_lidar_idx_list)
+
+        # Use the following in getitem
+        self.sorted_lidar_idx_map = np.argsort(infos_lidar_idx_np)
+        self.coda_infos = all_coda_infos
+
+    def set_sample_id_list(self, split):
+        split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
+        self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
 
     def set_split(self, split):
         super().__init__(
@@ -457,11 +462,15 @@ class CODataset(DatasetTemplate):
         if self._merge_all_iters_to_one_epoch:
             index = index % len(self.coda_infos)
         
-        info = copy.deepcopy(self.coda_infos[index])
+        if self.use_sorted_imageset:
+            matching_lidar_idx = self.sorted_lidar_idx_map[index]
+            info = copy.deepcopy(self.coda_infos[matching_lidar_idx])
+        else:
+            info = copy.deepcopy(self.coda_infos[index])
         # print("before if name annos ", info['annos']['name'].shape)
         # print("before if bbox annos ", info['annos']['bbox'].shape)
-
         sample_idx = info['point_cloud']['lidar_idx']
+        print(f'Requested index {index} LiDAR idx {sample_idx}')
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
 
@@ -525,8 +534,8 @@ class CODataset(DatasetTemplate):
         return data_dict
 
 
-def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
-    dataset = CODataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False, demo_splits=["train", "test", "val"])
+def create_coda_infos(dataset_cfg, class_names, data_path, save_path, workers=8):
+    dataset = CODataset(dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path, training=False)
     train_split, val_split = 'train', 'val'
 
     train_filename = save_path / ('coda_infos_%s.pkl' % train_split)
@@ -636,8 +645,8 @@ if __name__ == '__main__':
                 'Skateboard',
                 'WaterFountain'
             ],
-            data_path=ROOT_DIR / 'data' / 'coda128_allclass_full_inorder',
-            save_path=ROOT_DIR / 'data' / 'coda128_allclass_full_inorder',
+            data_path=ROOT_DIR / 'data' / 'coda128_allclass_full',
+            save_path=ROOT_DIR / 'data' / 'coda128_allclass_full',
         )
 """
 Full Class List
