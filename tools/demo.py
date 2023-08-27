@@ -85,6 +85,10 @@ class DemoDataset(DatasetTemplate):
         data_dict = self.prepare_data(data_dict=input_dict)
         return data_dict
 
+def normalize_color(color):
+    normalized_color = [(r / 255, g / 255, b / 255) for r, g, b in color]
+    return normalized_color
+
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/second.yaml',
@@ -105,18 +109,18 @@ def main():
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
-    use_dataset = "coda"
+    use_dataset = "jrdb"
     gen_video = True
     do_preds = True # Set to true to do inference, otherwise just views ground truth
-    vis_preds = True
-    show_gt = False
+    show_preds = False
+    show_gt = True
 
     if use_dataset=="coda":
         demo_splits = ["train", "test", "val"] # TODO: use test split later to avoid frame drops
         demo_dataset = CODataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger, use_sorted_imageset=True
         )
-        color_map=coda_utils.BBOX_ID_TO_COLOR
+        color_map=normalize_color(coda_utils.BBOX_ID_TO_COLOR)
     elif use_dataset=="jrdb":
         demo_dataset = JRDBDataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger
@@ -147,8 +151,8 @@ def main():
     # vis.get_render_option().point_size = 2.0
     # vis.get_render_option().background_color = np.zeros(3)
 
-    if gen_video and vis_preds:
-        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi", show_gt=show_gt)
+    if gen_video:
+        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi", show_gt=show_gt, show_preds=show_preds)
     else:
         with torch.no_grad():
             for idx, data_dict in enumerate(demo_dataset):
@@ -213,7 +217,7 @@ def main():
 
                     #### END for visualizing evaluation boxes
 
-                    if vis_preds:
+                    if show_preds:
                         V.draw_scenes(
                             points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
                             ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels'],
