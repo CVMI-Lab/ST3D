@@ -20,7 +20,9 @@ box_colormap = [
     [1, 1, 0],
 ]
 
-MAX_LINE_SEGMENTS = 2000
+MAX_LINE_SEGMENTS = 2500
+BACKGROUND_COLOR    = np.ones(3)
+POINT_COLOR         = np.zeros((1,3))+0.4
 
 def get_coor_colors(obj_labels):
     """
@@ -148,7 +150,8 @@ def build_pcd(points, o3d_pts):
 
     # pts = o3d.geometry.PointCloud()
     o3d_pts.points = o3d.utility.Vector3dVector(points)
-    o3d_pts.colors = o3d.utility.Vector3dVector(np.zeros((points.shape[0], 3))+0.1)
+    point_colors = np.repeat(POINT_COLOR, points.shape[0], axis=0)
+    o3d_pts.colors = o3d.utility.Vector3dVector(point_colors)
 
     return o3d_pts
 
@@ -209,7 +212,8 @@ def visualize_3d(
                 window_width=1920, window_height=1080,
                 draw_origin=True,
                 save_vid_filename="",
-                show_gt=True
+                show_gt=True,
+                show_preds=True
                 ):
     from pcdet.models import build_network, load_data_to_gpu
     def reset_line_mesh_list(line_mesh_list):
@@ -235,14 +239,15 @@ def visualize_3d(
         print("Lookat Vector:", lookat)
         print("Up Vector:", up)
 
-
     vis = o3d.visualization.Visualizer()
     vis.create_window(width=window_width, height=window_height)
     vis.get_render_option().point_size = 3.0
 
     ctr = vis.get_view_control()
+    ctr.change_field_of_view(60)
+
     opt = vis.get_render_option()
-    opt.background_color = np.ones(3)
+    opt.background_color = BACKGROUND_COLOR
 
     # draw origin
     if draw_origin:
@@ -275,13 +280,14 @@ def visualize_3d(
             gt_bbox_geos = reset_line_mesh_list(gt_bbox_geos)
             dt_bbox_geos = reset_line_mesh_list(dt_bbox_geos)
 
-            if model is not None:
+            if model is not None and show_preds:
                 pred_dicts, _ = model.forward(data_dict)
                 pred_boxes = torch.hstack((pred_dicts[0]['pred_boxes'], pred_dicts[0]['pred_labels'].reshape(-1, 1)))
                 dt_bbox_geos = build_bbox(pred_boxes, dt_bbox_geos, color_map)
 
             if show_gt and 'gt_boxes' in data_dict.keys():
-                gt_bbox_geos = build_bbox(data_dict['gt_boxes'], gt_bbox_geos, gt_bbox_color_map) # Reserve RED for gt boxes
+                # gt_bbox_geos = build_bbox(data_dict['gt_boxes'], gt_bbox_geos, gt_bbox_color_map) # Reserve RED for gt boxes
+                gt_bbox_geos = build_bbox(data_dict['gt_boxes'], gt_bbox_geos, color_map)
 
             pcd_geo = build_pcd(data_dict['points'][:, 1:], pcd_geo)
 
@@ -309,7 +315,7 @@ def visualize_3d(
 
                 vis.poll_events()
                 vis.update_renderer()
-            time.sleep(0.1) # 2 hz
+            time.sleep(0.1) # 10hz
 
             if save_as_vid:
                 vis.capture_screen_image(f'{output_video_dir}/temp.jpg', do_render=True)
