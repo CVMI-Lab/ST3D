@@ -94,6 +94,33 @@ python -m pcdet.datasets.waymo.waymo_dataset --func create_waymo_infos \
 
 Note that you do not need to install `waymo-open-dataset` if you have already processed the data before and do not need to evaluate with official Waymo Metrics. 
 
+# Using Pretrained Models
+
+## Visualize Detector Performance on CODa
+
+Before visualizing object detections on CODa, you will first need to download the pre-trained model weights. Then, run the following command, specifying the path to the model weights.
+
+```
+python demo.py --ckpt ../output/da-coda-coda_models/waymocenterhead/pvrcnn_allclass128full_finetune_headfull/coda128bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_30.pth
+```
+
+## Visualize Detector Performance on Custom Dataset
+
+To visualize the pre-trained model predictions on your dataset. Create a directory named `velodyne` and place the `.bin` files that you would like to use in this directory. Then set the `--data_path` cli argument to the parent directory for your `velodyne` directory. The file structure should look as follows:
+
+```
+PARENT_DIRECTORY
+├── velodyne
+│   ├── "000000.bin"
+│   ├── ...
+```
+
+Then, run the set the `--ckpt` argument to your model weights path and run the command below to visualize the predictions on Open3D.  
+
+```
+python demo.py --ckpt ../output/da-coda-coda_models/waymocenterhead/pvrcnn_allclass128full_finetune_headfull/coda128bestwaymoLR0.010000OPTadam_onecycle/ckpt/checkpoint_epoch_30.pth --dataset_name demo --data_path {PARENT_DIRECTORY} --ext .bin
+```
+
 ## Training & Testing
 
 
