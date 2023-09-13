@@ -91,12 +91,13 @@ def normalize_color(color):
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default='cfgs/kitti_models/second.yaml',
+    parser.add_argument('--cfg_file', type=str, default='cfgs/da-coda-coda_models/waymocenterhead/pvrcnn_allclass128full_finetune_headfull.yaml',
                         help='specify the config for demo')
-    parser.add_argument('--data_path', type=str, default='demo_data',
+    parser.add_argument('--data_path', type=str, default='../data/coda128_allclass_full',
                         help='specify the point cloud data file or directory')
     parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
     parser.add_argument('--ext', type=str, default='.bin', help='specify the extension of your point cloud data file')
+    parser.add_argument('--stat_path', type=str, default=None, help='specify the root path to each frame true positive, false positive, and false negative results')
 
     args = parser.parse_args()
 
@@ -109,14 +110,13 @@ def main():
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
-    use_dataset = "jrdb"
+    use_dataset = "coda"
     gen_video = True
     do_preds = True # Set to true to do inference, otherwise just views ground truth
-    show_preds = False
-    show_gt = True
+    show_preds = True
+    show_gt = False
 
     if use_dataset=="coda":
-        demo_splits = ["train", "test", "val"] # TODO: use test split later to avoid frame drops
         demo_dataset = CODataset(
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False, root_path=Path(args.data_path), logger=logger, use_sorted_imageset=True
         )
@@ -151,8 +151,10 @@ def main():
     # vis.get_render_option().point_size = 2.0
     # vis.get_render_option().background_color = np.zeros(3)
 
-    if gen_video:
-        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi", show_gt=show_gt, show_preds=show_preds)
+    if gen_video and show_preds:
+        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="test_split.avi", show_gt=show_gt, stat_path=args.stat_path)
+    elif not gen_video and show_preds:
+        V.visualize_3d(demo_dataset, model, logger, color_map, save_vid_filename="", show_gt=show_gt, view_frame=0, stat_path=args.stat_path)
     else:
         with torch.no_grad():
             for idx, data_dict in enumerate(demo_dataset):

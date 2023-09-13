@@ -493,7 +493,7 @@ class CODataset(DatasetTemplate):
         # print("before if name annos ", info['annos']['name'].shape)
         # print("before if bbox annos ", info['annos']['bbox'].shape)
         sample_idx = info['point_cloud']['lidar_idx']
-        print(f'Requested index {index} LiDAR idx {sample_idx}')
+        # print(f'Requested index {index} LiDAR idx {sample_idx}') 
         points = self.get_lidar(sample_idx)
         calib = self.get_calib(sample_idx)
 
