@@ -48,7 +48,6 @@ class DemoDataset(DatasetTemplate):
         gtbbox_list = glob.glob(str(root_path / "label_all" / f'*.txt'))
         # data_file_list = glob.glob(str(root_path / f'*{self.ext}')) if self.root_path.is_dir() else [self.root_path]
 
-
         data_file_list.sort()
         gtbbox_list.sort()
         self.sample_file_list = data_file_list
@@ -96,6 +95,9 @@ def parse_config():
     parser.add_argument('--data_path', type=str, default='../data/coda128_allclass_full',
                         help='specify the point cloud data file or directory')
     parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
+    parser.add_argument('--show_gt', type=str, default=False, help='Visualize ground truth annotations')
+    parser.add_argument('--show_preds', type=str, default=True, help='Predict and visualize bounding boxes')
+    parser.add_argument('--dataset_name', type=str, default="coda", help='Dataloader to use for demo Options: [coda, jrdb, demo]')
     parser.add_argument('--ext', type=str, default='.bin', help='specify the extension of your point cloud data file')
     parser.add_argument('--stat_path', type=str, default=None, help='specify the root path to each frame true positive, false positive, and false negative results')
 
@@ -110,11 +112,11 @@ def main():
     logger = common_utils.create_logger()
     logger.info('-----------------Quick Demo of OpenPCDet-------------------------')
 
-    use_dataset = "coda"
+    use_dataset = args.dataset_name
     gen_video = True
     do_preds = True # Set to true to do inference, otherwise just views ground truth
-    show_preds = True
-    show_gt = False
+    show_preds = args.show_preds
+    show_gt = args.show_gt
 
     if use_dataset=="coda":
         demo_dataset = CODataset(
@@ -131,6 +133,7 @@ def main():
             dataset_cfg=cfg.DATA_CONFIG, class_names=cfg.CLASS_NAMES, training=False,
             root_path=Path(args.data_path), ext=args.ext, logger=logger
         )
+        color_map = normalize_color(coda_utils.BBOX_ID_TO_COLOR)
     
     model=None
     if do_preds:
