@@ -1,7 +1,7 @@
 
 BBOX_ID_TO_COLOR = [
     (140, 51, 147),         #0 Car (Blue)
-    (7, 33, 229),           #1 Person (Green)
+    (7, 33, 229),           #1 Person (Blue)
     (66, 21, 72),           #2 Bike
     (67, 31, 116),          #3 Motorcycle (Orange)
     (159, 137, 254),        #4 Golf Cart (Yellow)
