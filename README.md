@@ -1,4 +1,4 @@
-# University of Texas Campus Object Dataset Object Detection Models
+# UT Campus Object Dataset (CODa) Object Detection Models
 
 <b>Official model development kit for CODa.</b> We strongly recommend using this repository to run our pretrained
 models and train on custom datasets. Thanks to the authors of ST3D++ and OpenPCDet from whom this repository
