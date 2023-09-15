@@ -116,8 +116,6 @@ export CKPT1=../output/da-coda-nuscenes_models/pvrcnn_128oracle_finetune_headful
 # export CONFIG_FILE2=cfgs/da-kitti-coda_models/pvrcnn/pvrcnn_old_anchor.yaml 
 # export EXTRA_TAG2=kitti_oracle
 
-
-
 # Launch CODa to AV dataset models
 
 # CODa32 nuscenes oracle

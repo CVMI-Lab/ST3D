@@ -41,9 +41,9 @@ def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default='cfgs/da-coda-coda_models/waymocenterhead/pvrcnn_allclass32full_finetune_headfull.yaml',
                         help='specify the config for demo')
-    parser.add_argument('-pc','--point_cloud_topic', type=str, default='/coda/ouster/points',
+    parser.add_argument('--point_cloud_topic', type=str, default='/coda/ouster/points',
                         help='specify the point cloud ros topic name')
-    parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
+    parser.add_argument('--ckpt', type=str, default='../ckpts/waymocenterhead32/checkpoint_epoch_30.pth', help='specify the pretrained model')
 
     args = parser.parse_args()
 
