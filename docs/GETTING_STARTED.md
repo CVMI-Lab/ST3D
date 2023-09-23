@@ -62,34 +62,40 @@ coda-models
 ├── pcdet
 ├── tools
 ```
-## Using Pretrained Models
-The examples below use the provided pretrained model on 32 vertical channel resolution. To download pretrained
-model weights for the other resolutions. Refer to the [Pretrained Models]
+## Downloading Pretrained Model Weights
+The examples below use the provided pretrained model on 32 vertical channel resolution. You will need to **download the pretrained weights** from our **[data server](https://web.corral.tacc.utexas.edu/texasrobotics/web_CODa/pretrained_models/)**. We provide an example below showing how to download weights for the 32 channel LiDAR resolution to the default location that this repo uses for the demos.
 
-### Live Visualization using ROS (ROS Installation Required)
+```code
+mkdir ckpts
+cd ckpts
+wget https://web.corral.tacc.utexas.edu/texasrobotics/web_CODa/pretrained_models/32channel/coda32_allclass_bestoracle.pth
+```
+
+## Live Visualization using ROS (ROS Installation Required)
 
 You will need to have installed the ROS in your conda environment according to the [INSTALL.md](./INSTALL.md)
 for the following to work. In a separate terminal, publish your point clouds over ROS. Run the following command,
 replacing `YOUR_POINT_CLOUD_TOPIC_NAME` with the point cloud topic being published. Depending on your ROS
-configuration, the maximum inference frequency varies between 2-5 Hz.
+configuration, the maximum inference frequency varies between 2-5 Hz. You do not need to download CODa to try
+this demo.
 
 ```
-python ros_demo.py --pc YOUR_POINT_CLOUD_TOPIC_NAME
+python ros_demo.py --pc YOUR_POINT_CLOUD_TOPIC_NAME --ckpt PATH_TO_YOUR_PRETRAINED_WEIGHTS_FILE
 ```
 
-You should something that looks like this:
+You should see something that looks like this:
 
 ![Sequence 0 Clip](./rosdemo.png)
 
-### Visualize Detector Performance on CODa (Open3D)
+## Visualize Detector Performance on CODa (Open3D)
 
-Before visualizing object detections on CODa, you will first need to download the pre-trained model weights. Then, run the following command, specifying the path to the model weights.
+Before visualizing object detections on CODa, you will first need to download the pre-trained model weights and preprocess CODa according to the dataset preparation section. Then, run the following command, specifying the path to the model weights.
 
 ```
-python demo.py
+python demo.py --ckpt PATH_TO_YOUR_PRETRAINED_WEIGHTS_FILE
 ```
 
-### Visualize Detector Performance on Custom Dataset (Open3D)
+## Visualize Detector Performance on Custom Dataset (Open3D)
 
 To visualize the pre-trained model predictions on your dataset. Create a directory named `velodyne` and place the `.bin` files that you would like to use in this directory. Then set the `--data_path` cli argument to the parent directory for your `velodyne` directory. The file structure should look as follows:
 
@@ -127,7 +133,6 @@ sh scripts/dist_train.sh ${NUM_GPUS} --cfg_file cfgs/da-waymo-kitti_models/secon
 ```
 Notice that you need to select the **best model** as your Pre-train model, 
 because the performance of adapted model is really unstable when target domain is KITTI.
-
 
 ### Self-training Process
 You need to set the `--pretrained_model ${PRETRAINED_MODEL}` when finish the

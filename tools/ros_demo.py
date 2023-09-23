@@ -43,7 +43,7 @@ def parse_config():
                         help='specify the config for demo')
     parser.add_argument('--point_cloud_topic', type=str, default='/coda/ouster/points',
                         help='specify the point cloud ros topic name')
-    parser.add_argument('--ckpt', type=str, default='../ckpts/waymocenterhead32/checkpoint_epoch_30.pth', help='specify the pretrained model')
+    parser.add_argument('--ckpt', type=str, default='../ckpts/checkpoint_epoch_30.pth', help='specify the pretrained model')
 
     args = parser.parse_args()
 
