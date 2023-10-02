@@ -20,7 +20,8 @@ Our code is released under the Apache 2.0 license.
 
 ## Paper Citation
 
-If you find our work useful in your research, please consider citing our work:
+If you find our work useful in your research, please consider citing our [paper](https://arxiv.org/abs/2309.13549) and [dataset](https://dataverse.tdl.org/dataset.xhtml?persistentId=doi:10.18738/T8/BBOQMV):
+
 ```
 @inproceedings{zhang2023utcoda,
     title={Towards Robust 3D Robot Perception in Urban Environments: The UT Campus Object Dataset},
