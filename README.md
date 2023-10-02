@@ -12,7 +12,7 @@ Please refer to [INSTALL.md](docs/INSTALL.md) for the installation.
 
 ## Getting Started
 
-Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more about how to use this project.
+Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more about how to use this project. **Prebuilt Docker Container Coming Soon!**
 
 ## License
 
