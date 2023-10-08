@@ -27,10 +27,16 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install MMDetection3D
+# Install ROS Noetic
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ros-noetic-desktop-full \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install coda-models
 RUN conda clean --all
-COPY . /ST3D
-WORKDIR /ST3D
+COPY . /coda-models
+WORKDIR /coda-models
 
 ENV FORCE_CUDA="1"
 RUN pip install -r requirements.txt
