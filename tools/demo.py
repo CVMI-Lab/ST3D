@@ -90,11 +90,11 @@ def normalize_color(color):
 
 def parse_config():
     parser = argparse.ArgumentParser(description='arg parser')
-    parser.add_argument('--cfg_file', type=str, default='cfgs/da-coda-coda_models/waymocenterhead/pvrcnn_allclass128full_finetune_headfull.yaml',
+    parser.add_argument('--cfg_file', type=str, default='cfgs/da-coda-coda_models/waymocenterhead/pvrcnn_allclass32full_finetune_headfull.yaml',
                         help='specify the config for demo')
-    parser.add_argument('--data_path', type=str, default='../data/coda128_allclass_full',
+    parser.add_argument('--data_path', type=str, default='../data/coda32_allclass_full',
                         help='specify the point cloud data file or directory')
-    parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
+    parser.add_argument('--ckpt', type=str, default='../ckpts/waymocenterhead32/checkpoint_epoch_30.pth', help='specify the pretrained model')
     parser.add_argument('--show_gt', type=str, default=False, help='Visualize ground truth annotations')
     parser.add_argument('--show_preds', type=str, default=True, help='Predict and visualize bounding boxes')
     parser.add_argument('--dataset_name', type=str, default="coda", help='Dataloader to use for demo Options: [coda, jrdb, demo]')

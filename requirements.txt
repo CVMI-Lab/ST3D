@@ -8,3 +8,4 @@ scikit-image
 tqdm
 wandb
 pytorch-scatter
+open3d
