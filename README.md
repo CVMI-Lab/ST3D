@@ -12,7 +12,12 @@ Please refer to [INSTALL.md](docs/INSTALL.md) for the installation.
 
 ## Getting Started
 
-Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more about how to use this project. **Prebuilt Docker Container Coming Soon!**
+### Quicksetup with Docker
+
+Please refer to [DOCKER.md](docs/DOCKER.md) to learn about how to pull our prebuilt docker images to **deploy our pretrained 3D object detection models.**
+
+### Full Setup
+Please refer to [GETTING_STARTED.md](docs/GETTING_STARTED.md) to learn more about how to use this project.
 
 ## License
 
