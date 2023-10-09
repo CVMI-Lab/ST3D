@@ -7,5 +7,7 @@ pyyaml
 scikit-image
 tqdm
 wandb
-pytorch-scatter
+# pytorch-scatter
 open3d
+roslibpy
+rospkg

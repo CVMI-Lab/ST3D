@@ -12,9 +12,10 @@ try:
     from visual_utils.open3d_vis_utils import draw_box
     OPEN3D_FLAG = True
 except:
-    import mayavi.mlab as mlab
-    from visual_utils import visualize_utils as V
-    OPEN3D_FLAG = False
+    print("Open3D not installed, visualization disabled")
+#     import mayavi.mlab as mlab
+#     from visual_utils import visualize_utils as V
+#     OPEN3D_FLAG = False
 
 import numpy as np
 import torch
