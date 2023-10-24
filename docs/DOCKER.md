@@ -6,7 +6,7 @@ This tutorial walks through how to pull our prebuilt docker image, and how to us
 
 1. Pulling docker image from Docker Hub. This command will pull the latest prebuilt image from Docker Hub.
 ```
-docker image pull docker://artzha/coda-models
+docker pull artzha/coda-models
 ```
 
 2. Start the docker container. This command will run the docker container with the following settings:
