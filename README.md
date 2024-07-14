@@ -61,10 +61,10 @@ We provide pretrained models here for nuScenes > KITTI task in [models](https://
 ### Waymo -> nuScenes TASK
 |                                             | method | Car@R11 | Car@R40 | download | 
 |---------------------------------------------|----------:|:-------:|:-------:|:---------:|
-| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D | 23.24 | 20.19 | [model](https://drive.google.com/file/d/150gvNE29iZ8Ah4L4uO_E40x0fyr_cn_J/view?usp=sharing) | 
-| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D | 27.18 | 22.99 | [model](https://drive.google.com/file/d/1Gk5i4qRz5tLU7Yd4U-oPureN9cV6TaLa/view?usp=sharing) |
-| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 23.52 | 20.38 | [model](https://drive.google.com/file/d/1WUHBTZylVTFLdSvO8wrgti27SEjFJxQl/view?usp=sharing) | 
-| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 28.06 | 23.67 | [model](https://drive.google.com/file/d/1KTCvmltfwIEh9i2t3Pu9APp_2GKyENme/view?usp=sharing) |
+| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D | 23.24 | 20.19 | [model](https://connecthkuhk-my.sharepoint.com/:u:/g/personal/jhyang13_connect_hku_hk/EeMq80RN8K1Fsub3qWyfexMB5mIgb-eohHbs9iCMlTY9Pw?e=7ClPTt) | 
+| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D | 27.18 | 22.99 | [model](https://connecthkuhk-my.sharepoint.com/:u:/g/personal/jhyang13_connect_hku_hk/Eevtjh6MnKlBkptG3Hh_jyUBkunmyedmXbahmBf0CpUqpw?e=JM31IH) |
+| [SECOND-IoU](tools/cfgs/da-waymo-nus_models/secondiou_st3d/secondiou_st3d.yaml) | ST3D (w/ sn) | 23.52 | 20.38 | [model](https://connecthkuhk-my.sharepoint.com/:u:/g/personal/jhyang13_connect_hku_hk/ETLk3FQu_5VPqghADqPA8CcB6uLJtWRLuCaIryCs3Ps7Uw?e=a2iQVb) | 
+| [PVRCNN](tools/cfgs/da-waymo-nus_models/pvrcnn_st3d/pvrcnn_st3d.yaml)    | ST3D (w/ sn)   | 28.06 | 23.67 | [model](https://connecthkuhk-my.sharepoint.com/:u:/g/personal/jhyang13_connect_hku_hk/EZdecJDPWhhHpflKBuwJhjIBLq23eGcxyzY1sfFKHn9zlA?e=6ZbFOM) |
 
 We could not provide the above pretrained models due to [Waymo Dataset License Agreement](https://waymo.com/open/terms/), 
 but you should achieve similar performance by training with the default configs.
